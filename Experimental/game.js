@@ -2,8 +2,9 @@ var canvas = document.getElementById("game"),
 	context = canvas.getContext("2d"),
 	frameRequestId = null;
 
-canvas.width = 500;
-canvas.height = 500;
+
+canvas.width = 1280;
+canvas.height = 720;
 
 function Player() {
 	this.width = 50;
