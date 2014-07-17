@@ -96,10 +96,10 @@ function draw(dt) {
 	player.applyForce(fHorizontal - fHorizontalDrag, fVertical - fVerticalDrag, dt);
 	if (player.x < 0) {
 		player.x = 0;
-		player.velocityX = 0;
+		player.resetVelocityX();
 	} else if (player.x + player.width > canvas.width) {
 		player.x = canvas.width - player.width;
-		player.velocityX = 0;
+		player.resetVelocityX();
 	}
 	cameraY = player.y - 100;
 

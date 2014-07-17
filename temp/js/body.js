@@ -12,6 +12,16 @@ function Body(x, y, width, height, mass) {
 	var lastAX = 0,
 		lastAY = 0;
 
+	this.resetVelocityX = function() {
+		lastAX = 0;
+		this.velocityX = 0;
+	}
+		
+	this.resetVelocityY = function() {
+		lastAY = 0;
+		this.velocityY = 0;
+	}
+		
 	this.applyForce = function(forceX, forceY, dt) {
 		/*
 		 * Based on obscure code for Verlet numerical integration for velocity from article 
