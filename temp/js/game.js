@@ -55,8 +55,9 @@ bg.onload = requestFrame;
 function draw(dt) {
 	dt *= 0.001; // ms to s
 	
-	var fVertical = g * player.mass;
-		fVerticalDrag = 0.5 * crossSectionalArea * airDensity * dragCoeff * player.velocityY * player.velocityY;
+	// TODO: fix this mess...
+	var fVertical = 0;
+		fVerticalDrag = 0;
 		fHorizontal = 0,
 		fHorizontalDrag = 0;
 	
@@ -87,6 +88,11 @@ function draw(dt) {
 		fVertical -= 1000;
 	}
 
+	fVertical += g * player.mass;
+	fVerticalDrag += player.velocityY > 0 
+						? 0.5 * crossSectionalArea * airDensity * dragCoeff * player.velocityY * player.velocityY
+						: -0.5 * crossSectionalArea * airDensity * dragCoeff * player.velocityY * player.velocityY;
+	
 	player.applyForce(fHorizontal - fHorizontalDrag, fVertical - fVerticalDrag, dt);
 	if (player.x < 0) {
 		player.x = 0;
@@ -116,4 +122,3 @@ function draw(dt) {
 	console.log("player velocity: " + player.velocityX.toFixed(2) + " | " + player.velocityY.toFixed(2) + " (m/s)");
 	console.log("player position: " + (player.x / PIXELS_PER_METER).toFixed(2) + " | " + (player.y / PIXELS_PER_METER).toFixed(2) + " (m)");
 }
-//requestFrame();
