@@ -1,8 +1,8 @@
 function Body(x, y, width, height, mass) {
     this.x = x;
 	this.y = y;
-	this.width = height;
-	this.height = width;
+	this.width = width;
+	this.height = height;
 	this.mass = mass;
 	this.velocityX = 0;
 	this.velocityY = 0;
@@ -38,7 +38,7 @@ function Body(x, y, width, height, mass) {
 		 
 		var a;
 		
-		this.x += (this.velocityX * dt + (0.5 * lastAX * dt * dt)) * 50;
+		this.x += (this.velocityX * dt + (0.5 * lastAX * dt * dt)) * 50; // TODO: PPM conversions
 		a = forceX / this.mass;
 		this.velocityX += ((lastAX + a) / 2) * dt;
 		lastAX = a;
@@ -52,7 +52,7 @@ function Body(x, y, width, height, mass) {
 
 // TODO
 function boxIntersectsBox(aX, aY, aWidth, aHeight, bX, bY, bWidth, bHeight) {
-	return (Math.abs(aX - bY) * 2 < (aWidth + bWidth)) && (Math.abs(aY - bY) * 2 < (aHeight + bHeight));
+	return (Math.abs(aX - bY) * 2 <= aWidth + bWidth) && (Math.abs(aY - bY) * 2 <= aHeight + bHeight);
 }
 
 // TODO
