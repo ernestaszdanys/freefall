@@ -51,11 +51,11 @@ function Body(x, y, width, height, mass) {
 }
 
 // TODO
-function boxIntersectsBox(aX, aY, aWidth, aHeight, bX, bY, bWidth, bHeight) {
-	return (Math.abs(aX - bY) * 2 <= aWidth + bWidth) && (Math.abs(aY - bY) * 2 <= aHeight + bHeight);
+function boxIntersectsBox(a, b) {
+	return !(b.x > a.x + a.width || b.x + b.width < a.x) && !(b.y > a.y + a.height || b.y + b.height < a.y);
 }
 
 // TODO
-function boxIntersectsPoint(aX, aY, aWidth, aHeight, pX, pY) {
-	return (pX >= aX && pX <= aX + aWidth) && (pY >= aY && pY <= aY + aHeight);
+function boxIntersectsPoint(a, pX, pY) {
+	return (pX >= a.x && pX <= a.x + a.width) && (pY >= a.y && pY <= a.y + a.height);
 }

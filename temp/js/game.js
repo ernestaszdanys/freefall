@@ -34,11 +34,17 @@ var cameraY = 0;
 var	dragCoeff = 1.2,
 	airDensity = 50.2754,
 	crossSectionalArea = 0.09,
-	g = 9.8;
+	g = 1.8;
 	
 var player = new Body(canvas.width / 2 - 25, 100, 50, 100, 100);
 player.draw = function(context) {
 	context.fillStyle = "rgba(0, 0, 0, 1)"
+	context.fillRect(this.x, this.y - cameraY, this.width, this.height);
+}
+
+var obstacle = new Body(canvas.width / 2 - 100, 100, 200, 100, 100);
+obstacle.draw = function(context, colided) {
+	context.fillStyle = colided ? "rgba(255, 0, 0, 1)" : "rgba(0, 0, 0, 1)"
 	context.fillRect(this.x, this.y - cameraY, this.width, this.height);
 }
 
@@ -82,7 +88,13 @@ function draw(dt) {
 	}
 
 	player.applyForce(fHorizontal - fHorizontalDrag, fVertical - fVerticalDrag, dt);
-	
+	if (player.x < 0) {
+		player.x = 0;
+		player.velocityX = 0;
+	} else if (player.x + player.width > canvas.width) {
+		player.x = canvas.width - player.width;
+		player.velocityX = 0;
+	}
 	cameraY = player.y - 100;
 
 	//context.fillStyle = "rgba(255, 255, 255, 1)"
@@ -90,9 +102,12 @@ function draw(dt) {
 	var offset = -cameraY % canvas.height;
 	context.drawImage(bg, 0, offset + canvas.height, canvas.width, canvas.height);
 	context.drawImage(bg, 0, offset, canvas.width, canvas.height);
-	
-	
+		
+	if (obstacle.y + obstacle.height < cameraY) obstacle.y += canvas.height + obstacle.height;
+
+	obstacle.draw(context, boxIntersectsBox(obstacle, player));
 	player.draw(context);
+
 	
 	console.clear();
 	console.log("fVertical:       " + fVertical.toFixed(2) + " (N)");
