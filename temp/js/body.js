@@ -1,8 +1,10 @@
+
+
 function Body(x, y, width, height, mass) {
     this.x = x;
 	this.y = y;
-	this.width = height;
-	this.height = width;
+	this.width = width;
+	this.height = height;
 	this.mass = mass;
 	this.velocityX = 0;
 	this.velocityY = 0;
@@ -10,6 +12,16 @@ function Body(x, y, width, height, mass) {
 	var lastAX = 0,
 		lastAY = 0;
 
+	this.resetVelocityX = function() {
+		lastAX = 0;
+		this.velocityX = 0;
+	}
+		
+	this.resetVelocityY = function() {
+		lastAY = 0;
+		this.velocityY = 0;
+	}
+		
 	this.applyForce = function(forceX, forceY, dt) {
 		/*
 		 * Based on obscure code for Verlet numerical integration for velocity from article 
@@ -38,7 +50,7 @@ function Body(x, y, width, height, mass) {
 		 
 		var a;
 		
-		this.x += (this.velocityX * dt + (0.5 * lastAX * dt * dt)) * 50;
+		this.x += (this.velocityX * dt + (0.5 * lastAX * dt * dt)) * 50; // TODO: PPM conversions
 		a = forceX / this.mass;
 		this.velocityX += ((lastAX + a) / 2) * dt;
 		lastAX = a;
@@ -51,11 +63,11 @@ function Body(x, y, width, height, mass) {
 }
 
 // TODO
-function boxIntersectsBox(aX, aY, aWidth, aHeight, bX, bY, bWidth, bHeight) {
-	return (Math.abs(aX - bY) * 2 < (aWidth + bWidth)) && (Math.abs(aY - bY) * 2 < (aHeight + bHeight));
+function boxIntersectsBox(a, b) {
+	return !(b.x > a.x + a.width || b.x + b.width < a.x) && !(b.y > a.y + a.height || b.y + b.height < a.y);
 }
 
 // TODO
-function boxIntersectsPoint(aX, aY, aWidth, aHeight, pX, pY) {
-	return (pX >= aX && pX <= aX + aWidth) && (pY >= aY && pY <= aY + aHeight);
+function boxIntersectsPoint(a, pX, pY) {
+	return (pX >= a.x && pX <= a.x + a.width) && (pY >= a.y && pY <= a.y + a.height);
 }
