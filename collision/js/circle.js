@@ -60,16 +60,22 @@ function Circle(x, y, radius, sAngle, eAngle, mass) {
 		lastAY = a;
 	}
         
-        // TODO optimize using Voronoi regions http://www.metanetsoftware.com/technique/tutorialA.html
-        /*this.circleIntersectsPolygon = function(p) {
-            
-        }*/
-    
         this.circleIntersectsPolygon = function(p) {
             for (var i=0; i<p.vertices.length; i++){
-                if (Math.sqrt((p.vertices[i].x-this.x)*(p.vertices[i].x-this.x)+(p.vertices[i].y-this.y)*(p.vertices[i].y-this.y)) < this.radius) return true;
+                v1 = p.vertices[i];
+                v2 = p.vertices[i + 1 == p.vertices.length ? 0 : i + 1];
+                
+                eq = Polygon.equationTwoPoints(v1, v2);
+                d1 = Polygon.distanceTwoPoints(v1, new Vertice(this.x, this.y));
+                d2 = Polygon.distanceTwoPoints(v2, new Vertice(this.x, this.y));
+                d3 = Polygon.distanceTwoPoints(v1, v2);
+                distance = Math.abs(eq.a*this.x+eq.b*this.y+eq.c)/Math.sqrt(eq.a*eq.a+eq.b*eq.b);
+                maxd = Math.sqrt(d3*d3 + distance*distance);
+
+                if((distance<this.radius && (d1 < maxd && d2 < maxd)) ||
+                   d1<this.radius ||
+                   d2<this.radius) return true;
             }
-        return false;
         }
 }
 

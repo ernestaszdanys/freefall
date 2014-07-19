@@ -44,7 +44,12 @@ player.draw = function(context) {
         
 }
 
-var triangle = new Polygon([new Vertice(canvas.width / 2, 300), new Vertice(canvas.width / 2+100, 300), new Vertice(canvas.width / 2+50, 250)], 50);
+var triangle = new Polygon([new Vertice(canvas.width / 2, 300), 
+                            new Vertice(canvas.width / 2+100, 300),
+                            new Vertice(canvas.width / 2+150, 350),
+                            new Vertice(canvas.width / 2+100, 250),
+                        
+], 50);
 triangle.draw(context);
 
 bg = new Image();
@@ -98,7 +103,7 @@ function draw(dt) {
 	
         context.clearRect(0 ,0 , canvas.width, canvas.height);
 	player.draw(context);
-        if (player.circleIntersectsPolygon(triangle)) triangle.draw(context, "red")
+        if (player.circleIntersectsPolygon(triangle, context)) triangle.draw(context, "red")
             else triangle.draw(context, "black");
         
 

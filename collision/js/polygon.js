@@ -70,3 +70,32 @@ function Projection(vertices, axis){
                 min = axis[i].dot(vertices[j].x, vertices[j].y);
         }
 }
+
+
+//Returns coefficients A, B, C of line equation between 2 points Ax+Bx+C=0
+Polygon.equationTwoPoints = function(x1, x2){
+    var eq = new Equation(0, 0, 0);
+    
+    if (x1.x == x2.x){
+        eq.a=0;
+        eq.b=1;
+        eq.c=-x1.x;
+    } else
+    {
+        eq.a = (x2.y -x1.y)/(x2.x -x1.x);
+        eq.b = -1;
+        eq.c = eq.a*(-x1.x)+x1.y;
+    }
+
+    return eq;
+}
+
+Polygon.distanceTwoPoints = function(x1, x2){
+    return Math.sqrt( (x2.x-x1.x)*(x2.x-x1.x)+(x2.y-x1.y)*(x2.y-x1.y) );
+}
+
+function Equation(a, b, c){
+    this.a = a;
+    this.b = b;
+    this.c = c;
+}
