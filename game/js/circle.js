@@ -77,20 +77,29 @@ function Circle(x, y, radius, sAngle, eAngle, mass) {
     }
 
     this.circleIntersectsPolygon = function(p) {
-        for (var i=0; i<p.vertices.length; i++){
-            v1 = p.vertices[i];
-            v2 = p.vertices[i + 1 == p.vertices.length ? 0 : i + 1];
+        
+		//Checks if circle is outside the bounding box
+		if (this.x+this.radius < p.bbx || this.x+this.radius > p.bbx + p.bbwidth || this.y+this.radius < p.bby || this.y+this.radius > p.bby + p.bbheight) {
+			return false;            
+		}
+			
+		//Checks if circle touches or crosses any edge of polygon
+		for (var i=0; i<p.vertices.length; i++){
+			v1 = p.vertices[i];
+			v2 = p.vertices[i + 1 == p.vertices.length ? 0 : i + 1];
 
-            eq = Polygon.equationTwoPoints(v1, v2);
-            d1 = Polygon.distanceTwoPoints(v1, new Vec2(this.x, this.y));
-            d2 = Polygon.distanceTwoPoints(v2, new Vec2(this.x, this.y));
-            d3 = Polygon.distanceTwoPoints(v1, v2);
-            distance = Math.abs(eq.a*this.x+eq.b*this.y+eq.c)/Math.sqrt(eq.a*eq.a+eq.b*eq.b);
-            maxd = Math.sqrt(d3*d3 + distance*distance);
+			eq = Polygon.equationTwoPoints(v1, v2);
+			d1 = Polygon.distanceTwoPoints(v1, new Vec2(this.x, this.y));
+			d2 = Polygon.distanceTwoPoints(v2, new Vec2(this.x, this.y));
+			d3 = Polygon.distanceTwoPoints(v1, v2);
+			distance = Math.abs(eq.a*this.x+eq.b*this.y+eq.c)/Math.sqrt(eq.a*eq.a+eq.b*eq.b);
+			maxd = Math.sqrt(d3*d3 + distance*distance);
 
-            if((distance<this.radius && (d1 < maxd && d2 < maxd)) ||
-                d1<this.radius ||
-                d2<this.radius) return true;
-        }
-    }
+			if((distance<this.radius && (d1 < maxd && d2 < maxd)) ||
+				d1<this.radius ||
+				d2<this.radius) return true;
+		}
+				
+		//TODO checks if circle center is inside the pentagon with ray check
+		}
 }
