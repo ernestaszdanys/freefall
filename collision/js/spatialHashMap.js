@@ -19,10 +19,10 @@ function SpatialHashMap(shift) {
         keys = [],
         cells = {},
         hash = function(object) {
-            var sx = object.x >> shift,
-                sy = object.y >> shift,
-                ex = (object.x + object.width) >> shift,
-                ey = (object.y + object.height) >> shift,
+            var sx = object.bbx >> shift,
+                sy = object.bby >> shift,
+                ex = (object.bbx + object.bbwidth) >> shift,
+                ey = (object.bby + object.bbheight) >> shift,
                 x, y, keys = [];
             for(y = sy; y <= ey; y++) for(x = sx; x <= ex; x++) keys.push(x + ":" + y);
             return keys;
@@ -86,15 +86,15 @@ function SpatialHashMap(shift) {
     };
     
     this.query = function(x, y, width, height) {
-        var rectKeys = hash({x: x, y: y, width: width, height: height}),
+        var rectKeys = hash({bbx: x, bby: y, bbwidth: width, bbheight: height}),
             objectIds,
             results = [];
         for(var i = 0; i < rectKeys.length; i++) {
             //for(var uid in cells[rectKeys[i]])results.push(ids[uid]);
             if (cells[rectKeys[i]]) {
                 objectIds = Object.keys(cells[rectKeys[i]]);
-
-\				}
+                for(var j = 0; j < objectIds.length; j++) results.push(ids[objectIds[j]]);
+			}
         }
         return toArrayOfUnique(results);
     };
