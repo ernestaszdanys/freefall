@@ -1,35 +1,33 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 function Polygon(vertices, mass) {
 
     this.vertices = vertices;
     
-    this.xMin = this.xMax = this.vertices[0].x;
-    this.yMin = this.yMax = this.vertices[0].y;
-
-    //TODO is this most effective?
-    for(var i=0; i<this.vertices.length; i++){
-        if(this.vertices[i].x < this.xMin) this.xMin = this.vertices[i].x;
-        if(this.vertices[i].x > this.xMax) this.xMax = this.vertices[i].x;
-        if(this.vertices[i].y < this.yMin) this.yMin = this.vertices[i].y;
-        if(this.vertices[i].y < this.yMax) this.yMax = this.vertices[i].y;
-    }
-    
-    //Array of normals of edges
-    this.normals = [];
-    for (var i=0; i<this.vertices.length; i++){
-        this.normals[i] = Vec2.createNormal(this.vertices[i], this.vertices[i + 1 == this.vertices.length ? 0 : i + 1]);
-    }
-    
     this.mass = mass;
     this.velocityX = 0;
     this.velocityY = 0;
+    
+    this.bbx = Number.MAX_VALUE;
+    this.bby = Number.MAX_VALUE;
+    this.bbwidth = 0;
+    this.bbheight = 0;
+    
+    for (var i = 0; i<this.vertices.length; i++){
+        if(this.vertices[i].x < this.bbx) this.bbx = this.vertices[i].x;
+        if(this.vertices[i].y < this.bby) this.bby = this.vertices[i].y;
+        if(this.vertices[i].x > this.bbwidth) this.bbwidth = this.vertices[i].x;
+        if(this.vertices[i].y > this.bbheight) this.bbheight = this.vertices[i].y;
+    }
+    this.bbwidth -= this.bbx;
+    this.bbheight -= this.bby;
 
     var lastAX = 0,
         lastAY = 0;
+
+    /*Array of normals of edges, used for SAT collision detenction between 2 polygons
+    this.normals = [];
+    for (var i=0; i<this.vertices.length; i++){
+        this.normals[i] = Vec2.createNormal(this.vertices[i], this.vertices[i + 1 == this.vertices.length ? 0 : i + 1]);
+    }*/
 
     this.resetVelocityX = function() {
         lastAX = 0;
@@ -40,7 +38,8 @@ function Polygon(vertices, mass) {
         lastAY = 0;
         this.velocityY = 0;
     }
-    //color is just for testing
+    
+    //Color is just for testing
     this.draw = function(context, color){
         context.beginPath();
         context.moveTo(this.vertices[this.vertices.length-1].x, vertices[this.vertices.length-1].y);
@@ -49,16 +48,12 @@ function Polygon(vertices, mass) {
             context.stroke();
         }
         context.closePath();
-        context.fillStyle=color;
+        context.fillStyle = color;
         context.fill();
     }
 }
 
-function Vertice(x, y){
-    this.x = x;
-    this.y = y;
-}
-
+/* used for SAT use between 2 polygons
 function Projection(vertices, axis){
     this.min = MAX_VALUE;
     this.max = 0;        
@@ -69,8 +64,7 @@ function Projection(vertices, axis){
             if (axis[i].dot(vertices[j].x, vertices[j].y) < min)
                 min = axis[i].dot(vertices[j].x, vertices[j].y);
         }
-}
-
+}*/
 
 //Returns coefficients A, B, C of line equation between 2 points Ax+Bx+C=0
 Polygon.equationTwoPoints = function(x1, x2){

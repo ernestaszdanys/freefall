@@ -40,7 +40,8 @@ Vec2.prototype = {
         return JSON.stringify(this);   
     }
 }
-//returns normal of vector between those points
+
+//returns normal of vector between 2 points
 //TODO optimize that normal would always point out from polygon if needed for physics
 Vec2.createNormal = function(p1, p2){
     var normal = new Vec2(p2.x-p1.x, p2.y-p1.y);
