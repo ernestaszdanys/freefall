@@ -93,8 +93,8 @@ function SpatialHashMap(shift) {
             //for(var uid in cells[rectKeys[i]])results.push(ids[uid]);
             if (cells[rectKeys[i]]) {
                 objectIds = Object.keys(cells[rectKeys[i]]);
-
-\				}
+                for(var j = 0; j < objectIds.length; j++) results.push(ids[objectIds[j]]);
+            }
         }
         return toArrayOfUnique(results);
     };
