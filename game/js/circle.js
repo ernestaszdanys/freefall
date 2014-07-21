@@ -79,7 +79,7 @@ function Circle(x, y, radius, sAngle, eAngle, mass) {
     this.circleIntersectsPolygon = function(p) {
         
 		//Checks if circle is outside the bounding box
-		if (this.x+this.radius < p.bbx || this.x+this.radius > p.bbx + p.bbwidth || this.y+this.radius < p.bby || this.y+this.radius > p.bby + p.bbheight) {
+		if (this.x+this.radius < p.bbx || this.x-this.radius > p.bbx + p.bbwidth || this.y+this.radius < p.bby || this.y-this.radius > p.bby + p.bbheight) {
 			return false;            
 		}
 			
