@@ -30,9 +30,9 @@ function Block(x, y, width, height) {
 
 var PIXELS_PER_METER = 50;
 
-var dragCoeff = 1.2,
+var //dragCoeff = 1.2,
     airDensity = 50.2754,
-    crossSectionalArea = 0.09,
+    //crossSectionalArea = 0.09,
     g = 1.8;
 	
 var player = new Circle(canvas.width / 2, 100, 50, 0, 2 * Math.PI, 100);
@@ -116,7 +116,7 @@ spatialMap.add(new Polygon([new Vec2(canvas.width / 2 + 0, 300 + 800),
 							
 var offsetY = 0;							
 							
-function draw(dt) {
+/*function draw(dt) {
     dt *= 0.001; // ms to s
 
 	var fVertical = g * player.mass;
@@ -178,4 +178,14 @@ function draw(dt) {
  //   triangle.draw(context);  
 }
 
+requestFrame();
+
+*/
+
+function draw() {
+	new Rect(100, 100, 200, 200).draw(context);
+	new Poly([new Vec2(100, 200), new Vec2(300, 100), new Vec2(500, 500)]).draw(context);
+	new Circle(200, 200, 40).draw(context);
+
+}
 requestFrame();
