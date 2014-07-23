@@ -219,9 +219,8 @@ function draw(dt) {
 	//console.log(obs);
 	for (var i = 0; i < obs.length; i++) {
 		obs[i].draw(context);
-	*/
 	}
-	
+	*/
 }
 
 requestFrame();
