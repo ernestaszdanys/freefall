@@ -3,17 +3,20 @@ var Intersection = {
         return (x >= rect.x && x <= rect.x + rect.width)
                 && (y >= rect.y && y <= rect.y + rect.height);
     },
-    circlePoly: function(circle, poly, intersectionData) {
+    
+    circlePoly: function(circle, poly) {
         //Checks if circle is outside the bounding box
         if (!Intersection.rectRect(circle, poly)) {
             return null;
         }
 
         //Checks if circle touches or crosses any edge of polygon
+        //Returns distance and angle in RADIANS
         var v1 = new Vec2(),
                 v2 = new Vec2(),
                 center = new Vec2();
         var d1, d2, d3, distance, maxd, eq;
+        var angle, normal;
 
         for (var i = 0; i < poly.vertices.length; i++) {
             v1.x = poly.vertices[i].x + poly.x;
@@ -32,7 +35,14 @@ var Intersection = {
             if ((distance < circle.width / 2 && (d1 < maxd && d2 < maxd)) ||
                     d1 < circle.width / 2 ||
                     d2 < circle.width / 2) {
-                return true;
+                
+            normal = Vec2.createNormal(poly.vertices[i], poly.vertices[i + 1 == poly.vertices.length ? 0 : i + 1], poly);
+            normal.x = normal.x/normal.length();
+            angle = Math.acos(normal.x);
+            
+            console.clear();
+            console.log(angle);
+            return [distance, angle];
             }
         }
 
@@ -49,16 +59,9 @@ var Intersection = {
             v2.y = poly.vertices[i + 1 == poly.vertices.length ? 0 : i + 1].y + poly.y;
             center.x = circle.getCenterX();
             center.y = circle.getCenterY();
-            if (Physics.rayHitsLineSegment(v1, v2, center)) {
-                hits++;
-                console.clear();
-                console.log(i);
-                console.log(v1);
-                console.log(v2);
-            }
+            if (Physics.rayHitsLineSegment(v1, v2, center)) hits++;
         }
-        if (hits % 2 == 1) return true;
-        
+        if (hits % 2 == 1) return [0, null];
         
     },
     rectRect: function(rect1, rect2) {
@@ -97,7 +100,9 @@ Physics.rayHitsLineSegment = function(v1, v2, ray){
     if ((ray.y > v1.y && ray.y < v2.y) || (ray.y > v2.y && ray.y < v1.y)){
         var eq = Physics.equationTwoPoints(v1, v2);
         var x = (-eq[1]*ray.y-eq[2])/eq[0];
+        if (eq[0] == 0) x = v1.x;
         if(x < ray.x) return true;
     }
     return false;
 }
+
