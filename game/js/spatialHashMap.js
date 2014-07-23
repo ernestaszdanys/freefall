@@ -51,6 +51,10 @@ function SpatialHashMap(shift) {
         }
     };
     
+	this.addArray = function(array) {
+		for (var i = 0; i < array.length; i++) this.add(array[i]);
+	};
+	
     this.remove = function(object) {
         if (this.contains(object)) {
             var uid = object.__uid,
