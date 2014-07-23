@@ -76,9 +76,9 @@ Poly.DRAG_COEF = 1.05;     // TODO: find the way to calculate it. god damn...
 Poly.prototype = {
 	draw : function(context, red){   // TODO: temp
         context.beginPath();
-        context.moveTo(this.vertices[this.vertices.length-1].x, this.vertices[this.vertices.length-1].y);
+        context.moveTo(this.vertices[this.vertices.length-1].x + this.x, this.vertices[this.vertices.length-1].y + this.y);
         for (var i = 0; i<this.vertices.length; i++){
-            context.lineTo(this.vertices[i].x, this.vertices[i].y);
+            context.lineTo(this.vertices[i].x + this.x, this.vertices[i].y + this.y);
             context.stroke();
         }
         context.closePath();

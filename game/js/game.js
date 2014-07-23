@@ -2,7 +2,7 @@ var canvas = document.getElementById("game"),
 context = canvas.getContext("2d"),
 frameRequestId = null;
 
-canvas.width = 1280;
+canvas.width = 400;
 canvas.height = 720;
 
 var lastTime = 0;
@@ -21,13 +21,6 @@ function onDraw(time) {
     requestFrame();
 }
 
-function Block(x, y, width, height) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-}
-
 var PIXELS_PER_METER = 50;
 
 var //dragCoeff = 1.2,
@@ -36,8 +29,6 @@ var //dragCoeff = 1.2,
     g = 1.8;
 	
 var player = new Circle(canvas.width / 2, 100, 50, 0, 2 * Math.PI, 100);
-
-
 
 var triangle = new Polygon([new Vec2(canvas.width / 2, 300), 
                             new Vec2(canvas.width / 2 + 100, 300),
@@ -181,11 +172,55 @@ var offsetY = 0;
 requestFrame();
 
 */
+	var floor = new Poly([new Vec2(0, 0), new Vec2(canvas.width, 0), new Vec2(canvas.width / 2, 50)]),
+		player = new Body(new Circle(canvas.width / 2, 100, 40), 100);
+		
+	floor.y = canvas.height - floor.height;
+	
+function draw(dt) {
+	dt *= 0.001; // ms to s
+	context.clearRect(0, 0, canvas.width, canvas.height);
 
-function draw() {
-	new Rect(100, 100, 200, 200).draw(context);
-	new Poly([new Vec2(100, 200), new Vec2(300, 100), new Vec2(500, 500)]).draw(context);
-	new Circle(200, 200, 40).draw(context);
+	var fVertical = g * player.mass;
+        fHorizontal = 0,
+        fHorizontalDrag = 0;
 
+    if (KEYS.isDown(68)) {
+        fHorizontal += 10000;
+        fHorizontalDrag += player.velocityX > 0 ? (player.velocityX * player.velocityX) * 10 : 0;
+        if (player.velocityX < 0) player.velocityX *= 0.2; 
+    } 
+
+    if (KEYS.isDown(65)) {
+        fHorizontal += -10000;
+        fHorizontalDrag += player.velocityX < 0 ? -(player.velocityX * player.velocityX) * 10 : 0;
+        if (player.velocityX > 0) player.velocityX *= 0.2; 
+    } 	
+
+    if (!KEYS.isDown(68) && !KEYS.isDown(65)) {
+        player.velocityX *= 0.9;
+    }
+
+    if (KEYS.isDown(83)) {
+        fVertical += 1000;
+    }
+
+    if (KEYS.isDown(87)) {
+        fVertical -= 1000;
+    }
+
+    player.applyForce(fHorizontal - fHorizontalDrag, fVertical, dt);
+    if (player.x < 0) {
+        player.x = 0;
+        player.resetVelocityX();
+    } else if (player.x + player.width > canvas.width) {
+        player.x = canvas.width - player.width;
+        player.resetVelocityX();
+    }
+	
+	player.draw(context);
+	floor.draw(context);
+	
 }
+
 requestFrame();

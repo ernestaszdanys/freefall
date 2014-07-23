@@ -55,4 +55,8 @@ function Body(shape, mass){
         this.velocityY += ((lastAY + a) / 2) * dt;
         lastAY = a;
     }
+	
+	this.draw = function(context) {
+		this.shape.draw(context);
+	}
 }
