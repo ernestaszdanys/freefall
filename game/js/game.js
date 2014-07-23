@@ -97,7 +97,7 @@ var triangle = new Polygon([new Vec2(canvas.width / 2, 300),
 
 var spatialMap = new SpatialHashMap(6);
 var obstacles = levelGenerator.generateObstacles();
-
+spatialMap.addArray(obstacles);
 							
 var offsetY = 0;							
 							
@@ -214,6 +214,13 @@ function draw(dt) {
 	
 	player.draw(context);
 	floor.draw(context, Intersection.circlePoly(player.shape, floor));
+	/*
+	var obs = spatialMap.query(0, 0, canvas.width, canvas.height);
+	//console.log(obs);
+	for (var i = 0; i < obs.length; i++) {
+		obs[i].draw(context);
+	*/
+	}
 	
 }
 

@@ -7,7 +7,7 @@ var levelGenerator = {
 		[new Vec2(0, 80), new Vec2(50, 30), new Vec2(80, 0), new Vec2(100, 100)],
 		[new Vec2(0, 120), new Vec2(80, 0), new Vec2(90, 40), new Vec2(70, 130)],
 		[new Vec2(0, 45), new Vec2(90, 0), new Vec2(130, 50), new Vec2(60, 100)],
-		[new Vec2(0, 100), new Vec2(50, 50), new Vec2(0, 100), new Vec2(150, 150), new Vec2(100, 200)],
+		[new Vec2(0, 100), new Vec2(50, 50), new Vec2(100, 0), new Vec2(150, 150), new Vec2(100, 200)],
 		[new Vec2(0, 35), new Vec2(70, 0), new Vec2(100, 30), new Vec2(60, 60), new Vec2(30, 50)],
 		[new Vec2(0, 160), new Vec2(50, 50), new Vec2(100, 50), new Vec2(80, 80), new Vec2(30, 130)]
 	],
