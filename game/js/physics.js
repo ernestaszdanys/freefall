@@ -35,6 +35,30 @@ var Intersection = {
                 return true;
             }
         }
+
+        center.x = circle.getCenterX();
+        center.y = circle.getCenterY();
+        
+        //checks if circle center is inside the pentagon with ray casting
+        var hits = 0; 
+
+        for (var i = 0; i < poly.vertices.length; i++) {
+            v1.x = poly.vertices[i].x + poly.x;
+            v1.y = poly.vertices[i].y + poly.y;
+            v2.x = poly.vertices[i + 1 == poly.vertices.length ? 0 : i + 1].x + poly.x;
+            v2.y = poly.vertices[i + 1 == poly.vertices.length ? 0 : i + 1].y + poly.y;
+            center.x = circle.getCenterX();
+            center.y = circle.getCenterY();
+            if (Physics.rayHitsLineSegment(v1, v2, center)) {
+                hits++;
+                console.clear();
+                console.log(i);
+                console.log(v1);
+                console.log(v2);
+            }
+        }
+        if (hits % 2 == 1) return true;
+        
         
     },
     rectRect: function(rect1, rect2) {
@@ -67,4 +91,13 @@ Physics.equationTwoPoints = function(x1, x2) {
 
 Physics.distanceTwoPoints = function(x1, x2) {
     return Math.sqrt((x2.x - x1.x) * (x2.x - x1.x) + (x2.y - x1.y) * (x2.y - x1.y));
+}
+
+Physics.rayHitsLineSegment = function(v1, v2, ray){
+    if ((ray.y > v1.y && ray.y < v2.y) || (ray.y > v2.y && ray.y < v1.y)){
+        var eq = Physics.equationTwoPoints(v1, v2);
+        var x = (-eq[1]*ray.y-eq[2])/eq[0];
+        if(x < ray.x) return true;
+    }
+    return false;
 }
