@@ -91,6 +91,7 @@ function SpatialHashMap(shift) {
     
     this.query = function(x, y, width, height) {
 		var rectObj = {};
+		rectObj.shape = {};
 		rectObj.shape.x = x;
 		rectObj.shape.y = y;
 		rectObj.shape.width = width;

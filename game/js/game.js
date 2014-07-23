@@ -213,7 +213,7 @@ function draw(dt) {
     }
 	
 	player.draw(context);
-	floor.draw(context);
+	floor.draw(context, Intersection.circlePoly(player.shape, floor));
 	
 }
 
