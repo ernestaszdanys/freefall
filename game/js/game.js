@@ -96,14 +96,8 @@ var triangle = new Polygon([new Vec2(canvas.width / 2, 300),
 */
 
 var spatialMap = new SpatialHashMap(6);
-spatialMap.add(new Polygon([new Vec2(canvas.width / 2 + 0, 300 ), 
-                            new Vec2(canvas.width / 2 + 100, 300),
-                            new Vec2(canvas.width / 2 + 150, 350),
-                            new Vec2(canvas.width / 2 + 100, 250)], 50));
-spatialMap.add(new Polygon([new Vec2(canvas.width / 2 + 0, 300 + 800), 
-                            new Vec2(canvas.width / 2 + 100, 300 + 800),
-                            new Vec2(canvas.width / 2 + 150, 350 + 800),
-                            new Vec2(canvas.width / 2 + 100, 250 + 800)], 50));
+var obstacles = levelGenerator.generateObstacles();
+
 							
 var offsetY = 0;							
 							
