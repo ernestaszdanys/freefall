@@ -166,7 +166,7 @@ var offsetY = 0;
 requestFrame();
 
 */
-	var floor = new Poly([new Vec2(0, 0), new Vec2(canvas.width, 0), new Vec2(canvas.width / 2, 50)]),
+	var floor = new Poly([new Vec2(0, 0), new Vec2(canvas.width/2, -50), new Vec2(canvas.width, 0)]),
 		player = new Body(new Circle(canvas.width / 2, 100, 40), 100);
 		
 	floor.y = canvas.height - floor.height;
