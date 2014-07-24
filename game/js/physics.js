@@ -4,7 +4,7 @@ var Intersection = {
                 && (y >= rect.y && y <= rect.y + rect.height);
     },
     
-    circlePoly: function(circle, poly) {
+    circlePoly: function(circle, poly, intersectionData) {
         //Checks if circle is outside the bounding box
         if (!Intersection.rectRect(circle, poly)) {
             return null;
@@ -17,6 +17,7 @@ var Intersection = {
                 center = new Vec2();
         var d1, d2, d3, distance, maxd, eq;
         var angle, normal;
+		
 
         for (var i = 0; i < poly.vertices.length; i++) {
             v1.x = poly.vertices[i].x + poly.x;
@@ -35,14 +36,17 @@ var Intersection = {
             if ((distance < circle.width / 2 && (d1 < maxd && d2 < maxd)) ||
                     d1 < circle.width / 2 ||
                     d2 < circle.width / 2) {
-                
-            normal = Vec2.createNormal(poly.vertices[i], poly.vertices[i + 1 == poly.vertices.length ? 0 : i + 1], poly);
-            normal.x = normal.x/normal.length();
-            angle = Math.acos(normal.x);
-            
-            console.clear();
-            console.log(angle);
-            return [distance, angle];
+				normal = Vec2.createNormal(poly.vertices[i], poly.vertices[i + 1 == poly.vertices.length ? 0 : i + 1], poly);
+				normal.normalize();
+				
+				console.clear();
+				console.log(normal);
+				console.log(normal.length());
+				if (intersectionData){
+					intersectionData.distance = distance;
+					intersectionData.normal = normal;
+				}
+				return [distance-circle.width/2, normal];
             }
         }
 

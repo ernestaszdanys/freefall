@@ -18,8 +18,8 @@ Vec2.prototype = {
 	},
     dot: function(a, b) {
         return a instanceof Vec2 
-                ? this.x * a.x + this.y + a.y 
-                : this.x * a + this.y + b;
+                ? this.x * a.x + this.y * a.y 
+                : this.x * a + this.y * b;
     },
     cross: function(vec) {
         return this.x * vec.y - this.y * vec.x;
@@ -28,7 +28,7 @@ Vec2.prototype = {
         return Math.sqrt(this.x * this.x + this.y * this.y);   
     },
     normalize: function() {
-        var magnitude = this.magnitude();
+        var magnitude = this.length();
         this.x /= magnitude;
         this.y /= magnitude;
     },
@@ -53,11 +53,9 @@ Vec2.createNormal = function(p1, p2, shape){
         if (Intersection.circlePoly(middle, shape)){
             normal.x = Math.abs(normal.x);
             normal.y = -Math.abs(normal.y);
-            console.log("collides1");
         } else{
             normal.x = -Math.abs(normal.x);
             normal.y = Math.abs(normal.y);
-            console.log("not collides1");
         }            
     } else
     if ((normal.x <= 0 && normal.y >= 0) || (normal.x >= 0 && normal.y <= 0)){
@@ -65,11 +63,9 @@ Vec2.createNormal = function(p1, p2, shape){
         if (Intersection.circlePoly(middle, shape)){
             normal.x = -Math.abs(normal.x);
             normal.y = -Math.abs(normal.y);
-            console.log("collides2");
         } else{
             normal.x = Math.abs(normal.x);
             normal.y = Math.abs(normal.y);
-            console.log("not collides2");
         }            
     }
     
