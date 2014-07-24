@@ -6,6 +6,7 @@ canvas.width = 400;
 canvas.height = 720;
 
 var lastTime = 0;
+var game = { state : "stop" };
 
 function requestFrame() {
     frameRequestId = window.requestAnimationFrame(onDraw);
@@ -172,6 +173,7 @@ requestFrame();
 	floor.y = canvas.height - floor.height;
 	
 function draw(dt) {
+    
 	dt *= 0.001; // ms to s
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -212,8 +214,8 @@ function draw(dt) {
         player.resetVelocityX();
     }
 	
-	player.draw(context);
-	floor.draw(context, Intersection.circlePoly(player.shape, floor));
+//	player.draw(context);
+//	floor.draw(context, Intersection.circlePoly(player.shape, floor));
 	/*
 	var obs = spatialMap.query(0, 0, canvas.width, canvas.height);
 	//console.log(obs);
@@ -221,6 +223,19 @@ function draw(dt) {
 		obs[i].draw(context);
 	}
 	*/
+
+    gui.draw(context);
+    
+    if (game.state == "play") {
+        
+        context.clearRect(0, 0, canvas.width, canvas.height);
+//        context.fillStyle = "#ffffff";
+//        context.fillRect(0,0,canvas.width, canvas.height);
+        
+        player.draw(context);
+        floor.draw(context, Intersection.circlePoly(player.shape, floor));   
+    }
+
 }
 
 requestFrame();
