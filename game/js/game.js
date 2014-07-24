@@ -7,6 +7,7 @@ canvas.height = 720;
 
 var lastTime = 0;
 var game = { state : "stop" };
+var score = 0;
 
 function requestFrame() {
     frameRequestId = window.requestAnimationFrame(onDraw);
@@ -233,9 +234,76 @@ function draw(dt) {
 //        context.fillRect(0,0,canvas.width, canvas.height);
         
         player.draw(context);
-        floor.draw(context, Intersection.circlePoly(player.shape, floor));   
-    }
+        floor.draw(context, Intersection.circlePoly(player.shape, floor));
+        
+        //score +=1;
+        
+        context.font="20px Georgia";
+        context.fillText("Score: ",10,30);
+        context.fillText(score,80,30);
+        
+        context.font="20px Georgia";
+        context.fillText("P.Velocity: ",10,60);
+        context.fillText(player.velocityY.toFixed(2),120,60);
+        
 
+        
+        if (player.velocityY.toFixed(2) > 10 && player.velocityY.toFixed(2) < 20) {
+            score +=10;
+            context.font="20px Georgia";
+            context.fillText("+ 10 Points: ",10,90);
+            //console.log("Plus 10 points", + score);
+        } else if (player.velocityY.toFixed(2) > 20) {
+            score +=20;
+            context.font="20px Georgia";
+            context.fillText("+ 20 Points: ",10,90);
+            //console.log("Plus 20 points", + score);
+        } else {
+            score +=5;
+            //console.log("Plus 5 points", + score);
+        }
+        
+//        //if (player.velocityY.toFixed(2) >=  100) {
+        if (score >= 5000) {
+            score = 5000;
+            context.rect(0,0,canvas.width, canvas.height);
+            context.fillStyle="rgb(0, 0, 0)";
+            context.fill();
+            
+            context.font="70px Georgia";
+            context.fillStyle = 'rgb(255, 255, 255)';
+            context.fillText("Score: ",10,300);
+            context.fillStyle = 'rgb(255, 255, 255)';
+            context.fillText(score,200,300);
+        }
+        
+//        if (player.velocityY.toFixed(2) <= 10) {
+//                score += 10;
+            
+                //score += player.velocityY.toFixed(0);
+//            if (score >= 500) {
+//        
+//        
+//        context.rect(0,0,canvas.width, canvas.height);
+//        context.fillStyle="rgb(0, 0, 0)";
+//        context.fill();
+//            
+//        context.font="70px Georgia";
+//        context.fillStyle = 'rgb(255, 255, 255)';
+//        context.fillText("Score: ",10,300);
+//        context.fillStyle = 'rgb(255, 255, 255)';
+//        context.fillText(score,200,300);
+//                }
+
+//        var score = 50;
+//        if (player.velocityY.toFixed(2) > score) {
+//        console.log("velocity: " + score + " ok");
+//        }
+        
+       // console.log(Math.max(50, player.velocityY.toFixed(2) ));
+        
+//        console.log("velocity: " + player.velocityY.toFixed(2) + " | " + (player.y) + " (m)");
+    }    
 }
 
 requestFrame();
