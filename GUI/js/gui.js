@@ -22,7 +22,6 @@ var rect = {
 };
 
 
-
 var isMouseDown = false, lastMouseX = 0, lastMouseY = 0;
 
 
@@ -43,14 +42,12 @@ function onMouseDown() {
 }
 
 
-
 window.addEventListener("mousemove", onMouseMove, false);
 window.addEventListener("mouseup", onMouseUp, false);
 window.addEventListener("mousedown", onMouseDown, false);
 
 
-
-var resourcesToLoad = {"background" : "assets/images/gui/main.png", "logo" : "assets/images/gui/logo.png", "button" : "assets/images/gui/button.png"};
+var resourcesToLoad = {"background" : "assets/images/gui/main.png", "logo" : "assets/images/gui/logo.png", "button" : "assets/images/gui/button.png", "buttonOver" : "assets/images/gui/button1.png", "buttonClick" : "assets/images/gui/button2.png"};
 var loadedImages;
 
 function loadImages(resourcesToLoad, callback) {
@@ -80,21 +77,20 @@ function onDraw() {
     
     var hover = PIR(lastMouseX, lastMouseY, rect);
     if (hover && !isMouseDown) {
-        context.fillStyle = "rgb(255, 0, 0)";
-            context.fillRect(rect.x, rect.y, rect.width, rect.height);
+//        context.fillStyle = "rgb(255, 0, 0)";
+//            context.fillRect(rect.x, rect.y, rect.width, rect.height);
+        context.drawImage(loadedImages.buttonOver, rect.x, rect.y);
     } else if (hover) {
-        context.fillStyle = "rgb(0, 0, 255)";
-            context.fillRect(rect.x, rect.y, rect.width, rect.height);
-        confirm("clicked");
+//        context.fillStyle = "rgb(0, 0, 255)";
+//          context.fillRect(rect.x, rect.y, rect.width, rect.height);
+        context.drawImage(loadedImages.buttonClick, rect.x, rect.y);
     } else {
         context.drawImage(loadedImages.button, rect.x, rect.y);
-        
     }
 
-    
-    context.font = 'italic 40pt Calibri';
-    context.fillStyle = 'rgb(255, 255, 255)';
-    context.fillText('PLAY!', 535, 555);
-    
+//    context.font = 'italic 40pt Calibri';
+//    context.fillStyle = 'rgb(255, 255, 255)';
+//    context.fillText('PLAY!', 535, 555);
+
     requestAnimationFrame(onDraw);
 }
