@@ -43,10 +43,10 @@ var Intersection = {
 				console.log(normal);
 				console.log(normal.length());
 				if (intersectionData){
-					intersectionData.distance = distance;
+					intersectionData.distance = distance-circle.width/2;
 					intersectionData.normal = normal;
 				}
-				return [distance-circle.width/2, normal];
+				return true;
             }
         }
 
