@@ -29,13 +29,13 @@ var //dragCoeff = 1.2,
     g = 1.8;
 	
 var player = new Circle(canvas.width / 2, 100, 50, 0, 2 * Math.PI, 100);
-
-var triangle = new Polygon([new Vec2(canvas.width / 2, 300), 
+/*
+var triangle = new Poly([new Vec2(canvas.width / 2, 300), 
                             new Vec2(canvas.width / 2 + 100, 300),
                             new Vec2(canvas.width / 2 + 150, 350),
-                            new Vec2(canvas.width / 2 + 100, 250)], 50);
+                            new Vec2(canvas.width / 2 + 100, 250)]);
 
-	
+*/	
 /*function draw(dt) {
     dt *= 0.001; // ms to s
 
@@ -214,13 +214,6 @@ function draw(dt) {
 	
 	player.draw(context);
 	floor.draw(context, Intersection.circlePoly(player.shape, floor));
-	/*
-	var obs = spatialMap.query(0, 0, canvas.width, canvas.height);
-	//console.log(obs);
-	for (var i = 0; i < obs.length; i++) {
-		obs[i].draw(context);
-	}
-	*/
 }
 
 requestFrame();

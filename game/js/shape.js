@@ -50,6 +50,7 @@ Rect.prototype = {
 
 function Poly(vertices) {
 	this.vertices = vertices;
+	this.deadly = true;    // default value
     
 	// Calculate bounding box of the given polygon
     this.x = vertices[0].x;
@@ -77,12 +78,21 @@ Poly.prototype = {
 	draw : function(context, red){   // TODO: temp
         context.beginPath();
         context.moveTo(this.vertices[this.vertices.length-1].x + this.x, this.vertices[this.vertices.length-1].y + this.y);
-        for (var i = 0; i<this.vertices.length; i++){
+        for (var i = 0; i < this.vertices.length; i++){
             context.lineTo(this.vertices[i].x + this.x, this.vertices[i].y + this.y);
             context.stroke();
         }
         context.closePath();
-        context.fillStyle = red ? "red" : "black";
+		
+		var imageObj = new Image();
+		if (this.deadly)
+			imageObj.src = "assets/images/texture_rock.jpg";
+		else
+			imageObj.src = "assets/images/texture_wood.png";
+		
+		var pattern = context.createPattern(imageObj, 'repeat');
+		context.fillStyle = pattern;
+        //context.fillStyle = this.deadly ? "red" : "black";
         context.fill();
     },
 	calculateVerticalCrossSectionalArea : function() {
