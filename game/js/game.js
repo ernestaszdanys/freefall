@@ -75,7 +75,7 @@ function draw(dt) {
 		if (intersects && data.penetration >= 0) {
 			player.shape.x += data.penetrationX;
 			player.shape.y += data.penetrationY;
-			player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.5);
+			player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.3);
 		}
 	}
 	
