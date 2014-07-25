@@ -12,16 +12,24 @@ var levelGenerator = {
 		[new Vec2(0, 130), new Vec2(50, 50), new Vec2(100, 50), new Vec2(80, 80), new Vec2(30, 130)]
 	],
 
-	generateObstacles : function() {
+	generateObstacles : function(canvas) {
 		var offsetY = 0;
 		var obstacleArray = [];
-		for (var i = 0; i < 15; i++){
-			offsetY += 500;
+		var numberOfObstacles = 15;
+		var obstacleVerticleSpacing = 500;
+		for (var i = 0; i < numberOfObstacles; i++){
+			offsetY += obstacleVerticleSpacing;
 			obstacleArray.push(new Body(new Poly(this.coordinates[Math.floor(Math.random() * 10) % this.coordinates.length]), 1));
 			obstacleArray[i].shape.x = (Math.floor(Math.random() * 10000)) % (canvas.width - obstacleArray[i].shape.width);
 			obstacleArray[i].shape.y = offsetY;
 			obstacleArray[i].shape.deadly = (Math.floor(Math.random() * 10) % 2) === 1 ? true : false;
 		}
+		var wallHeight = numberOfObstacles * obstacleVerticleSpacing;
+		obstacleArray.push(new Body(new Poly([new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, wallHeight), new Vec2(0, wallHeight)])));
+		obstacleArray[obstacleArray.length-1].shape.deadly = false;
+		obstacleArray.push(new Body(new Poly([new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, wallHeight), new Vec2(0, wallHeight)])));
+		obstacleArray[obstacleArray.length-1].shape.deadly = false;
+		obstacleArray[obstacleArray.length-1].shape.x = canvas.width-20;
 		return obstacleArray;
 	}
 	
