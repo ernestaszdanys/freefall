@@ -12,10 +12,9 @@ var levelGenerator = {
 		[new Vec2(0, 130), new Vec2(50, 50), new Vec2(100, 50), new Vec2(80, 80), new Vec2(30, 130)]
 	],
 
-	generateObstacles : function(canvas) {
+	generateObstacles : function(numberOfObstacles, canvas) {
 		var offsetY = 0;
 		var obstacleArray = [];
-		var numberOfObstacles = 15;
 		var obstacleVerticleSpacing = 500;
 		for (var i = 0; i < numberOfObstacles; i++){
 			offsetY += obstacleVerticleSpacing;

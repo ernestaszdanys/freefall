@@ -75,7 +75,7 @@ function Poly(vertices) {
 }
 Poly.DRAG_COEF = 1.05;     // TODO: find the way to calculate it. god damn...
 Poly.prototype = {
-	draw : function(context, red){   // TODO: temp
+	draw : function(context, hit){   // TODO: temp
         context.beginPath();
         context.moveTo(this.vertices[this.vertices.length-1].x + this.x, this.vertices[this.vertices.length-1].y + this.y);
         for (var i = 0; i < this.vertices.length; i++){
@@ -91,8 +91,7 @@ Poly.prototype = {
 			imageObj.src = "assets/images/texture_wood.png";
 		
 		var pattern = context.createPattern(imageObj, 'repeat');
-		context.fillStyle = pattern;
-        //context.fillStyle = this.deadly ? "red" : "black";
+        context.fillStyle = hit ? "red" : pattern;
         context.fill();
     },
 	calculateVerticalCrossSectionalArea : function() {

@@ -32,6 +32,17 @@ Vec2.prototype = {
         this.x /= magnitude;
         this.y /= magnitude;
     },
+	reflectAlongNormal: function(normal, restitution) {
+		if (restitution > 1) {
+			resitution = 1;
+		} else if (restitution < 0) {
+			resitution = 0;
+		}
+        // vectorReflection = vector - 2(vector dot normal) * normal
+        var dotTimesTwo = this.dot(normal) * (1 + restitution);
+        this.x -= dotTimesTwo * normal.x;
+        this.y -= dotTimesTwo * normal.y;
+    },
     toUnitVector: function() {
         var magnitude = this.magnitude();
         return new Vec2(this.x / magnitude, this.y / magnitude);

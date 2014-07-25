@@ -1,23 +1,10 @@
 function Body(shape, mass){
 	this.shape = shape;
 	this.mass = mass;
-    this.velocityX = 0;
-    this.velocityY = 0;
 
-	var lastAX = 0,
-        lastAY = 0;
-
-    this.resetVelocityX = function() {
-        lastAX = 0;
-        this.velocityX = 0;
-    }
-
-    this.resetVelocityY = function() {
-        lastAY = 0;
-        this.velocityY = 0;
-    }
-
-    this.applyForce = function(forceX, forceY, dt) {
+	this.velocity = new Vec2(0, 0);
+	
+    this.applyForce = function(force, dt) {
         /*
          * Based on obscure code for Verlet numerical integration for velocity from article 
          * on http://buildnewgames.com/gamephysics/ (note that "acceleration" is not defined)
@@ -35,14 +22,12 @@ function Body(shape, mass){
          */
 
 
-        /* 
-         * this.velocityX += forceX / this.mass * dt;
-         * this.x += this.velocityX * dt;
-         * 		
-         * this.velocityY += forceY / this.mass * dt;
-         * this.y += this.velocityY * dt;
-         */
-
+        this.velocity.x += (force.x / this.mass) * dt;
+        this.shape.x += this.velocity.x * dt * 50;
+        this.velocity.y += (force.y / this.mass) * dt;
+        this.shape.y += this.velocity.y * dt * 50;
+        
+		/*
         var a;
 
         this.shape.x += (this.velocityX * dt + (0.5 * lastAX * dt * dt)) * 50; // TODO: PPM conversions
@@ -54,6 +39,8 @@ function Body(shape, mass){
         a = forceY / this.mass;
         this.velocityY += ((lastAY + a) / 2) * dt;
         lastAY = a;
+		
+		*/
     }
 	
 	this.draw = function(context) {
