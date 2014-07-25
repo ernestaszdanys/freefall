@@ -107,7 +107,8 @@ Physics.distanceTwoPoints = function(x1, x2) {
 }
 
 Physics.rayHitsLineSegment = function(v1, v2, ray) {
-    if ((ray.y > v1.y && ray.y < v2.y) || (ray.y > v2.y && ray.y < v1.y)) {
+    var e = Math.random()/10;
+    if ((ray.y > v1.y+e && ray.y < v2.y+e) || (ray.y > v2.y+e && ray.y < v1.y+e)) {
         var eq = Physics.equationTwoPoints(v1, v2);
         var x = (-eq[1] * ray.y - eq[2]) / eq[0];
         if (eq[0] == 0)
