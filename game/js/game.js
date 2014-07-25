@@ -26,13 +26,14 @@ var PIXELS_PER_METER = 50;
 var airDensity = 50.2754,
     g = 2.8;
 	
-var spatialMap = new SpatialHashMap(6);
+var spatialMap = new SpatialHashMap(10);
 var obstacles = levelGenerator.generateObstacles(1000, canvas);
 spatialMap.addArray(obstacles);
 
-var player = new Body(new Circle(canvas.width / 2, 100, 40), 100);
+var player = new Body(new Circle(canvas.width / 2, 100, 10), 100);
 			
 function draw(dt) {
+	if (dt > 30) dt = 30;
 	dt *= 0.001; // ms to s
 	
 	context.setTransform(1, 0, 0, 1, 0, 0);
@@ -57,28 +58,28 @@ function draw(dt) {
     if (KEYS.isDown(87)) {
         fVertical -= 1000;
     }
-
-	
-	// Move player
-    player.applyForce(new Vec2(fHorizontal, fVertical), dt);
-    var cameraY = player.shape.y - player.shape.height * 2;
-	
-	// Find obstacle
-	var obstacles = spatialMap.query(0, cameraY, canvas.width, canvas.height + cameraY);
-
-	// Check collision between player and obstacles
-	var data = {}, intersects = false;
-	for(var i = 0; i < obstacles.length; i++) {
-		intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
+	dt = dt/4;
+	for (var j = 0; j<4; j++){
+		// Move player
+		player.applyForce(new Vec2(fHorizontal, fVertical), dt);
+		var cameraY = player.shape.y - player.shape.height * 2;
 		
-		// Resolve collision (if any)
-		if (intersects && data.penetration >= 0) {
-			player.shape.x += data.penetrationX;
-			player.shape.y += data.penetrationY;
-			player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.3);
+		// Find obstacle
+		var obstacles = spatialMap.query(0, cameraY, canvas.width, canvas.height + cameraY);
+
+		// Check collision between player and obstacles
+		var data = {}, intersects = false;
+		for(var i = 0; i < obstacles.length; i++) {
+			intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
+			
+			// Resolve collision (if any)
+			if (intersects && data.penetration >= 0) {
+				player.shape.x += data.penetrationX;
+				player.shape.y += data.penetrationY;
+				player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.3);
+			}
 		}
 	}
-	
 	context.setTransform(1, 0, 0, 1, 0, -cameraY);
 	
 	// Draw stuff
