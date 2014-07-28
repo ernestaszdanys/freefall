@@ -71,8 +71,8 @@ function draw(dt) {
 		var data = {}, intersects = false;
 		for(var i = 0; i < obstacles.length; i++) {
 			intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
-			if (intersects && obstacles[i].shape.deadly) {
-                            // oops, the player is dead
+			if (intersects && obstacles[i].type instanceof Liquid) {
+                            //going through liquid
 			} else if (data.penetration >= 0) {
                             player.shape.x += data.penetrationX;
                             player.shape.y += data.penetrationY;
