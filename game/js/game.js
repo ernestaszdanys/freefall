@@ -71,9 +71,12 @@ function draw(dt) {
 		var data = {}, intersects = false;
 		for(var i = 0; i < obstacles.length; i++) {
 			intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
-			
-			// Resolve collision (if any)
-			if (intersects && data.penetration >= 0) {
+			if (intersects && obstacles[i].shape.deadly) {
+				context.font = "20px Georgia";
+					context.setTransform(1, 0, 0, 1, 0, -cameraY);
+				context.fillStyle = "red";
+				context.fillText("wtf man!!!", player.shape.x, player.shape.y);
+			} else if (data.penetration >= 0) {
 				player.shape.x += data.penetrationX;
 				player.shape.y += data.penetrationY;
 				player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.3);
@@ -81,7 +84,7 @@ function draw(dt) {
 		}
 	}
 	context.setTransform(1, 0, 0, 1, 0, -cameraY);
-	
+
 	// Draw stuff
 	for(var i = 0; i < obstacles.length; i++) obstacles[i].shape.draw(context);		
 	player.draw(context);
