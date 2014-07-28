@@ -30,9 +30,8 @@ var spatialMap = new SpatialHashMap(10);
 var obstacles = levelGenerator.generateObstacles(1000, canvas);
 spatialMap.addArray(obstacles);
 
-var player = new Body(new Circle(canvas.width / 2, 100, 10), 100);
-var menu = new Menu(context);
-
+var player = new Body(new Circle(canvas.width / 2, 100, 10), new Solid(100));
+		var menu = new Menu(context);	
 function draw(dt) {
 	if (dt > 30) dt = 30;
 	dt *= 0.001; // ms to s
@@ -40,7 +39,7 @@ function draw(dt) {
 	context.setTransform(1, 0, 0, 1, 0, 0);
 	context.clearRect(0, 0, canvas.width, canvas.height);
 
-	var fVertical = g * player.mass;
+	var fVertical = g * player.type.mass;
         fHorizontal = 0,
         fHorizontalDrag = 0;
 
@@ -87,7 +86,7 @@ function draw(dt) {
 	// Draw stuff
 	for(var i = 0; i < obstacles.length; i++) obstacles[i].shape.draw(context);		
 	player.draw(context);
-    menu.draw();
+    //menu.draw();
 
 }
 

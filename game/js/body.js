@@ -1,6 +1,7 @@
-function Body(shape, mass){
+function Body(shape, type){
+
 	this.shape = shape;
-	this.mass = mass;
+	this.type = type;
 
 	this.velocity = new Vec2(0, 0);
 	
@@ -22,9 +23,9 @@ function Body(shape, mass){
          */
 
 
-        this.velocity.x += (force.x / this.mass) * dt;
+        this.velocity.x += (force.x / this.type.mass) * dt;
         this.shape.x += this.velocity.x * dt * 50;
-        this.velocity.y += (force.y / this.mass) * dt;
+        this.velocity.y += (force.y / this.type.mass) * dt;
         this.shape.y += this.velocity.y * dt * 50;
         
 		/*
@@ -46,4 +47,19 @@ function Body(shape, mass){
 	this.draw = function(context) {
 		this.shape.draw(context);
 	}
+}
+
+// Body types
+function Solid(mass) {
+	this.mass = mass;
+}
+
+function Liquid(density) {
+	this.density = density;
+}
+
+function Player(mass) {
+	this.mass = mass;
+	this.health = 100;
+	this.score = 0;
 }
