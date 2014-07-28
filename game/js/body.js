@@ -49,6 +49,7 @@ function Body(shape, type){
 	}
 }
 
+// Body types
 function Solid(mass) {
 	this.mass = mass;
 }
@@ -57,3 +58,8 @@ function Liquid(density) {
 	this.density = density;
 }
 
+function Player(mass) {
+	this.mass = mass;
+	this.health = 100;
+	this.score = 0;
+}
