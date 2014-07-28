@@ -50,7 +50,6 @@ Rect.prototype = {
 
 function Poly(vertices) {
     this.vertices = vertices;
-    this.deadly = true;    // default value
 
     // Calculate bounding box of the given polygon
     this.x = vertices[0].x;
@@ -89,10 +88,7 @@ Poly.prototype = {
         context.closePath();
         // TODO: loader
         var imageObj = new Image();
-        if (this.deadly)
-            imageObj.src = "assets/images/texture_rock.jpg";
-        else
-            imageObj.src = "assets/images/texture_wood.png";
+        imageObj.src = "assets/images/texture_wood.png";
 
         var pattern = context.createPattern(imageObj, 'repeat');
         context.fillStyle = hit ? "red" : pattern;
