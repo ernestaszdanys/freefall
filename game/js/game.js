@@ -31,7 +31,8 @@ var obstacles = levelGenerator.generateObstacles(1000, canvas);
 spatialMap.addArray(obstacles);
 
 var player = new Body(new Circle(canvas.width / 2, 100, 10), 100);
-		var menu = new Menu(context);	
+var menu = new Menu(context);
+
 function draw(dt) {
 	if (dt > 30) dt = 30;
 	dt *= 0.001; // ms to s
@@ -86,7 +87,7 @@ function draw(dt) {
 	// Draw stuff
 	for(var i = 0; i < obstacles.length; i++) obstacles[i].shape.draw(context);		
 	player.draw(context);
-                menu.draw();
+    menu.draw();
 
 }
 

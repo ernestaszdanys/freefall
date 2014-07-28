@@ -69,7 +69,7 @@ function Menu(context) {
                 context.drawImage(images.buttonClick, buttonRect.x, buttonRect.y);
 
             } else if (buttonHover) { // Clicked
-                context.drawImage(images.buttonHover, buttonRect.x, buttonRect.y);
+				context.drawImage(images.buttonHover, buttonRect.x, buttonRect.y);
 
             } else { // Idle
                 context.drawImage(images.buttonIdle, buttonRect.x, buttonRect.y);
