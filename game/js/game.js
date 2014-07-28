@@ -31,7 +31,7 @@ var obstacles = levelGenerator.generateObstacles(1000, canvas);
 spatialMap.addArray(obstacles);
 
 var player = new Body(new Circle(canvas.width / 2, 100, 10), 100);
-			
+		var menu = new Menu(context);	
 function draw(dt) {
 	if (dt > 30) dt = 30;
 	dt *= 0.001; // ms to s
@@ -72,22 +72,22 @@ function draw(dt) {
 		for(var i = 0; i < obstacles.length; i++) {
 			intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
 			if (intersects && obstacles[i].shape.deadly) {
-				context.font = "20px Georgia";
-					context.setTransform(1, 0, 0, 1, 0, -cameraY);
-				context.fillStyle = "red";
-				context.fillText("wtf man!!!", player.shape.x, player.shape.y);
+                            // oops, the player is dead
 			} else if (data.penetration >= 0) {
-				player.shape.x += data.penetrationX;
-				player.shape.y += data.penetrationY;
-				player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.3);
+                            player.shape.x += data.penetrationX;
+                            player.shape.y += data.penetrationY;
+                            player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.3);
 			}
 		}
 	}
+        
 	context.setTransform(1, 0, 0, 1, 0, -cameraY);
 
 	// Draw stuff
 	for(var i = 0; i < obstacles.length; i++) obstacles[i].shape.draw(context);		
 	player.draw(context);
+                menu.draw();
+
 }
 
 requestFrame();

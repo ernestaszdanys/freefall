@@ -30,7 +30,6 @@ function Menu(context) {
         buttonClick = false,
         buttonHover = false,
         images;
-
     loadImages({
         background : "assets/images/gui/main.png",
         logo: "assets/images/gui/logoSmall.png",
