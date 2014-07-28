@@ -1,85 +1,130 @@
-var game = { state : "stop" };
-
-var gui = (function() {
+function loadImages(sources, callback) {
+    var sourceCount = 0,
+        loadedCount = 0,
+        images = {};
     
-    var rect = {
-        x : 50,
-        y : 500,
-        width: 300,
-        height: 60
-    };
+    for (var imageName in sources) {
+        if (sources.hasOwnProperty(imageName)) sourceCount++;
+    }
 
+    for (var imageName in sources) {
+        if (sources.hasOwnProperty(imageName)) {
+            images[imageName] = new Image();
+            images[imageName].onload = function() {
+                if (++loadedCount >= sourceCount) callback(images);
+            };
+            images[imageName].onerror = function() {
+                throw new Error("Couldn't load " + imageName);
+            };
+            images[imageName].src = sources[imageName];
+        }
+    }
+}
 
-    var isMouseDown = false, lastMouseX = 0, lastMouseY = 0;
+function Menu(context) {
+    "use strict";
+    
+    var that = this;
+    
+    var buttonRect = {x: 50, y: 500, width: 300, height: 60},
+        buttonClick = false,
+        buttonHover = false,
+        images;
 
+    loadImages({
+        background : "assets/images/gui/main.png",
+        logo: "assets/images/gui/logoSmall.png",
+        buttonIdle: "assets/images/gui/button.png",
+        buttonHover: "assets/images/gui/button1.png",
+        buttonClick: "assets/images/gui/button2.png"
+    }, function(loadedImages) {
+        images = loadedImages;
+        console.log("Menu images loaded.");
+    });
 
     function onMouseMove(event) {
-        "use strict";
-        lastMouseX = event.clientX;
-        lastMouseY = event.clientY;
+        var canvasRect = context.canvas.getBoundingClientRect();
+        buttonHover = Intersection.pointRect(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonRect);
     }
 
     function onMouseUp() {
-        "use strict";
-        isMouseDown = false;
+        buttonClick = false;
     }
 
-    function onMouseDown() {
-        "use strict";
-        isMouseDown = true;
-    }
-
-
-    window.addEventListener("mousemove", onMouseMove, false);
-    window.addEventListener("mouseup", onMouseUp, false);
-    window.addEventListener("mousedown", onMouseDown, false);
-
-
-    var resourcesToLoad = {"background" : "assets/images/gui/main.png", "logo" : "assets/images/gui/logoSmall.png", "button" : "assets/images/gui/button.png", "buttonOver" : "assets/images/gui/button1.png", "buttonClick" : "assets/images/gui/button2.png"};
-    var loadedImages;
-
-    function loadImages(resourcesToLoad, callback) {
-        "use strict";
-        var images = {},
-            numberLoaded = 0,
-            resourceName;
-
-        for (resourceName in resourcesToLoad) {
-            images[resourceName] = new Image();
-            images[resourceName].src = resourcesToLoad[resourceName];
-            images[resourceName].onload = function () {
-                numberLoaded++;
-                if (numberLoaded === Object.keys(resourcesToLoad).length) callback(images);
-            };
-        }
-    }
-
-    loadImages(resourcesToLoad, function(images) {
-        loadedImages = images;
-    });
+    function onMouseDown(event) {
+        var canvasRect = context.canvas.getBoundingClientRect();
+        buttonClick = Intersection.pointRect(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonRect);
+        if (buttonClick && that.onStartClicked !== void 0) that.onStartClicked();
+    } 
     
-    function onDraw(context) {
+    context.canvas.addEventListener("mousemove", onMouseMove, false);
+    context.canvas.addEventListener("mouseup", onMouseUp, false);
+    context.canvas.addEventListener("mousedown", onMouseDown, false);
+  
+    this.draw = function() {
+        if (images) {
+            context.drawImage(images.background, 0, 0);
+            context.drawImage(images.logo, 0, 50);
 
-        if (loadedImages) {
+            if (buttonHover && buttonClick) { // Hover
+                context.drawImage(images.buttonClick, buttonRect.x, buttonRect.y);
 
-            context.drawImage(loadedImages["background"], 0,0);
-            context.drawImage(loadedImages.logo, 0,50);
+            } else if (buttonHover) { // Clicked
+                context.drawImage(images.buttonHover, buttonRect.x, buttonRect.y);
 
-            var hover = Intersection.pointRect(lastMouseX, lastMouseY, rect);
-            if (hover && !isMouseDown) {
-                context.drawImage(loadedImages.buttonOver, rect.x, rect.y);
-            } else if (hover) {
-                context.drawImage(loadedImages.buttonClick, rect.x, rect.y);
-                game.state = "play";
-            } else {
-                context.drawImage(loadedImages.button, rect.x, rect.y);
+            } else { // Idle
+                context.drawImage(images.buttonIdle, buttonRect.x, buttonRect.y);
             }
-        } else {
-//            console.log("test");
-        }        
-    }
-    
-    return {
-        draw : onDraw
+        }
     };
-})();
+};
+
+function Hud(context) {
+    
+    var score = 0,
+        velocity = 0;
+    
+    this.setScore = function(newScore) {
+        this.score = newScore;
+    };
+    
+    this.setVelocity = function(newVelocity) {
+        this.velocity = newVelocity;
+    };
+    
+    this.draw = function() {
+        context.font = "20px Georgia";
+        context.fillText("Score: " + ~~score, 10, 30);
+        context.fillText("Velocity: " + ~~velocity, 10, 60);
+    };
+};
+
+function GameOver(context) {
+    
+    var score = 0,
+        textGameOver = "Game Over";
+    
+    this.setScore = function(newScore) {
+        this.score = newScore;
+    };
+    
+    this.draw = function() {
+        // Draw background
+        context.fillStyle = "rgb(0, 0, 0)";
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        // Draw "Game Over"
+        context.font = "70px Georgia";
+        context.fillStyle = 'rgb(255, 255, 255)';
+        context.fillText(textGameOver,
+                (context.canvas.width - context.measureText(textGameOver).width) / 2,
+                300);
+        // Draw score
+        var scoreText = "Score: " + score;
+        context.font = "30px Georgia";
+        context.fillStyle = 'rgb(255, 255, 255)';
+        context.fillText(
+                scoreText,
+                (context.canvas.width - context.measureText(scoreText).width) / 2,
+                350);
+    };
+};
