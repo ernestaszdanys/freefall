@@ -21,6 +21,7 @@ function onDraw(time) {
     requestFrame();
 }
 
+var currentLevel = 0;
 var States = {MENU : 0, GAME : 1, GAME_OVER : 2};
 var state = States.MENU;
 var menu = new Menu(context);
@@ -36,7 +37,11 @@ game.onPlayerScoreChanged = function(oldScore, newScore) {
     hud.setScore(newScore);
     gameOver.setScore(newScore);
 }
-game.setLevel(levelGenerator.generateObstacles(1000, canvas));
+game.setLevel(new Level(100, 9.8, canvas.width, 1000, 1));
+game.onLevelEnd = function(){
+	currentLevel++;
+	game.addLevel(new Level((1/(currentLevel/2))*100, 9.8, canvas.width, 5000, currentLevel * 2, game.getLevel().height + game.getLevel().offset));
+}
 menu.onStartClicked = function() {
     state = States.GAME;
     menu.dissable();
