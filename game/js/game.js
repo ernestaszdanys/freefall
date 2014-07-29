@@ -1,34 +1,50 @@
 var PIXELS_PER_METER = 50;
 var Game = function(context) {
+	var that = this;
 
-	var totalForce = new Vec2();
-	var dragForce = new Vec2();
-	var airDensity = 100.225;
     // Physics stuff
     var timeScale = 1,
         totalTime = 0; // seconds
-
+	
     // Camera stuff
     var cameraRect = {x: 0, y: 0, width: context.canvas.width, height: context.canvas.height};
 
     // Level stuff
     var spatialMap = new SpatialHashMap(10),
         player = new Body(new Circle(200, 100, 10), new Solid(100)); // TODO:
+		
+	var level;
 
     this.setTimeScale = function(newTimeScale) {
         timeScale = newTimeScale > 0 ? newTimeScale : 0;
     };
 
-    this.setLevel = function(obstacles) {
-        spatialMap.clear();
-        spatialMap.addArray(obstacles);
+    this.addLevel = function(newLevel) {
+		level = newLevel;
+        //spatialMap.clear();
+        spatialMap.addArray(newLevel.obstacles);
+		//player.shape.y = 100;
     };
+	
+	this.setLevel = function(newLevel) {
+		level = newLevel;
+        spatialMap.clear();
+        spatialMap.addArray(newLevel.obstacles);
+		player.shape.y = 100;
+    };
+	
+	this.getLevel = function() {
+		return level;
+	}
+	
+	this.onLevelEnd;
     
     /*
      * TODO: Simulate physics in fixed time steps (constant dt).
      * It would be nice to interpolate between time steps when drawing...
      */
     function simulatePhysics(dt) {
+		if(level === void 0) throw new Error("level is not set");
         dt = Math.abs(dt); // TODO: wth is happening?
         dt *= 0.001; // Convert milliseconds to seconds
         
@@ -39,10 +55,14 @@ var Game = function(context) {
 		
         var samples = 4,
             scaledDt = (dt * timeScale) / samples;
+			
+		var totalForce = new Vec2();
+		var dragForce;
     
         while (samples--) {
             // TODO: Camera
             cameraRect.y = player.shape.y - 50;
+			if(cameraRect.y + cameraRect.height > level.height + level.offset && that.onLevelEnd !== void 0) that.onLevelEnd();
             
             // Check for collisions and resolve them
             var obstacles = spatialMap.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height),
@@ -50,7 +70,7 @@ var Game = function(context) {
                 intersects = false;
              
             for(var i = 0; i < obstacles.length; i++) {	
-				totalForce.y = 9.8 * player.type.mass;
+				totalForce.y = level.gravity * player.type.mass;
 				totalForce.x = 0;
 				if (KEYS.isDown(68)) {
 					totalForce.x += 3000;
@@ -68,10 +88,7 @@ var Game = function(context) {
 					totalForce.y -= 1000;
 				}
 				//Air resistance
-				dragForce = Physics.calculateDrag(player.velocity, airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
-				
-				console.clear();
-				console.log(dragForce);
+				dragForce = Physics.calculateDrag(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
 				
 				for(var i = 0; i < obstacles.length; i++) {
 					intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
@@ -92,6 +109,7 @@ var Game = function(context) {
     };
 
     function draw() {
+		if(level === void 0) throw new Error("level is not set");
         // Transform
         context.save();
         context.setTransform(1, 0, 0, 1, 0, -cameraRect.y);
