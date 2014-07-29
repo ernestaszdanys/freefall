@@ -1,6 +1,9 @@
 var PIXELS_PER_METER = 50;
 var Game = function(context) {
-    
+
+	var totalForce = new Vec2();
+	var dragForce = new Vec2();
+	var airDensity = 100.225;
     // Physics stuff
     var timeScale = 1,
         totalTime = 0; // seconds
@@ -33,9 +36,7 @@ var Game = function(context) {
         if (dt > 0.1) dt = 0.1; 
 
         totalTime += dt;
-		var totalForce = new Vec2();
-		var dragForce = new Vec2();
-
+		
         var samples = 4,
             scaledDt = (dt * timeScale) / samples;
     
@@ -66,12 +67,17 @@ var Game = function(context) {
 				if (KEYS.isDown(87)) {
 					totalForce.y -= 1000;
 				}
+				//Air resistance
+				dragForce = Physics.calculateDrag(player.velocity, airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
+				
+				console.clear();
+				console.log(dragForce);
+				
 				for(var i = 0; i < obstacles.length; i++) {
 					intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
 					if (intersects && obstacles[i].type instanceof Liquid) {
-						dragForce = Physics.calculateDrag(player.velocity, obstacles[i].type.density, obstacles[i].shape.dragCoef, player.shape.crossSectionalArea);
+						dragForce = Physics.calculateDrag(player.velocity, obstacles[i].type.density, player.shape.dragCoef, player.shape.crossSectionalArea);
 						dragForce.scale(obstacles[i].type.multiplier);
-						totalForce.addVector(dragForce);
 					} else if (data.penetration >= 0) {
 						player.shape.x += data.penetrationX;
 						player.shape.y += data.penetrationY;
@@ -79,6 +85,7 @@ var Game = function(context) {
 					}
 				}
 				// Move player
+				totalForce.addVector(dragForce);
 				player.applyForce(totalForce, scaledDt);
             }
         }
