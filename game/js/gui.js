@@ -30,6 +30,7 @@ function Menu(context) {
         buttonClick = false,
         buttonHover = false,
         images;
+
     loadImages({
         background : "assets/images/gui/main.png",
         logo: "assets/images/gui/logoSmall.png",
@@ -68,9 +69,9 @@ function Menu(context) {
             if (buttonHover && buttonClick) { // Hover
                 context.drawImage(images.buttonClick, buttonRect.x, buttonRect.y);
 
-            } else if (buttonHover) { // Clicked
-				context.drawImage(images.buttonHover, buttonRect.x, buttonRect.y);
-
+            } else if (buttonHover) { // Click
+		context.drawImage(images.buttonHover, buttonRect.x, buttonRect.y);
+                
             } else { // Idle
                 context.drawImage(images.buttonIdle, buttonRect.x, buttonRect.y);
             }
@@ -93,6 +94,7 @@ function Hud(context) {
     
     this.draw = function() {
         context.font = "20px Georgia";
+        context.fillStyle = "rgb(0, 0, 0)";
         context.fillText("Score: " + ~~score, 10, 30);
         context.fillText("Velocity: " + ~~velocity, 10, 60);
     };
@@ -113,14 +115,14 @@ function GameOver(context) {
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
         // Draw "Game Over"
         context.font = "70px Georgia";
-        context.fillStyle = 'rgb(255, 255, 255)';
+        context.fillStyle = "rgb(255, 255, 255)";
         context.fillText(textGameOver,
                 (context.canvas.width - context.measureText(textGameOver).width) / 2,
                 300);
         // Draw score
         var scoreText = "Score: " + score;
         context.font = "30px Georgia";
-        context.fillStyle = 'rgb(255, 255, 255)';
+        context.fillStyle = "rgb(255, 255, 255)";
         context.fillText(
                 scoreText,
                 (context.canvas.width - context.measureText(scoreText).width) / 2,

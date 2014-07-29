@@ -1,6 +1,6 @@
 var canvas = document.getElementById("game"),
-context = canvas.getContext("2d"),
-frameRequestId = null;
+    context = canvas.getContext("2d"),
+    frameRequestId = null;
 
 canvas.width = 400;
 canvas.height = 720;
@@ -21,15 +21,20 @@ function onDraw(time) {
     requestFrame();
 }
 
+
+
+
 var States = {MENU : 0, GAME : 1, GAME_OVER : 2};
 var state = States.MENU;
 var menu = new Menu(context);
 var hud = new Hud(context);
 var gameOver = new GameOver(context);
 var game = new Game(context);
+game.setLevel(levelGenerator.generateObstacles(1000, canvas));
 menu.onStartClicked = function() {
-	state = States.GAME;
-}
+    state = States.GAME;
+};
+
 function draw(dt) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     

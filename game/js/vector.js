@@ -36,15 +36,13 @@ Vec2.prototype = {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     },
     normalize: function() {
-        var magnitude = this.length();
-        this.x /= magnitude;
-        this.y /= magnitude;
+        var length = this.length();
+        this.x /= length;
+        this.y /= length;
     },
     reflectAlongNormal: function(normal, restitution) {
-        if (restitution === void 0)
+        if (restitution === void 0 || restitution > 1)
             restitution = 1;
-        else if (restitution > 1)
-            resitution = 1;
         else if (restitution < 0)
             resitution = 0;
 
