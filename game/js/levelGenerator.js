@@ -32,7 +32,7 @@ var levelGenerator = {
 			offsetY += obstacleVerticleSpacing;
 			obstacleArray.push(new Body(new Poly([new Vec2(0, 0), new Vec2(canvas.width, 0), new Vec2(canvas.width, 100), new Vec2(0, 100)]), new Liquid(1000)));
 			obstacleArray[i].shape.y = offsetY;
-			obstacleArray[i].type.multiplier = Math.random() > 0.5 ? 1 : -0.2;
+			obstacleArray[i].type.multiplier = Math.random() > 0.5 ? 1 : -0.1;
 		}
 		var wallHeight = numberOfObstacles * obstacleVerticleSpacing;
 		obstacleArray.push(new Body(new Poly([new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, wallHeight), new Vec2(0, wallHeight)])));
