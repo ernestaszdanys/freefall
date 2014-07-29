@@ -42,24 +42,24 @@ function Body(shape, type){
         lastAY = a;
 		
 		*/
-    }
+    };
 	
-	this.draw = function(context) {
-		this.shape.draw(context);
-	}
+    this.draw = function(context) {
+            this.shape.draw(context);
+    };
 }
 
 // Body types
 function Solid(mass) {
-	this.mass = mass;
+    this.mass = mass;
 }
 
 function Liquid(density) {
-	this.density = density;
+    this.density = density;
 }
 
 function Player(mass) {
-	this.mass = mass;
-	this.health = 100;
-	this.score = 0;
+    this.mass = mass;
+    this.health = 100;
+    this.score = 0;
 }

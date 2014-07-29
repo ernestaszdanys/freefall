@@ -26,19 +26,23 @@ var state = States.MENU;
 var menu = new Menu(context);
 var hud = new Hud(context);
 var gameOver = new GameOver(context);
+var game = new Game(context);
 menu.onStartClicked = function() {
 	state = States.GAME;
 }
 function draw(dt) {
-	context.clearRect(0, 0, canvas.width, canvas.height);
-	if (state === States.MENU) menu.draw();
-	if (state === States.GAME) hud.draw();
-	if (state === States.GAME_OVER) gameOver.draw();
-	
-	if (KEYS.isDown(87)) {
-		state = States.GAME_OVER;
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    
+    if (state === States.MENU) {
+        menu.draw();
+    } else if (state === States.GAME) {
+        game.simulatePhysics(dt);
+        game.draw();
+        hud.draw();
+        if (KEYS.isDown(87)) state = States.GAME_OVER;
+    } else if (state === States.GAME_OVER) {
+        gameOver.draw();
     }
-	
 }
 
 requestFrame();
