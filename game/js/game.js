@@ -36,12 +36,33 @@ var Game = function(context) {
         var samples = 4,
             scaledDt = (dt * timeScale) / samples;
     
-        while (samples--) {           
+        while (samples--) {
+             var fHorizontal = 0,
+                 fVertical = 9.8 * player.type.mass,
+                 fHorizontalDrag = 0,
+                 fVerticalDrag = 0;
+
+            if (KEYS.isDown(68)) {
+                fHorizontal += 3000;
+            } 
+
+            if (KEYS.isDown(65)) {
+                fHorizontal += -3000;
+            }
+
+            if (KEYS.isDown(83)) {
+                fVertical += 1000;
+            }
+
+            if (KEYS.isDown(87)) {
+                fVertical -= 1000;
+            }
+            
             // Move player
-            player.applyForce(new Vec2(0, 9.8 * player.type.mass), scaledDt);
+            player.applyForce(new Vec2(fHorizontal, fVertical), scaledDt);
 
             // TODO: Camera
-            cameraRect.y = player.shape.y;
+            cameraRect.y = player.shape.y - 50;
             
             // Check for collisions and resolve them
             var obstacles = spatialMap.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height),
@@ -87,25 +108,3 @@ var Game = function(context) {
         draw();
     };
 };
-
-/*
- var fVertical = g * player.mass;
- fHorizontal = 0,
- fHorizontalDrag = 0;
- 
- if (KEYS.isDown(68)) {
- fHorizontal += 3000;
- } 
- 
- if (KEYS.isDown(65)) {
- fHorizontal += -3000;
- }
- 
- if (KEYS.isDown(83)) {
- fVertical += 1000;
- }
- 
- if (KEYS.isDown(87)) {
- fVertical -= 1000;
- }
- */
