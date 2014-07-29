@@ -78,7 +78,7 @@ function Poly(vertices) {
     this.x = this.y = 0;
 }
 Poly.prototype = {
-    draw: function(context) {   // TODO: temp
+    draw: function(context, type) {   // TODO: temp
         context.beginPath();
         context.moveTo(this.vertices[this.vertices.length - 1].x + this.x, this.vertices[this.vertices.length - 1].y + this.y);
         for (var i = 0; i < this.vertices.length; i++) {
@@ -88,8 +88,9 @@ Poly.prototype = {
         context.closePath();
         // TODO: loader
         var imageObj = new Image();
-        imageObj.src = "assets/images/texture_wood.png";
-
+		
+        imageObj.src = type instanceof Liquid ? "assets/images/background4.png" : "assets/images/texture_wood.png";
+		
         var pattern = context.createPattern(imageObj, 'repeat');
         context.fillStyle = pattern;
         context.fill();

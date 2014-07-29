@@ -117,7 +117,7 @@ var Game = function(context) {
 
         // Draw obstacles
         var obstacles = spatialMap.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height);
-        for (var i = 0; i < obstacles.length; i++) obstacles[i].shape.draw(context);
+        for (var i = 0; i < obstacles.length; i++) obstacles[i].draw(context);
 		
         // Draw player 
         player.draw(context);

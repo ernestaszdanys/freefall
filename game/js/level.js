@@ -19,21 +19,12 @@ var Level = (function() {
 		
 		
 		for (var i = 0; i < numberOfObstacles; i++){
-			offsetY += obstacleVerticleSpacing;
-			obstacleArray.push(new Body(new Poly(coordinates[Math.floor(Math.random() * 10) % coordinates.length]), new Solid(1)));
+			offsetY += obstacleVerticleSpacing;			
+			obstacleArray.push(new Body(new Poly(coordinates[Math.floor(Math.random() * 10) % coordinates.length]), Math.random() > 0.5 ? new Solid(1) : new Liquid(10000)));
 			obstacleArray[i].shape.x = (Math.floor(Math.random() * 10000)) % (width - obstacleArray[i].shape.width);
 			obstacleArray[i].shape.y = offsetY;
 		}
 		
-		/*//adding water
-		offsetY = 600;
-		var count = numberOfObstacles + obstacleArray.length;
-		for(var i = obstacleArray.length; i < count; i++){
-			offsetY += obstacleVerticleSpacing;
-			obstacleArray.push(new Body(new Poly([new Vec2(0, 0), new Vec2(canvas.width, 0), new Vec2(canvas.width, 100), new Vec2(0, 100)]), new Liquid(1000)));
-			obstacleArray[i].shape.y = offsetY;
-			obstacleArray[i].type.multiplier = Math.random() > 0.5 ? 1 : -0.1;
-		}*/
 		offsetY = offset || 0;
 		var wallHeight = numberOfObstacles * obstacleVerticleSpacing;
 		obstacleArray.push(new Body(new Poly([new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, wallHeight), new Vec2(0, wallHeight)])));

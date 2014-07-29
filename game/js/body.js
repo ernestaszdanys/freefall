@@ -43,7 +43,7 @@ function Body(shape, type){
     };
 	
     this.draw = function(context) {
-        this.shape.draw(context);
+        this.shape.draw(context, this.type);
     };
 }
 
@@ -54,7 +54,7 @@ function Solid(mass) {
 
 function Liquid(density) {
     this.density = density;
-	this.multiplier;
+	this.multiplier = Math.random() > 0.5 ? 1 : -0.1;
 }
 
 function Player(mass) {
