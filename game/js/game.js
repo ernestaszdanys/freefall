@@ -1,5 +1,5 @@
 var Game = function(context) {
-    
+    var that = this;
     // Physics stuff
     var timeScale = 1,
         totalTime = 0; // seconds
@@ -9,8 +9,13 @@ var Game = function(context) {
 
     // Level stuff
     var spatialMap = new SpatialHashMap(10),
-        player = new Body(new Circle(200, 100, 10), new Solid(100)); // TODO:
-
+        player = new Body(new Circle(200, 100, 10), new Player(100)); // TODO:
+        player.type.onHealthChanged = function(oldHealth, newHealth) {
+            if (that.onPlayerHealthChanged !== void 0) that.onPlayerHealthChanged(oldHealth, newHealth);
+        }
+        player.type.onScoreChanged = function(oldScore, newScore) {
+            if (that.onPlayerScoreChanged !== void 0) that.onPlayerScoreChanged(oldScore, newScore);
+        }
     this.setTimeScale = function(newTimeScale) {
         timeScale = newTimeScale > 0 ? newTimeScale : 0;
     };
@@ -20,6 +25,9 @@ var Game = function(context) {
         spatialMap.addArray(obstacles);
     };
     
+    this.onPlayerHealthChanged;
+    this.onPlayerScoreChanged;
+
     /*
      * TODO: Simulate physics in fixed time steps (constant dt).
      * It would be nice to interpolate between time steps when drawing...
@@ -60,7 +68,8 @@ var Game = function(context) {
             
             // Move player
             player.applyForce(new Vec2(fHorizontal, fVertical), scaledDt);
-
+            player.type.score = player.shape.y / 1000;
+            
             // TODO: Camera
             cameraRect.y = player.shape.y - 50;
             
@@ -71,14 +80,21 @@ var Game = function(context) {
              
             for(var i = 0; i < obstacles.length; i++) {
                 intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
-                /*if (intersects && obstacles[i].type.deadly !== void 0) {
-                   // Oops, the player is dead
-                   console.log("Oh noes... you died... so sad...");
-                } else */
                 if (data.penetration >= 0) {
+                    // Remember last velocity
+                    var lastSpeed = player.velocity.length();
+                    
                     player.shape.x += data.penetrationX;
                     player.shape.y += data.penetrationY;
                     player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.3);
+
+                    // Calculate health loss
+                    var acceleration = (player.velocity.length() - lastSpeed) / 0.1;
+                    var force = Math.abs(player.type.mass * acceleration);
+                    var healthLost = force / 1000 > 1 ? force / 1000 : 0;
+                    
+                    // Change health
+                    player.type.health -= healthLost;
                 }
             }
         }

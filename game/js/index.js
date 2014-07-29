@@ -27,9 +27,19 @@ var menu = new Menu(context);
 var hud = new Hud(context);
 var gameOver = new GameOver(context);
 var game = new Game(context);
+hud.setHealth(100); // TODO: temp REWRITE EVERYTHING!!!!!!!
+game.onPlayerHealthChanged = function(oldHealth, newHealth) {
+    hud.setHealth(newHealth);
+    if (~~newHealth <= 0) state = States.GAME_OVER;
+}
+game.onPlayerScoreChanged = function(oldScore, newScore) {
+    hud.setScore(newScore);
+    gameOver.setScore(newScore);
+}
 game.setLevel(levelGenerator.generateObstacles(1000, canvas));
 menu.onStartClicked = function() {
     state = States.GAME;
+    menu.dissable();
 };
 
 function draw(dt) {

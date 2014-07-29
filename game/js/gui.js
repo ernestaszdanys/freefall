@@ -61,6 +61,12 @@ function Menu(context) {
     context.canvas.addEventListener("mouseup", onMouseUp, false);
     context.canvas.addEventListener("mousedown", onMouseDown, false);
   
+    this.dissable = function() {
+        context.canvas.removeEventListener("mousemove", onMouseMove, false);
+        context.canvas.removeEventListener("mouseup", onMouseUp, false);
+        context.canvas.removeEventListener("mousedown", onMouseDown, false);
+    };
+    
     this.draw = function() {
         if (images) {
             context.drawImage(images.background, 0, 0);
@@ -82,21 +88,21 @@ function Menu(context) {
 function Hud(context) {
     
     var score = 0,
-        velocity = 0;
+        health = 0;
     
     this.setScore = function(newScore) {
-        this.score = newScore;
+        score = newScore;
     };
     
-    this.setVelocity = function(newVelocity) {
-        this.velocity = newVelocity;
+    this.setHealth = function(newHealth) {
+        health = newHealth;
     };
     
     this.draw = function() {
         context.font = "20px Georgia";
         context.fillStyle = "rgb(0, 0, 0)";
         context.fillText("Score: " + ~~score, 10, 30);
-        context.fillText("Velocity: " + ~~velocity, 10, 60);
+        context.fillText("Health: " + ~~health, 10, 60);
     };
 };
 
@@ -106,7 +112,7 @@ function GameOver(context) {
         textGameOver = "Game Over";
     
     this.setScore = function(newScore) {
-        this.score = newScore;
+        score = ~~newScore;
     };
     
     this.draw = function() {
