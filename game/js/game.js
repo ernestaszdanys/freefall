@@ -97,6 +97,11 @@ var Game = function(context) {
                     player.type.health -= healthLost;
                 }
             }
+            
+            if (totalTime - player.type.lastTimeHealed > 0.5) {
+                player.type.lastTimeHealed = totalTime;
+                player.type.health += 1;
+            }
         }
     };
 

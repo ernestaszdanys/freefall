@@ -51,7 +51,6 @@ function draw(dt) {
         game.simulatePhysics(dt);
         game.draw();
         hud.draw();
-        if (KEYS.isDown(87)) state = States.GAME_OVER;
     } else if (state === States.GAME_OVER) {
         gameOver.draw();
     }

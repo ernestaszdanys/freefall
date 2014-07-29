@@ -65,7 +65,8 @@ function Player(mass) {
         score = 0;
     
     this.mass = mass;
-
+    this.lastTimeHealed = 0;
+    
     Object.defineProperty(this, "health", {
         get: function() {
             return health;
