@@ -21,9 +21,6 @@ function onDraw(time) {
     requestFrame();
 }
 
-
-
-
 var States = {MENU : 0, GAME : 1, GAME_OVER : 2};
 var state = States.MENU;
 var menu = new Menu(context);
