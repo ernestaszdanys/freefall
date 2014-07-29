@@ -8,7 +8,7 @@ function SpatialHashMap(shift) {
         var a = [];
         for (var i=0, l=array.length; i<l; i++) if (a.indexOf(array[i]) === -1) a.push(array[i]);
         return a;
-    }
+    };
     
     var createUid = (function() {
         var id = 1;
@@ -29,7 +29,7 @@ function SpatialHashMap(shift) {
         };
 
     this.contains = function(object) {
-        return (typeof object.__uid !== "undefined") && (typeof ids[object.__uid] !== "undefined");
+        return (typeof object.__uid !== "undefined") && (ids[object.__uid] === object);
     };
     
     this.add = function(object) {
@@ -51,9 +51,9 @@ function SpatialHashMap(shift) {
         }
     };
     
-	this.addArray = function(array) {
-		for (var i = 0; i < array.length; i++) this.add(array[i]);
-	};
+    this.addArray = function(array) {
+            for (var i = 0; i < array.length; i++) this.add(array[i]);
+    };
 	
     this.remove = function(object) {
         if (this.contains(object)) {
@@ -68,6 +68,12 @@ function SpatialHashMap(shift) {
         } else {
             throw new Error("Map doesn't contain the object.");
         }
+    };
+    
+    this.clear = function() {
+        ids = [];
+        keys = [];
+        cells = {};
     };
     
     this.rehash =  function(object) {
