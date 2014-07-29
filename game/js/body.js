@@ -3,7 +3,8 @@ function Body(shape, type){
     this.shape = shape;
     this.type = type;
     this.velocity = new Vec2(0, 0);
-	
+	this.lastVelocity = new Vec2(0, 0);
+    
     this.applyForce = function(force, dt) {
         /*
          * Based on obscure code for Verlet numerical integration for velocity from article 
@@ -34,7 +35,8 @@ function Body(shape, type){
         this.velocityY += ((lastAY + a) / 2) * dt;
         lastAY = a;
         */
-       
+        this.lastVelocity.x = this.velocity.x;
+        this.lastVelocity.y = this.velocity.y;
         this.velocity.x += (force.x / this.type.mass) * dt;
         this.shape.x += this.velocity.x * dt * 50;
         this.velocity.y += (force.y / this.type.mass) * dt;
@@ -57,7 +59,48 @@ function Liquid(density) {
 }
 
 function Player(mass) {
+    
+    var maxHealth = 100,
+        health = 100,
+        score = 0;
+    
     this.mass = mass;
-    this.health = 100;
-    this.score = 0;
+    this.lastTimeHealed = 0;
+    
+    Object.defineProperty(this, "health", {
+        get: function() {
+            return health;
+        },
+        set: function(newHealth) {
+            var oldHealth = health;
+            
+            if (newHealth < 0) {
+                health = 0;
+            } else if (newHealth > maxHealth) {
+                health = maxHealth;
+            } else {
+                health = newHealth;
+            }
+            
+            if (oldHealth !== health && this.onHealthChanged !== void 0) this.onHealthChanged(oldHealth, health);
+        }
+    });
+    
+    Object.defineProperty(this, "score", {
+        get: function() {
+            return score;
+        },
+        set: function(newScore) {
+            var oldScore = score;
+            if (newScore !== oldScore) {
+                score = newScore;
+                if (this.onScoreChanged !== void 0) this.onScoreChanged(oldScore, score);
+            }
+        }
+    });
+    
+    this.onHealthChanged;
+    this.onScoreChanged;
+
+
 }
