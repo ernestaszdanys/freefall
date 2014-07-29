@@ -31,37 +31,39 @@ var obstacles = levelGenerator.generateObstacles(1000, canvas);
 spatialMap.addArray(obstacles);
 
 var player = new Body(new Circle(canvas.width / 2, 100, 10), new Solid(100));
-		var menu = new Menu(context);	
+var menu = new Menu(context);
+	
 function draw(dt) {
 	if (dt > 30) dt = 30;
 	dt *= 0.001; // ms to s
 	
 	context.setTransform(1, 0, 0, 1, 0, 0);
 	context.clearRect(0, 0, canvas.width, canvas.height);
+	
+	var totalForce = new Vec2();
 
-	var fVertical = g * player.type.mass;
-        fHorizontal = 0,
-        fHorizontalDrag = 0;
-
-    if (KEYS.isDown(68)) {
-        fHorizontal += 3000;
-    } 
-
-    if (KEYS.isDown(65)) {
-        fHorizontal += -3000;
-    }
-
-    if (KEYS.isDown(83)) {
-        fVertical += 1000;
-    }
-
-    if (KEYS.isDown(87)) {
-        fVertical -= 1000;
-    }
 	dt = dt/4;
 	for (var j = 0; j<4; j++){
+		totalForce.y = g * player.type.mass;
+		totalForce.x = 0;
+
+		if (KEYS.isDown(68)) {
+			totalForce.x += 3000;
+		} 
+
+		if (KEYS.isDown(65)) {
+			totalForce.x += -3000;
+		}
+
+		if (KEYS.isDown(83)) {
+			totalForce.y += 1000;
+		}
+
+		if (KEYS.isDown(87)) {
+			totalForce.y -= 1000;
+		}
+		
 		// Move player
-		player.applyForce(new Vec2(fHorizontal, fVertical), dt);
 		var cameraY = player.shape.y - player.shape.height * 2;
 		
 		// Find obstacle
@@ -72,13 +74,15 @@ function draw(dt) {
 		for(var i = 0; i < obstacles.length; i++) {
 			intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
 			if (intersects && obstacles[i].type instanceof Liquid) {
-                            //going through liquid
+				var dragForce = Physics.calculateDrag(player.velocity, obstacles[i].type.density, obstacles[i].shape.dragCoef, player.shape.crossSectionalArea);				
+				totalForce.addVector(dragForce);
 			} else if (data.penetration >= 0) {
-                            player.shape.x += data.penetrationX;
-                            player.shape.y += data.penetrationY;
-                            player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.3);
+				player.shape.x += data.penetrationX;
+				player.shape.y += data.penetrationY;
+				player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.3);
 			}
 		}
+		player.applyForce(totalForce, dt);
 	}
         
 	context.setTransform(1, 0, 0, 1, 0, -cameraY);
@@ -87,7 +91,6 @@ function draw(dt) {
 	for(var i = 0; i < obstacles.length; i++) obstacles[i].shape.draw(context);		
 	player.draw(context);
     //menu.draw();
-
 }
 
 requestFrame();

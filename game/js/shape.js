@@ -3,8 +3,9 @@ function Circle(centerX, centerY, radius) {
     this.x = centerX - this.radius;
     this.y = centerY - this.radius;
     this.width = this.height = 2 * this.radius;
+	this.dragCoef = 0.47;
+	this.crossSectionalArea = Math.PI*radius*radius/PIXELS_PER_METER/PIXELS_PER_METER;
 }
-Circle.DRAG_COEF = 0.47;
 Circle.TAU = Math.PI * 2;
 Circle.prototype = {
     getCenterX: function() {
@@ -33,7 +34,6 @@ function Rect(x, y, width, height) {
     this.width = width;
     this.height = height;
 }
-Rect.DRAG_COEF = 1.05;     // TODO: find the way to calculate it. god damn...
 Rect.prototype = {
     draw: function(context) {
         context.rect(this.x, this.y, this.width, this.height);
@@ -50,12 +50,13 @@ Rect.prototype = {
 
 function Poly(vertices) {
     this.vertices = vertices;
-
-    // Calculate bounding box of the given polygon
+	this.dragCoef = 1.05;     // TODO: find the way to calculate it. god damn...
+	
+    // Calculates bounding box of the given polygon
     this.x = vertices[0].x;
     this.y = vertices[0].y;
     this.width = vertices[0].x;
-    this.height = vertices[0].y;
+    this.height = vertices[0].y;	
     for (var i = 1; i < this.vertices.length; i++) {
         if (this.vertices[i].x < this.x)
             this.x = this.vertices[i].x;
@@ -76,7 +77,6 @@ function Poly(vertices) {
     }
     this.x = this.y = 0;
 }
-Poly.DRAG_COEF = 1.05;     // TODO: find the way to calculate it. god damn...
 Poly.prototype = {
     draw: function(context, hit) {   // TODO: temp
         context.beginPath();
