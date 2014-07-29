@@ -60,10 +60,7 @@ var Game = function(context) {
 		var dragForce;
     
         while (samples--) {
-            // TODO: Camera
-            cameraRect.y = player.shape.y - 50;
-			if(cameraRect.y + cameraRect.height > level.height + level.offset && that.onLevelEnd !== void 0) that.onLevelEnd();
-            
+
             // Check for collisions and resolve them
             var obstacles = spatialMap.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height),
                 data = {},
@@ -104,6 +101,10 @@ var Game = function(context) {
 				// Move player
 				totalForce.addVector(dragForce);
 				player.applyForce(totalForce, scaledDt);
+                
+                // TODO: Camera
+                cameraRect.y = player.shape.y - 50;
+                if(cameraRect.y + cameraRect.height > level.height + level.offset && that.onLevelEnd !== void 0) that.onLevelEnd();
             }
         }
     };
