@@ -54,6 +54,7 @@ function Solid(mass) {
 
 function Liquid(density) {
     this.density = density;
+	this.multiplier;
 }
 
 function Player(mass) {
