@@ -122,3 +122,12 @@ Physics.rayHitsLineSegment = function(v1, v2, ray) {
     return false;
 }
 
+Physics.calculateDrag = function(velocity, density, dragCoef, crossSectionalArea) {
+	var force = new Vec2(
+		velocity.x > 0 ? -0.5*velocity.x*velocity.x*density*dragCoef*crossSectionalArea
+					   : 0.5*velocity.x*velocity.x*density*dragCoef*crossSectionalArea,
+		velocity.y > 0 ? -0.5*velocity.y*velocity.y*density*dragCoef*crossSectionalArea
+					   : 0.5*velocity.y*velocity.y*density*dragCoef*crossSectionalArea);
+	return force;
+}
+
