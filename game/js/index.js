@@ -20,7 +20,7 @@ function onDraw(time) {
     lastTime = time;
     requestFrame();
 }
-
+/*
 var currentLevel = 0;
 var States = {MENU : 0, GAME : 1, GAME_OVER : 2};
 var state = States.MENU;
@@ -46,19 +46,37 @@ menu.onStartClicked = function() {
     state = States.GAME;
     menu.dissable();
 };
+*/
+
+var game = new Game(context);
+
+var gravityThingy = new Body(new Poly([new Vec2(0, 0), new Vec2(0, 100), new Vec2(50, 50)]), new GravityField(1000, 50000000000000));
+
+gravityThingy.shape.x = 200;
+gravityThingy.shape.y = 500;
+
+game.setLevel({
+    airDensity: 100,
+    gravity: 0,
+    width: 1000,
+    height: 1000,
+    numberOfObstacles: 1,
+    offset: 0,
+    obstacles: [gravityThingy]
+    });
 
 function draw(dt) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     
-    if (state === States.MENU) {
-        menu.draw();
-    } else if (state === States.GAME) {
+    //if (state === States.MENU) {
+    //    menu.draw();
+    //} else if (state === States.GAME) {
         game.simulatePhysics(dt);
         game.draw();
-        hud.draw();
-    } else if (state === States.GAME_OVER) {
-        gameOver.draw();
-    }
+    //    hud.draw();
+    //} else if (state === States.GAME_OVER) {
+    //    gameOver.draw();
+    //}
 }
 
 requestFrame();

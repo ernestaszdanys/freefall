@@ -1,3 +1,4 @@
+
 var Intersection = {
     pointRect: function(x, y, rect) {
         return (x >= rect.x && x <= rect.x + rect.width)
@@ -131,3 +132,4 @@ Physics.calculateDrag = function(velocity, density, dragCoef, crossSectionalArea
 	return force;
 }
 
+Physics.G = 6.67384E-11; // Gravitational constant

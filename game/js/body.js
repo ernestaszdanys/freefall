@@ -59,6 +59,11 @@ function Liquid(density) {
 	this.multiplier = Math.random() > 0.5 ? 1 : -0.1;
 }
 
+function GravityField(maxRadius, pointMass) {
+    this.maxRadius = maxRadius;
+    this.pointMass = pointMass;
+}
+
 function Player(mass) {
     
     var maxHealth = 100,

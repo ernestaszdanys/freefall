@@ -98,6 +98,21 @@ var Game = function(context) {
 				dragForce = Physics.calculateDrag(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
 				
 				for(var i = 0; i < obstacles.length; i++) {
+                    var obstacle = obstacles[i];
+                    
+                    if (obstacle.type instanceof GravityField) {
+                        var gravityForceOnPlayer = new Vec2(
+                                (obstacle.shape.x + obstacle.shape.width / 2) - (player.shape.x + player.shape.width / 2),
+                                (obstacle.shape.y + obstacle.shape.height / 2) - (player.shape.y + player.shape.height / 2)
+                            );
+                        
+                        var distance = gravityForceOnPlayer.length();
+                        
+                        gravityForceOnPlayer.scale((Physics.G * player.type.mass * obstacle.type.pointMass) / (distance * distance));
+                        
+                        totalForce.addVector(gravityForceOnPlayer);
+                    }
+                    
 					intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
 					if (intersects && obstacles[i].type instanceof Liquid) {
 						dragForce = Physics.calculateDrag(player.velocity, obstacles[i].type.density, player.shape.dragCoef, player.shape.crossSectionalArea);

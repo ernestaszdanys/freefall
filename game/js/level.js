@@ -45,6 +45,6 @@ var Level = (function() {
 		this.offset = offset || 0;
 		this.obstacles = generateObstacles(numberOfObstacles, width, height, offset);
 		
-	}
+	};
 })();
 
