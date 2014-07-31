@@ -1,4 +1,15 @@
-var canvas = document.getElementById("game"),
+
+var p = new Player(100);
+p.addCallback(Player.EVENT_HEALTH_CHANGED, function(newHealth) {
+    console.log(newHealth);
+});
+
+
+p.setHealth(99);
+p.setHealth(80);
+
+
+/*var canvas = document.getElementById("game"),
     context = canvas.getContext("2d"),
     frameRequestId = null;
 
@@ -20,7 +31,7 @@ function onDraw(time) {
     lastTime = time;
     requestFrame();
 }
-/*
+
 var currentLevel = 0;
 var States = {MENU : 0, GAME : 1, GAME_OVER : 2};
 var state = States.MENU;
@@ -29,14 +40,14 @@ var hud = new Hud(context);
 var gameOver = new GameOver(context);
 var game = new Game(context);
 hud.setHealth(100); // TODO: temp REWRITE EVERYTHING!!!!!!!
-game.onPlayerHealthChanged = function(oldHealth, newHealth) {
+game.getPlayer().getType().addObserver(Player.EVENT_HEALTH_CHANGED, function(newHealth) {
     hud.setHealth(newHealth);
     if (~~newHealth <= 0) state = States.GAME_OVER;
-}
-game.onPlayerScoreChanged = function(oldScore, newScore) {
+});
+game.getPlayer().getType().addObserver(Player.EVENT_SCORE_CHANGED, function(newScore) {
     hud.setScore(newScore);
     gameOver.setScore(newScore);
-}
+});
 game.setLevel(new Level(100, 9.8, canvas.width, 1000, 1));
 game.onLevelEnd = function(){
 	currentLevel++;
@@ -46,37 +57,21 @@ menu.onStartClicked = function() {
     state = States.GAME;
     menu.dissable();
 };
-*/
-
-var game = new Game(context);
-
-var gravityThingy = new Body(new Poly([new Vec2(0, 0), new Vec2(0, 100), new Vec2(50, 50)]), new GravityField(1000, 50000000000000));
-
-gravityThingy.shape.x = 200;
-gravityThingy.shape.y = 500;
-
-game.setLevel({
-    airDensity: 100,
-    gravity: 0,
-    width: 1000,
-    height: 1000,
-    numberOfObstacles: 1,
-    offset: 0,
-    obstacles: [gravityThingy]
-    });
 
 function draw(dt) {
     context.clearRect(0, 0, canvas.width, canvas.height);
     
-    //if (state === States.MENU) {
-    //    menu.draw();
-    //} else if (state === States.GAME) {
+    if (state === States.MENU) {
+        menu.draw();
+    } else if (state === States.GAME) {
         game.simulatePhysics(dt);
         game.draw();
-    //    hud.draw();
-    //} else if (state === States.GAME_OVER) {
-    //    gameOver.draw();
-    //}
+        hud.draw();
+    } else if (state === States.GAME_OVER) {
+        gameOver.draw();
+    }
 }
 
 requestFrame();
+
+*/

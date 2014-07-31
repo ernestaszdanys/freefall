@@ -64,7 +64,13 @@ function GravityField(maxRadius, pointMass) {
     this.pointMass = pointMass;
 }
 
+function Button() {
+    View.apply(this, arguments);
+    this.oops = "yep";
+ }
+
 function Player(mass) {
+    Observable.apply(this);
     
     var maxHealth = 100,
         health = 100,
@@ -73,40 +79,32 @@ function Player(mass) {
     this.mass = mass;
     this.lastTimeHealed = 0;
     
-    Object.defineProperty(this, "health", {
-        get: function() {
-            return health;
-        },
-        set: function(newHealth) {
-            var oldHealth = health;
-            
-            if (newHealth < 0) {
-                health = 0;
-            } else if (newHealth > maxHealth) {
-                health = maxHealth;
-            } else {
-                health = newHealth;
-            }
-            
-            if (oldHealth !== health && this.onHealthChanged !== void 0) this.onHealthChanged(oldHealth, health);
+    this.setScore = function(newScore) {
+        if (newScore !== score) {
+            score = newScore;
+            this.dispatchEvent(Player.EVENT_SCORE_CHANGED, score);
         }
-    });
-    
-    Object.defineProperty(this, "score", {
-        get: function() {
-            return score;
-        },
-        set: function(newScore) {
-            var oldScore = score;
-            if (newScore !== oldScore) {
-                score = newScore;
-                if (this.onScoreChanged !== void 0) this.onScoreChanged(oldScore, score);
-            }
+    };
+    this.getScore = function() {
+        return score;
+    };
+    this.setHealth = function(newHealth) {
+        var oldHealth = health;
+        if (newHealth > maxHealth) {
+            health = maxHealth;
+        } else if (newHealth < 0) {
+            health = 0;
+        } else {
+            health = newHealth;
         }
-    });
+        if (oldHealth !== health) {
+            this.dispatchEvent(Player.EVENT_HEALTH_CHANGED, health);
+        }
+    };
+    this.getHealth = function() {
+        return health;
+    };
     
-    this.onHealthChanged;
-    this.onScoreChanged;
-
-
 }
+Player.EVENT_HEALTH_CHANGED = "PLAYER_HEALTH_CHANGED";
+Player.EVENT_SCORE_CHANGED = "PLAYER_SCORE_CHANGED";

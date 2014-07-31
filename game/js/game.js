@@ -13,13 +13,7 @@ var Game = function(context) {
     // Level stuff
     var spatialMap = new SpatialHashMap(10),
         player = new Body(new Circle(200, 100, 10), new Player(100)); // TODO:
-        player.type.onHealthChanged = function(oldHealth, newHealth) {
-            if (that.onPlayerHealthChanged !== void 0) that.onPlayerHealthChanged(oldHealth, newHealth);
-        }
-        player.type.onScoreChanged = function(oldScore, newScore) {
-            if (that.onPlayerScoreChanged !== void 0) that.onPlayerScoreChanged(oldScore, newScore);
-        }
-		
+   
 	var level;
 
     this.setTimeScale = function(newTimeScale) {
@@ -43,7 +37,10 @@ var Game = function(context) {
 	this.getLevel = function() {
 		return level;
 	}
-	
+	this.getPlayer = function() {
+        return player;
+    }
+    
 	this.onLevelEnd;
     
     this.onPlayerHealthChanged;
