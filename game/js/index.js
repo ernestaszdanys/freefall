@@ -1,7 +1,7 @@
 
 var p = new Player(100);
-p.addCallback(Player.EVENT_HEALTH_CHANGED, function(newHealth) {
-    console.log(newHealth);
+p.addEventListener(Player.EVENT_HEALTH_CHANGED, function(eventName, newHealth) {
+    console.log(this, event, newHealth);
 });
 
 
