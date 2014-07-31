@@ -100,5 +100,20 @@ Poly.prototype = {
     },
     calculateHorizontalCrossSectionalArea: function() {
         return this.width * this.height;
-    }
+    },
+	project: function(axis) {
+		var min = axis.dot(this.vertices[0]);
+		var max = min;
+		var p;
+		for (var i = 0; i < shape.vertices.length; i++) {
+		  p = axis.dot(this.vertices[i]);
+		  if (p < min) {
+			min = p;
+		  } else if (p > max) {
+			max = p;
+		  }
+		}
+		return [min, max];
+	}
 }
+

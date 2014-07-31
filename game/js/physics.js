@@ -84,7 +84,28 @@ var Intersection = {
             return true;
         }
         return false;
-    }
+    },
+	polyPoly: function(poly1, poly2) {
+		if (!Intersection.rectRect(poly, poly))
+            return false;
+	
+		var axes = [];
+		for (var i = 0; i < poly1.vertices.length; i++) {
+			axes[i] = Vec2.createNormal(poly1.vertices[i], poly1.vertices[i + 1 == poly1.vertices.length ? 0 : i + 1]);
+		}
+		for (var i = axes[i].length; i < poly2.vertices.length+axes[i].length; i++) {
+			axes[i] = Vec2.createNormal(poly2.vertices[i], poly2.vertices[i + 1 == poly2.vertices.length ? 0 : i + 1]);
+		}
+
+		var p1 = [], p2 = [];
+		for (var i = 0; i < axes.length; i++) {
+			p1 = poly1.project(axes[i]);
+			p2 = poly2.project(axes[i]);
+			if (!((p1[0] <= p2[0] && p1[1] >= p2[0]) ||
+				  (p1[1] >= p2[1] && p1[0] <= p2[1]))) return false;
+		}
+		return true;
+	}
 }
 
 var Physics = {};
@@ -130,4 +151,3 @@ Physics.calculateDrag = function(velocity, density, dragCoef, crossSectionalArea
 					   : 0.5*velocity.y*velocity.y*density*dragCoef*crossSectionalArea);
 	return force;
 }
-
