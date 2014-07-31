@@ -11,7 +11,7 @@ var Game = function(context) {
     var cameraRect = {x: 0, y: 0, width: context.canvas.width, height: context.canvas.height};
 
     // Level stuff
-    var spatialMap = new SpatialHashMap(10),
+    var spatialMap = new SpatialHashMap(10),		
         player = new Body(new Circle(200, 100, 10), new Player(100)); // TODO:
         player.type.onHealthChanged = function(oldHealth, newHealth) {
             if (that.onPlayerHealthChanged !== void 0) that.onPlayerHealthChanged(oldHealth, newHealth);
@@ -19,7 +19,7 @@ var Game = function(context) {
         player.type.onScoreChanged = function(oldScore, newScore) {
             if (that.onPlayerScoreChanged !== void 0) that.onPlayerScoreChanged(oldScore, newScore);
         }
-		
+	
 	var level;
 
     this.setTimeScale = function(newTimeScale) {
