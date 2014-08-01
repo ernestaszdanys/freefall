@@ -52,8 +52,8 @@ Vec2.prototype = {
         this.y -= dotTimesTwo * normal.y;
     },
     toUnitVector: function() {
-        var magnitude = this.magnitude();
-        return new Vec2(this.x / magnitude, this.y / magnitude);
+        var length = this.length();
+        return new Vec2(this.x / length, this.y / length);
     },
     toString: function() {
         return JSON.stringify(this);

@@ -102,16 +102,19 @@ Poly.prototype = {
         return this.width * this.height;
     },
 	project: function(axis) {
-		var min = axis.dot(this.vertices[0]);
+		var point = new Vec2(this.vertices[0].x + this.x, this.vertices[0].y + this.y);
+		var min = axis.dot(point);
 		var max = min;
-		var p;
-		for (var i = 0; i < shape.vertices.length; i++) {
-		  p = axis.dot(this.vertices[i]);
-		  if (p < min) {
-			min = p;
-		  } else if (p > max) {
-			max = p;
-		  }
+		var dotP;
+		for (var i = 0; i < this.vertices.length; i++) {
+			point.x = this.vertices[i].x + this.x;
+			point.y = this.vertices[i].y + this.y;
+			dotP = axis.dot(point);
+			if (dotP < min) {
+				min = dotP;
+			} else if (dotP > max) {
+				max = dotP;
+			}
 		}
 		return [min, max];
 	}

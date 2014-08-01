@@ -17,7 +17,6 @@ var Level = (function() {
 		var obstacleArray = [];
 		var obstacleVerticleSpacing = height / numberOfObstacles;
 		
-		
 		for (var i = 0; i < numberOfObstacles; i++){
 			offsetY += obstacleVerticleSpacing;			
 			obstacleArray.push(new Body(new Poly(coordinates[Math.floor(Math.random() * 10) % coordinates.length]), Math.random() > 0.5 ? new Solid(1) : new Liquid(10000)));
@@ -32,7 +31,7 @@ var Level = (function() {
 		obstacleArray.push(new Body(new Poly([new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, wallHeight), new Vec2(0, wallHeight)])));
 		obstacleArray[obstacleArray.length-1].shape.x = canvas.width-20;
 		obstacleArray[obstacleArray.length-1].shape.y = offsetY;
-
+		
 		return obstacleArray;
 	}
 	

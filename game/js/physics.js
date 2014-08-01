@@ -86,17 +86,16 @@ var Intersection = {
         return false;
     },
 	polyPoly: function(poly1, poly2) {
-		if (!Intersection.rectRect(poly, poly))
-            return false;
-	
+		if (!Intersection.rectRect(poly1, poly2)) return false;
+
 		var axes = [];
 		for (var i = 0; i < poly1.vertices.length; i++) {
 			axes[i] = Vec2.createNormal(poly1.vertices[i], poly1.vertices[i + 1 == poly1.vertices.length ? 0 : i + 1]);
 		}
-		for (var i = axes[i].length; i < poly2.vertices.length+axes[i].length; i++) {
-			axes[i] = Vec2.createNormal(poly2.vertices[i], poly2.vertices[i + 1 == poly2.vertices.length ? 0 : i + 1]);
+		var arrayLength = axes.length;
+		for (var i = 0; i < poly2.vertices.length; i++) {
+			axes[i + arrayLength] = Vec2.createNormal(poly2.vertices[i], poly2.vertices[i + 1 == poly2.vertices.length ? 0 : i + 1]);
 		}
-
 		var p1 = [], p2 = [];
 		for (var i = 0; i < axes.length; i++) {
 			p1 = poly1.project(axes[i]);
