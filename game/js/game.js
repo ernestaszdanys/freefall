@@ -1,72 +1,111 @@
 var PIXELS_PER_METER = 50;
-var Game = function(context) {
-
-    var that = this;
+var Game = function(width, height) {
 
     // Physics stuff
     var timeScale = 1,
-        totalTime = 0; // seconds
+        totalTime = 0, // Seconds
+        sampleCount = 4; // Physics runs per frame 
 	
     // Camera stuff
-    var cameraRect = {x: 0, y: 0, width: context.canvas.width, height: context.canvas.height};
+    var cameraRect = {x: 0, y: 0, width: width, height: height};
 
     // Level stuff
     var spatialMap = new SpatialHashMap(10),
-        player = new Body(new Circle(200, 100, 10), new Player(100)); // TODO:
+        player = new Body(new Circle(200, 100, 10), new Dynamic(100)); // TODO:
    
-	var level;
-
     this.setTimeScale = function(newTimeScale) {
-        timeScale = newTimeScale > 0 ? newTimeScale : 0;
+        if (typeof newTimeScale !== "number") {
+            throw new Error("Time scale must be a number");
+        }
+        // Negative time scale is not (yet) supported.
+        if (newTimeScale < 0) {
+            newTimeScale = 0;
+        }
+        if (newTimeScale !== timeScale) {
+            // TODO: dispatch event
+            timeScale = newTimeScale;
+        }
     };
 
+    this.getTimeScale = function() {
+        return timeScale;
+    };
+    
+    /*
     this.addLevel = function(newLevel) {
-		level = newLevel;
-        //spatialMap.clear();
+        level = newLevel;
         spatialMap.addArray(newLevel.obstacles);
-		//player.shape.y = 100;
     };
 	
-	this.setLevel = function(newLevel) {
-		level = newLevel;
+    this.setLevel = function(newLevel) {
+	level = newLevel;
         spatialMap.clear();
         spatialMap.addArray(newLevel.obstacles);
-		player.shape.y = 100;
+	player.shape.y = 100;
     };
-	
-	this.getLevel = function() {
-		return level;
-	}
-	this.getPlayer = function() {
-        return player;
-    }
-    
-	this.onLevelEnd;
-    
-    this.onPlayerHealthChanged;
-    this.onPlayerScoreChanged;
-
+    */
+   
     /*
-     * TODO: Simulate physics in fixed time steps (constant dt).
+     * TODO: Simulate physics in fixed time steps.
      * It would be nice to interpolate between time steps when drawing...
      */
-    function simulatePhysics(dt) {
-		if(level === void 0) throw new Error("level is not set");
-        dt = Math.abs(dt); // TODO: wth is happening?
-        dt *= 0.001; // Convert milliseconds to seconds
+    this.simulatePhysics = function(dt) {
+        // Don't simulate too much if game is running like crap.
+        if (dt > 100) {
+            dt = 100;
+        } 
         
-        // Don't simulate too much if game is running like crap (or if user switcher tabs)
-        if (dt > 0.1) dt = 0.1; 
-
+        dt *= 0.001; // Convert milliseconds to seconds
+        dt *= timeScale;
         totalTime += dt;
 		
-        var samples = 4,
-            scaledDt = (dt * timeScale) / samples;
-			
-		var totalForce = new Vec2();
-		var dragForce;
+        var samplesLeft = sampleCount,
+            sampleDt = dt / sampleCount;
+	
+        var obstacles,
+            data = {}, // Intersection data (normal, distance and whatnot...)
+            intersects = false,
+            playerTotalForce = new Vec2(),
+            playerDragForce = new Vec2();
+        
+        while (samplesLeft--) {
+            
+            playerTotalForce.y = 1.8 * player.behaviour.mass;
+            playerTotalForce.x = 0;
+            
+            // TODO: move key handling elsewhere
+            if (KEYS.isDown(68)) {
+                playerTotalForce.x += 3000;
+            }
+
+            if (KEYS.isDown(65)) {
+                playerTotalForce.x += -3000;
+            }
+
+            if (KEYS.isDown(83)) {
+                playerTotalForce.y += 1000;
+            }
+
+            if (KEYS.isDown(87)) {
+                playerTotalForce.y -= 1000;
+            }
+                        
+            // TODO: query areas of dynamic bodies visible to the camera instead of the area of the camera vieport
+            // TODO: construct pairs of collided objects (better physics board phase)
+            obstacles = spatialMap.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height);
+            for(var i = 0, length = obstacles.length; i < length; i++) {
+                
+            }	
+            
+        }
+        
+        
+        /*		
+        var totalForce = new Vec2();
+        var dragForce;
     
-        while (samples--) {
+        
+        while (samplesLeft--) {
             
             // Check for collisions and resolve them
             var obstacles = spatialMap.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height),
@@ -148,10 +187,10 @@ var Game = function(context) {
                 player.type.health += 1;
             }
         }
+        */
     };
 
-    function draw() {
-		if(level === void 0) throw new Error("level is not set");
+    this.draw = function(context) {
         // Transform
         context.save();
         context.setTransform(1, 0, 0, 1, 0, -cameraRect.y);
@@ -165,13 +204,5 @@ var Game = function(context) {
 		
         // Restore transformation
         context.restore();
-    };
-
-    this.simulatePhysics = function(dt) {
-        simulatePhysics(dt);
-    };
-
-    this.draw = function() {
-        draw();
     };
 };

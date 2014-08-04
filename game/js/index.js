@@ -1,37 +1,24 @@
+var canvas = document.getElementById("game"),
+    context = canvas.getContext("2d");
 
-var p = new Player(100);
-p.addEventListener(Player.EVENT_HEALTH_CHANGED, function(eventName, newHealth) {
-    console.log(this, event, newHealth);
-});
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight; 
+    
+var choreographer = new Choreographer(window);
+choreographer.addEventListener(Choreographer.EVENT_ON_FRAME, draw);
+choreographer.requestFrame();
 
+var player = new Player(new Circle(100, 100, 50), 100);
 
-p.setHealth(99);
-p.setHealth(80);
-
-
-/*var canvas = document.getElementById("game"),
-    context = canvas.getContext("2d"),
-    frameRequestId = null;
-
-canvas.width = 400;
-canvas.height = 720;
-
-var lastTime = 0;
-
-function requestFrame() {
-    frameRequestId = window.requestAnimationFrame(onDraw);
+function draw(eventName, dt) {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+    player.applyForce(new Vec2(50, 50), dt * 0.001);
+    player.draw(context);
 }
 
-function cancelFrame() {
-    window.cancelAnimationFrame(frameRequestId);
-}
 
-function onDraw(time) {
-    draw(time - lastTime);
-    lastTime = time;
-    requestFrame();
-}
 
+/*
 var currentLevel = 0;
 var States = {MENU : 0, GAME : 1, GAME_OVER : 2};
 var state = States.MENU;
@@ -52,7 +39,7 @@ game.setLevel(new Level(100, 9.8, canvas.width, 1000, 1));
 game.onLevelEnd = function(){
 	currentLevel++;
 	game.addLevel(new Level((1/(currentLevel/2))*100, 9.8, canvas.width, 5000, currentLevel * 2, game.getLevel().height + game.getLevel().offset));
-}
+};
 menu.onStartClicked = function() {
     state = States.GAME;
     menu.dissable();
@@ -73,5 +60,4 @@ function draw(dt) {
 }
 
 requestFrame();
-
 */
