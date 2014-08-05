@@ -79,14 +79,20 @@ var Intersection = {
         return hits % 2 == 1;
     },
     rectRect: function(rect1, rect2) {
-        if (rect1.x + rect1.width > rect2.x || rect1.x - rect1.width < rect2.x + rect2.width
-                || rect1.y + rect1.height > rect2.y || rect1.y - rect1.height < rect2.y + rect2.height) {
-            return true;
+        if (rect1.x + rect1.width < rect2.x || rect1.x > rect2.x + rect2.width
+                || rect1.y + rect1.height < rect2.y || rect1.y > rect2.y + rect2.height) {
+			console.log("nekerta");
+            return false;
         }
-        return false;
+		console.log("kerta");
+        return true;
     },
-	polyPoly: function(poly1, poly2) {
+	polyPoly: function(poly1, poly2, intersectionData) {
+		console.clear();
 		if (!Intersection.rectRect(poly1, poly2)) return false;
+		
+		var overlap;
+		var minOverlap = Number.MAX_VALUE;
 
 		var axes = [];
 		for (var i = 0; i < poly1.vertices.length; i++) {
@@ -102,7 +108,18 @@ var Intersection = {
 			p2 = poly2.project(axes[i]);
 			if (!((p1[0] <= p2[0] && p1[1] >= p2[0]) ||
 				  (p1[1] >= p2[1] && p1[0] <= p2[1]))) return false;
+			if (p1[0] <= p2[0] && p1[1] >= p2[0]) overlap = Math.abs(p1[1] - p2[0]);
+			else overlap = Math.abs(p1[0] - p2[1]);
+			if (overlap < minOverlap) {
+				minOverlap = overlap;
+				intersectionData.normalX = axes[i].x;
+				intersectionData.normalY = axes[i].y;
+			}
 		}
+
+		intersectionData.penetration = minOverlap;
+        intersectionData.penetrationX = intersectionData.normalX * intersectionData.penetration;
+        intersectionData.penetrationY = intersectionData.normalY * intersectionData.penetration;		
 		return true;
 	}
 }

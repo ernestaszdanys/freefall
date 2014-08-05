@@ -76,7 +76,7 @@ var Game = function(context) {
                 data = {},
                 intersects = false;
              
-            for(var i = 0; i < obstacles.length; i++) {	
+
 				totalForce.y = level.gravity * player.type.mass;
 				totalForce.x = 0;
 				if (KEYS.isDown(68)) {
@@ -102,7 +102,7 @@ var Game = function(context) {
 					if (intersects && obstacles[i].type instanceof Liquid) {
 						dragForce = Physics.calculateDrag(player.velocity, obstacles[i].type.density, player.shape.dragCoef, player.shape.crossSectionalArea);
 						dragForce.scale(obstacles[i].type.multiplier);
-					} else if (data.penetration >= 0) {						
+					} else if (intersects && data.penetration >= 0) {						
 						// Remember last velocity
 						var lastSpeed = player.velocity.length();
 						
@@ -129,7 +129,7 @@ var Game = function(context) {
                 // TODO: Camera
                 cameraRect.y = player.shape.y - 50;
                 if(cameraRect.y + cameraRect.height > level.height + level.offset && that.onLevelEnd !== void 0) that.onLevelEnd();
-            }
+            
             
             if (totalTime - player.type.lastTimeHealed > 0.5) {
                 player.type.lastTimeHealed = totalTime;
