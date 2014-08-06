@@ -2,7 +2,7 @@ var Level = (function() {
 	var coordinates = [
 		[new Vec2(0, 70), new Vec2(70, 0), new Vec2(70, 70)], 
 		[new Vec2(0, 50), new Vec2(70, 0), new Vec2(100, 100)],
-		[new Vec2(0, 80), new Vec2(50, 0), new Vec2(150, 50)],
+		[new Vec2(0 , 0), new Vec2(20, 0), new Vec2(20 , 150), new Vec2(0, 150)],
 		[new Vec2(0, 50), new Vec2(50, 0), new Vec2(100, 50), new Vec2(50, 100)],
 		[new Vec2(0, 80), new Vec2(50, 30), new Vec2(80, 0), new Vec2(100, 100)],
 		[new Vec2(0, 120), new Vec2(80, 0), new Vec2(90, 40), new Vec2(70, 130)],

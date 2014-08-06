@@ -69,6 +69,8 @@ function Poly(vertices) {
     }
     this.width -= this.x;
     this.height -= this.y;
+	
+	this.crossSectionalArea = this.width * this.width/(100*50);
 
     // Align everything to x and y axes
     for (var i = 0; i < this.vertices.length; i++) {
