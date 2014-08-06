@@ -19,7 +19,7 @@ var Level = (function() {
 		
 		for (var i = 0; i < numberOfObstacles; i++){
 			offsetY += obstacleVerticleSpacing;			
-			obstacleArray.push(new Body(new Poly(coordinates[Math.floor(Math.random() * 10) % coordinates.length]), Math.random() > 0.5 ? new Solid(1) : new Liquid(10000)));
+			obstacleArray.push(new Body(new Poly(coordinates[Math.floor(Math.random() * 10) % coordinates.length]), Math.random() > 0.5 ? new Solid(1) : new Liquid(5000)));
 			obstacleArray[i].shape.x = (Math.floor(Math.random() * 10000)) % (width - obstacleArray[i].shape.width);
 			obstacleArray[i].shape.y = offsetY;
 		}

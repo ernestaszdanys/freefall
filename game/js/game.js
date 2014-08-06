@@ -96,7 +96,6 @@ var Game = function(context) {
 					totalForce.y -= 1000;
 				}
 				//Air resistance
-				console.log(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
 				dragForce = Physics.calculateDrag(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
 				
 				for(var i = 0; i < obstacles.length; i++) {
