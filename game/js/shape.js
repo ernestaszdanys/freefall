@@ -45,7 +45,7 @@ Rect.prototype = {
     calculateHorizontalCrossSectionalArea: function() {
         return this.width * this.height;
     }
-}
+};
 
 
 function Poly(vertices) {

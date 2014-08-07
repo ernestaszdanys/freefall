@@ -12,6 +12,10 @@ Vec2.prototype = {
         this.x += scalar;
         this.y += scalar;
     },
+    addXY: function(x, y) {
+        this.x += x;
+        this.y += y;
+    },
     subtractVector: function(vec) {
         this.x -= vec.x;
         this.y -= vec.y;
@@ -20,17 +24,29 @@ Vec2.prototype = {
         this.x -= scalar;
         this.y -= scalar;
     },
+    subtractXY: function(x, y) {
+        this.x -= x;
+        this.y -= y;
+    },
     scale: function(scale) {
         this.x *= scale;
         this.y *= scale;
     },
-    dot: function(a, b) {
-        return a instanceof Vec2
-                ? this.x * a.x + this.y * a.y
-                : this.x * a + this.y * b;
+    scaleXY: function(x, y) {
+        this.x *= x;
+        this.y *= y;
     },
-    cross: function(vec) {
-        return this.x * vec.y - this.y * vec.x;
+    dotVector: function(vector) {
+        return this.x * vector.x + this.y * vector.y;
+    },
+    dotXY: function(x, y) {
+        return this.x * x + this.y * y;
+    },
+    cross: function(vector) {
+        return this.x * vector.y - this.y * vector.x;
+    },
+    crossXY: function(x, y) {
+        return this.x * y - this.y * x;
     },
     length: function() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
@@ -41,19 +57,19 @@ Vec2.prototype = {
         this.y /= length;
     },
     reflectAlongNormal: function(normal, restitution) {
-        if (restitution === void 0 || restitution > 1)
+        if (restitution === void 0 || restitution > 1) {
             restitution = 1;
-        else if (restitution < 0)
+        } if (restitution < 0) {
             resitution = 0;
-
+        }
         // vectorReflection = vector - 2(vector dot normal) * normal
-        var dotTimesTwo = this.dot(normal) * (1 + restitution);
+        var dotTimesTwo = this.dotVector(normal) * (1 + restitution);
         this.x -= dotTimesTwo * normal.x;
         this.y -= dotTimesTwo * normal.y;
     },
     toUnitVector: function() {
-        var magnitude = this.magnitude();
-        return new Vec2(this.x / magnitude, this.y / magnitude);
+        var length = this.length();
+        return new Vec2(this.x / length, this.y / length);
     },
     toString: function() {
         return JSON.stringify(this);

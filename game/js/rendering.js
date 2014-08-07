@@ -4,7 +4,7 @@
  */
 (function(){
 	var vendors = ["ms", "moz", "webkit", "o"],
-		getTime = Date.now || function() {return new Date().getTime()},
+		getTime = Date.now || function() {return new Date().getTime();},
 		lastTime = 0;
 		
 	for(var x = 0; x < vendors.length && !window.requestAnimationFrame; x++) {
@@ -13,7 +13,7 @@
     }
 
 	if (!window.requestAnimationFrame || !window.cancelAnimationFrame) {
-		window.requestAnimationFrame = function(callback, element) {
+		window.requestAnimationFrame = function(callback) {
 			var currTime = getTime();
 			var timeToCall = Math.max(0, 16 - (currTime - lastTime));
 			var id = window.setTimeout(function() {callback(currTime + timeToCall); }, timeToCall);

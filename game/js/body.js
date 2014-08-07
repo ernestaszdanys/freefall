@@ -2,8 +2,11 @@ function Body(shape, type){
 
     this.shape = shape;
     this.type = type;
+    
     this.velocity = new Vec2(0, 0);
-	this.lastVelocity = new Vec2(0, 0);
+    this.position = new Vec2(0, 0);
+    this.lastPosition = new Vec2(0, 0);
+    this.lastDt;
     
     this.applyForce = function(force, dt) {
         /*
@@ -35,12 +38,29 @@ function Body(shape, type){
         this.velocityY += ((lastAY + a) / 2) * dt;
         lastAY = a;
         */
-        this.lastVelocity.x = this.velocity.x;
-        this.lastVelocity.y = this.velocity.y;
-        this.velocity.x += (force.x / this.type.mass) * dt;
-        this.shape.x += this.velocity.x * dt * 50;
-        this.velocity.y += (force.y / this.type.mass) * dt;
-        this.shape.y += this.velocity.y * dt * 50;
+       
+//        this.velocity.x += (force.x / this.type.mass) * dt;
+//        this.shape.x += this.velocity.x * dt * 50;
+//        this.velocity.y += (force.y / this.type.mass) * dt;
+//        this.shape.y += this.velocity.y * dt * 50;
+
+        // Time corrected Verlet numerical intergration
+        if (this.lastDt === void 0) {
+            this.lastDt = dt;
+        }
+        
+        var lastX = this.position.x,
+            lastY = this.position.y;
+        
+        this.position.x += (this.position.x - this.lastPosition.x) * (dt / this.lastDt) + (force.x / this.type.mass) * dt * dt;
+        this.position.y += (this.position.y - this.lastPosition.y) * (dt / this.lastDt) + (force.y / this.type.mass) * dt * dt;
+
+        this.lastDt = dt;
+        this.lastPosition.x = lastX;
+        this.lastPosition.y = lastY;
+        
+        this.shape.x = this.position.x;
+        this.shape.y = this.position.y;
 
     };
 	
@@ -64,11 +84,6 @@ function GravityField(maxRadius, pointMass) {
     this.pointMass = pointMass;
 }
 
-function Button() {
-    View.apply(this, arguments);
-    this.oops = "yep";
- }
-
 function Player(mass) {
     Observable.apply(this);
     
@@ -78,6 +93,26 @@ function Player(mass) {
     
     this.mass = mass;
     this.lastTimeHealed = 0;
+        
+    this.getHealth = function() {
+        return health;
+    };
+    
+    this.setHealth = function(newHealth) {
+        if (newHealth > maxHealth) {
+            newHealth = maxHealth;
+        } else if (newHealth < 0) {
+            newHealth = 0;
+        } 
+        if (newHealth !== health) {
+            health = newHealth;
+            this.dispatchEvent(Player.EVENT_HEALTH_CHANGED, health);
+        }
+    };
+
+    this.getScore = function() {
+        return score;
+    };
     
     this.setScore = function(newScore) {
         if (newScore !== score) {
@@ -85,26 +120,7 @@ function Player(mass) {
             this.dispatchEvent(Player.EVENT_SCORE_CHANGED, score);
         }
     };
-    this.getScore = function() {
-        return score;
-    };
-    this.setHealth = function(newHealth) {
-        var oldHealth = health;
-        if (newHealth > maxHealth) {
-            health = maxHealth;
-        } else if (newHealth < 0) {
-            health = 0;
-        } else {
-            health = newHealth;
-        }
-        if (oldHealth !== health) {
-            this.dispatchEvent(Player.EVENT_HEALTH_CHANGED, health);
-        }
-    };
-    this.getHealth = function() {
-        return health;
-    };
-    
+
 }
 Player.EVENT_HEALTH_CHANGED = "PLAYER_HEALTH_CHANGED";
 Player.EVENT_SCORE_CHANGED = "PLAYER_SCORE_CHANGED";

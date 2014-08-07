@@ -1,36 +1,39 @@
-
-var p = new Player(100);
-p.addEventListener(Player.EVENT_HEALTH_CHANGED, function(eventName, newHealth) {
-    console.log(this, event, newHealth);
-});
-
-
-p.setHealth(99);
-p.setHealth(80);
-
-
-/*var canvas = document.getElementById("game"),
+"use strict";
+    
+var canvas = document.getElementById("game"),
     context = canvas.getContext("2d"),
-    frameRequestId = null;
+    frameRequestId,
+    frameLastTimestamp = 0;
 
-canvas.width = 400;
-canvas.height = 720;
-
-var lastTime = 0;
+function setCanvasSize(width, height) {
+    canvas.width = width;
+    canvas.height = height;
+}
 
 function requestFrame() {
-    frameRequestId = window.requestAnimationFrame(onDraw);
+    if (frameRequestId === void 0) {
+        frameRequestId = window.requestAnimationFrame(onDraw, canvas);
+    }
 }
 
 function cancelFrame() {
-    window.cancelAnimationFrame(frameRequestId);
+    if (frameRequestId !== void 0) {
+        window.cancelAnimationFrame(frameRequestId);
+        frameRequestId = void 0;
+    }
 }
 
-function onDraw(time) {
-    draw(time - lastTime);
-    lastTime = time;
-    requestFrame();
+function onDraw(frameTimestamp) {
+    // TODO: detect lags and deal with iOS 6 requestAnimationFrame bugs...
+    draw(frameTimestamp - frameLastTimestamp);
+    frameLastTimestamp = frameTimestamp;
+    // Keep requesting new frames
+    if (frameRequestId !== void 0) {
+        frameRequestId = window.requestAnimationFrame(onDraw, canvas);
+    }
 }
+
+setCanvasSize(400, 720);
 
 var currentLevel = 0;
 var States = {MENU : 0, GAME : 1, GAME_OVER : 2};
@@ -40,18 +43,18 @@ var hud = new Hud(context);
 var gameOver = new GameOver(context);
 var game = new Game(context);
 hud.setHealth(100); // TODO: temp REWRITE EVERYTHING!!!!!!!
-game.getPlayer().getType().addObserver(Player.EVENT_HEALTH_CHANGED, function(newHealth) {
+game.getPlayer().type.addEventListener(Player.EVENT_HEALTH_CHANGED, function(newHealth) {
     hud.setHealth(newHealth);
     if (~~newHealth <= 0) state = States.GAME_OVER;
 });
-game.getPlayer().getType().addObserver(Player.EVENT_SCORE_CHANGED, function(newScore) {
+game.getPlayer().type.addEventListener(Player.EVENT_SCORE_CHANGED, function(newScore) {
     hud.setScore(newScore);
     gameOver.setScore(newScore);
 });
-game.setLevel(new Level(100, 9.8, canvas.width, 1000, 1));
+game.setLevel(new Level(100, 1.8, canvas.width, 1000, 1));
 game.onLevelEnd = function(){
 	currentLevel++;
-	game.addLevel(new Level((1/(currentLevel/2))*100, 9.8, canvas.width, 5000, currentLevel * 2, game.getLevel().height + game.getLevel().offset));
+	game.addLevel(new Level((1/(currentLevel/2))*100, 1.8, canvas.width, 5000, currentLevel * 2, game.getLevel().height + game.getLevel().offset));
 }
 menu.onStartClicked = function() {
     state = States.GAME;
@@ -74,4 +77,3 @@ function draw(dt) {
 
 requestFrame();
 
-*/

@@ -1,8 +1,10 @@
 var Observable = (function() {
     
-    function isFunction(object) {
-        return !!(object && object.constructor && object.call && object.apply);
-    }
+    
+//    function isFunction(object) {
+//        //return !!(object && object.constructor && object.call && object.apply);
+//        return typeof(object) === "function";
+//    }
 
     return function() {
         var listeners = {};
@@ -14,7 +16,7 @@ var Observable = (function() {
          * @throws Error if the listener is not a function.
          */
         this.addEventListener = function(eventName, listener) {
-            if (isFunction(listener)) {
+            if (typeof(listener) === "function") {
                 var eventListeners = listeners[eventName];
                 if (eventListeners === void 0) eventListeners = listeners[eventName] = [];
                 eventListeners.push(listener);
@@ -36,7 +38,7 @@ var Observable = (function() {
         };
         
         /**
-         * Detaches listener from any associated events.
+         * Detaches listener from all associated events.
          * @param {function} listener
          */
         this.removeListener = function(listener) {

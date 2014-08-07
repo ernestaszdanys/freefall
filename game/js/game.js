@@ -1,12 +1,15 @@
 var PIXELS_PER_METER = 50;
-var Game = function(context) {
 
-    var that = this;
+var Game = function(context) {
+    Observable.apply(this);
+    
+    var self = this;
 
     // Physics stuff
-    var timeScale = 1,
-        totalTime = 0; // seconds
-	
+    var timeScale = 1, // 0 <= timeScale < infinity
+        totalTime = 0, // seconds
+	    sampleCount = 10; // Number of physics runs per frame
+
     // Camera stuff
     var cameraRect = {x: 0, y: 0, width: context.canvas.width, height: context.canvas.height};
 
@@ -22,9 +25,7 @@ var Game = function(context) {
 
     this.addLevel = function(newLevel) {
 		level = newLevel;
-        //spatialMap.clear();
         spatialMap.addArray(newLevel.obstacles);
-		//player.shape.y = 100;
     };
 	
 	this.setLevel = function(newLevel) {
@@ -36,129 +37,125 @@ var Game = function(context) {
 	
 	this.getLevel = function() {
 		return level;
-	}
+	};
+    
 	this.getPlayer = function() {
         return player;
-    }
+    };
     
-	this.onLevelEnd;
+    var playerLastPosition = new Vec2();
     
-    this.onPlayerHealthChanged;
-    this.onPlayerScoreChanged;
-
-    /*
-     * TODO: Simulate physics in fixed time steps (constant dt).
-     * It would be nice to interpolate between time steps when drawing...
-     */
+    // TODO: Simulate physics in fixed time steps.
     function simulatePhysics(dt) {
-		if(level === void 0) throw new Error("level is not set");
-        dt = Math.abs(dt); // TODO: wth is happening?
-        dt *= 0.001; // Convert milliseconds to seconds
+		if(level === void 0) {
+            throw new Error("level is not set");
+        }
         
-        // Don't simulate too much if game is running like crap (or if user switcher tabs)
-        if (dt > 0.1) dt = 0.1; 
+        // Don't simulate too much if game is running like crap
+        // TODO: there should be stall and tab switch detection somewhewre (preferably not in this file)
+        if (dt > 100) dt = 100; 
 
-        totalTime += dt;
+        dt *= 0.001; // Convert milliseconds to seconds
+        dt *= timeScale; // Apply time scale to allow slow-mo effects
+        totalTime += dt; // Keep track of total simulation time
 		
-        var samples = 4,
-            scaledDt = (dt * timeScale) / samples;
+        var samplesLeft = sampleCount, // Number of physics runs per frame
+            sampleDt = dt / sampleCount; // Sample physics delta time
 			
-		var totalForce = new Vec2();
-		var dragForce;
-    
-        while (samples--) {
+		var totalForce = new Vec2(),
+            dragForce = new Vec2(),
+            playerLastPosition = new Vec2(player.shape.x, player.shape.y); // Save initial player velocity
             
+        while (samplesLeft--) {
+            
+            totalForce.y = level.gravity * player.type.mass;
+            totalForce.x = 0;
+            
+            // Air resistance
+			dragForce = Physics.calculateDrag(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
+            
+            if (KEYS.isDown(68)) { // D
+                totalForce.x += 3000;
+            } 
+
+            if (KEYS.isDown(65)) { // A
+                totalForce.x += -3000;
+            }
+
+            if (KEYS.isDown(83)) { // S
+                totalForce.y += 1000;
+            }
+
+            if (KEYS.isDown(87)) { // W
+                totalForce.y -= 1000;
+            }
+                
             // Check for collisions and resolve them
             var obstacles = spatialMap.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height),
                 data = {},
-                intersects = false;
-             
-            for(var i = 0; i < obstacles.length; i++) {	
-				totalForce.y = level.gravity * player.type.mass;
-				totalForce.x = 0;
-				if (KEYS.isDown(68)) {
-					totalForce.x += 3000;
-				} 
+                intersects = false,
+                obstacle;
+            
+            
+            for(var i = 0, length = obstacles.length; i < length; i++) {
+                obstacle = obstacles[i];
 
-				if (KEYS.isDown(65)) {
-					totalForce.x += -3000;
-				}
+                /*if (obstacle.type instanceof GravityField) {
+                    var gravityForceOnPlayer = new Vec2(
+                            (obstacle.shape.x + obstacle.shape.width / 2) - (player.shape.x + player.shape.width / 2),
+                            (obstacle.shape.y + obstacle.shape.height / 2) - (player.shape.y + player.shape.height / 2)
+                        );
+                    var distance = gravityForceOnPlayer.length();
+                    gravityForceOnPlayer.scale((Physics.G * player.type.mass * obstacle.type.pointMass) / (distance * distance));
+                    totalForce.addVector(gravityForceOnPlayer);
+                }*/
 
-				if (KEYS.isDown(83)) {
-					totalForce.y += 1000;
-				}
-
-				if (KEYS.isDown(87)) {
-					totalForce.y -= 1000;
-				}
-				//Air resistance
-				dragForce = Physics.calculateDrag(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
-				
-				for(var i = 0; i < obstacles.length; i++) {
-                    var obstacle = obstacles[i];
-                    
-                    if (obstacle.type instanceof GravityField) {
-                        var gravityForceOnPlayer = new Vec2(
-                                (obstacle.shape.x + obstacle.shape.width / 2) - (player.shape.x + player.shape.width / 2),
-                                (obstacle.shape.y + obstacle.shape.height / 2) - (player.shape.y + player.shape.height / 2)
-                            );
-                        
-                        var distance = gravityForceOnPlayer.length();
-                        
-                        gravityForceOnPlayer.scale((Physics.G * player.type.mass * obstacle.type.pointMass) / (distance * distance));
-                        
-                        totalForce.addVector(gravityForceOnPlayer);
-                    }
-                    
-					intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
-					if (intersects && obstacles[i].type instanceof Liquid) {
-						dragForce = Physics.calculateDrag(player.velocity, obstacles[i].type.density, player.shape.dragCoef, player.shape.crossSectionalArea);
-						dragForce.scale(obstacles[i].type.multiplier);
-					} else if (data.penetration >= 0) {						
-						// Remember last velocity
-						var lastSpeed = player.velocity.length();
-						
-						player.shape.x += data.penetrationX;
-						player.shape.y += data.penetrationY;
-						player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.3);
-
-						// Calculate health loss
-						var acceleration = (player.velocity.length() - lastSpeed) / 0.1;
-						var force = Math.abs(player.type.mass * acceleration);
-						var healthLost = force / 1000 > 1 ? force / 1000 : 0;
-						
-						// Change health
-						player.type.health -= healthLost;
-					}
-				}
-				// Move player
-				totalForce.addVector(dragForce);
-				player.applyForce(totalForce, scaledDt);
-				
-				// Calculate score
-				player.type.score = player.shape.y / 1000;
-                
-                // TODO: Camera
-                cameraRect.y = player.shape.y - 50;
-                if(cameraRect.y + cameraRect.height > level.height + level.offset && that.onLevelEnd !== void 0) that.onLevelEnd();
+                intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
+                if (intersects && obstacles[i].type instanceof Liquid) {
+                    dragForce = Physics.calculateDrag(player.velocity, obstacles[i].type.density, player.shape.dragCoef, player.shape.crossSectionalArea);
+                    dragForce.scale(obstacles[i].type.multiplier);
+                } else if (data.penetration >= 0) {			
+                    player.position.x += data.penetrationX;
+                    player.position.y += data.penetrationY;
+                    player.velocity.reflectAlongNormal(new Vec2(data.normalX, data.normalY), 0.2);
+                }
             }
             
-            if (totalTime - player.type.lastTimeHealed > 0.5) {
-                player.type.lastTimeHealed = totalTime;
-                player.type.health += 1;
-            }
+            // Move player
+            totalForce.addVector(dragForce);
+            player.applyForce(totalForce, sampleDt);
+
+            // Calculate score
+//            player.type.score = player.shape.y / 1000;
+
+            // TODO: Camera
+            cameraRect.y = player.shape.y - 50;
+            if(cameraRect.y + cameraRect.height > level.height + level.offset && self.onLevelEnd !== void 0) self.onLevelEnd();
         }
+        
+        // Calculate the force that player felt during the simulation
+        var playerPositionDeltaX = player.shape.x - playerLastPosition.x,
+            playerPositionDeltaY = player.shape.y - playerLastPosition.y;
+            
+//            console.clear();
+//            console.log((playerPositionDeltaX / dt) * player.type.mass);
+//            console.log((playerPositionDeltaX / dt) * player.type.mass);
     };
 
     function draw() {
-		if(level === void 0) throw new Error("level is not set");
+		if(level === void 0) {
+            throw new Error("Level is not set.");
+        }
+        
         // Transform
         context.save();
         context.setTransform(1, 0, 0, 1, 0, -cameraRect.y);
 
         // Draw obstacles
         var obstacles = spatialMap.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height);
-        for (var i = 0; i < obstacles.length; i++) obstacles[i].draw(context);
+        for (var i = 0, length = obstacles.length; i < length; i++) {
+            obstacles[i].draw(context);
+        }
 		
         // Draw player 
         player.draw(context);
@@ -175,3 +172,4 @@ var Game = function(context) {
         draw();
     };
 };
+Game.EVENT_LEVEL_END_VISIBLE = "GAME_LEVEL_END_VISIBLE";

@@ -22,7 +22,6 @@ function loadImages(sources, callback) {
 }
 
 function Menu(context) {
-    "use strict";
     
     var that = this;
     
@@ -91,18 +90,18 @@ function Hud(context) {
         health = 0;
     
     this.setScore = function(newScore) {
-        score = newScore;
+        score = ~~newScore;
     };
     
     this.setHealth = function(newHealth) {
-        health = newHealth;
+        health = ~~newHealth;
     };
     
     this.draw = function() {
         context.font = "20px Georgia";
         context.fillStyle = "rgb(0, 0, 0)";
-        context.fillText("Score: " + ~~score, 10, 30);
-        context.fillText("Health: " + ~~health, 10, 60);
+        context.fillText("Score: " + score, 10, 30);
+        context.fillText("Health: " + health, 10, 60);
     };
 };
 
