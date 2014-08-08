@@ -1,7 +1,7 @@
-function Body(shape, type){
+function Body(shape, mass){
 
     this.shape = shape;
-    this.type = type;
+    this.mass = mass;
     
     this.velocity = new Vec2(0, 0);
     this.position = new Vec2(0, 0);
@@ -52,40 +52,27 @@ function Body(shape, type){
         var lastX = this.position.x,
             lastY = this.position.y;
         
-        this.position.x += (this.position.x - this.lastPosition.x) * (dt / this.lastDt) + (force.x / this.type.mass) * dt * dt;
-        this.position.y += (this.position.y - this.lastPosition.y) * (dt / this.lastDt) + (force.y / this.type.mass) * dt * dt;
+        this.position.x += (this.position.x - this.lastPosition.x) * (dt / this.lastDt) + (force.x / this.mass) * dt * dt * Metrics.PPM;
+        this.position.y += (this.position.y - this.lastPosition.y) * (dt / this.lastDt) + (force.y / this.mass) * dt * dt * Metrics.PPM;
 
         this.lastDt = dt;
         this.lastPosition.x = lastX;
         this.lastPosition.y = lastY;
         
+        // TODO
         this.shape.x = this.position.x;
         this.shape.y = this.position.y;
-
     };
 	
     this.draw = function(context) {
+        console.log("drawing");
         this.shape.draw(context, this.type);
     };
 }
 
-// Body types
-function Solid(mass) {
-    this.mass = mass;
-}
-
-function Liquid(density) {
-    this.density = density;
-	this.multiplier = Math.random() > 0.5 ? 1 : -0.1;
-}
-
-function GravityField(maxRadius, pointMass) {
-    this.maxRadius = maxRadius;
-    this.pointMass = pointMass;
-}
-
-function Player(mass) {
+function Player(shape, mass) {
     Observable.apply(this);
+    Body.call(this, shape, mass);
     
     var maxHealth = 100,
         health = 100,
@@ -122,5 +109,22 @@ function Player(mass) {
     };
 
 }
+Player.prototype = Object.create(Body.prototype);
+Player.prototype.constructor = Player;
 Player.EVENT_HEALTH_CHANGED = "PLAYER_HEALTH_CHANGED";
 Player.EVENT_SCORE_CHANGED = "PLAYER_SCORE_CHANGED";
+
+// TODO: body types
+function Solid(mass) {
+    this.mass = mass;
+}
+
+function Liquid(density) {
+    this.density = density;
+	this.multiplier = Math.random() > 0.5 ? 1 : -0.1;
+}
+
+function GravityField(maxRadius, pointMass) {
+    this.maxRadius = maxRadius;
+    this.pointMass = pointMass;
+}

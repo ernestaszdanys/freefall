@@ -13,6 +13,7 @@
         window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];
     }
 
+    // TODO: test
     if (!window.requestAnimationFrame || !window.cancelAnimationFrame) {
         window.requestAnimationFrame = function(callback) {
             var currTime = getTime();
@@ -48,13 +49,13 @@ function Choreographer(window) {
         }
     }
     
-    this.requestFrame = function() {
+    this.requestFrameLoop = function() {
         if (frameId === void 0) {
             frameId = window.requestAnimationFrame(onFrame);
         }
     };
 
-    this.cancelFrame = function() {
+    this.cancelFrameLoop = function() {
         if (frameId !== void 0) {
             window.cancelAnimationFrame(frameId);
             frameId = void 0;
