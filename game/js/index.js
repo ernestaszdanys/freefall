@@ -1,8 +1,8 @@
 var canvas = document.getElementById("game"),
     context = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight; 
+canvas.width = 480;
+canvas.height = 720; 
     
 var choreographer = new Choreographer(window);
 choreographer.requestFrameLoop();

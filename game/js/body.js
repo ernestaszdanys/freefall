@@ -45,13 +45,20 @@ function Body(shape, mass){
 //        this.shape.y += this.velocity.y * dt * 50;
 
         // Time corrected Verlet numerical intergration
+        console.log("applying force over", dt, "s");
+
         if (this.lastDt === void 0) {
             this.lastDt = dt;
         }
+
+        console.log((force.x / this.mass) * dt * dt * Metrics.PPM);
+        console.log((dt / this.lastDt));
+
+
         
         var lastX = this.position.x,
             lastY = this.position.y;
-        
+        console.log(lastX);
         this.position.x += (this.position.x - this.lastPosition.x) * (dt / this.lastDt) + (force.x / this.mass) * dt * dt * Metrics.PPM;
         this.position.y += (this.position.y - this.lastPosition.y) * (dt / this.lastDt) + (force.y / this.mass) * dt * dt * Metrics.PPM;
 
