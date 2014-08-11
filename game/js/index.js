@@ -46,6 +46,12 @@ menu.onStartClicked = function() {
     state = States.GAME;
     menu.dissable();
 };
+gameOver.onStartClicked = function() {
+    //game.setLevel(new Level(100, 9.8, canvas.width, 1000, 1));
+    //state = States.GAME;
+    //gameOver.dissable();
+};
+
 
 function draw(dt) {
     context.clearRect(0, 0, canvas.width, canvas.height);

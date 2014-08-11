@@ -21,30 +21,35 @@ function loadImages(sources, callback) {
     }
 }
 
+var images = void 0;
+loadImages({
+    //background : "assets/images/gui/main.png",
+    logo: "assets/images/logo.png",
+    button: "assets/images/button_red_round.png",
+    playIcon: "assets/images/icon_play.png",
+    refreshIcon: "assets/images/icon_refresh.png",
+    brokenEgg: "assets/images/egg_broken.png",
+    ribbon: "assets/images/ribbon.png"
+
+}, function(loadedImages) {
+    images = loadedImages;
+    console.log("Menu images loaded.");
+});
+
 function Menu(context) {
     "use strict";
     
     var that = this;
     
-    var buttonRect = {x: 50, y: 500, width: 300, height: 60},
+    var buttonCircle = new Circle(canvas.width/2, 559, 45),
         buttonClick = false,
-        buttonHover = false,
-        images;
+        buttonHover = false;
 
-    loadImages({
-        background : "assets/images/gui/main.png",
-        logo: "assets/images/gui/logoSmall.png",
-        buttonIdle: "assets/images/gui/button.png",
-        buttonHover: "assets/images/gui/button1.png",
-        buttonClick: "assets/images/gui/button2.png"
-    }, function(loadedImages) {
-        images = loadedImages;
-        console.log("Menu images loaded.");
-    });
+
 
     function onMouseMove(event) {
         var canvasRect = context.canvas.getBoundingClientRect();
-        buttonHover = Intersection.pointRect(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonRect);
+        buttonHover = Intersection.pointCircle(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonCircle);
     }
 
     function onMouseUp() {
@@ -53,7 +58,7 @@ function Menu(context) {
 
     function onMouseDown(event) {
         var canvasRect = context.canvas.getBoundingClientRect();
-        buttonClick = Intersection.pointRect(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonRect);
+        buttonClick = Intersection.pointCircle(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonCircle);
         if (buttonClick && that.onStartClicked !== void 0) that.onStartClicked();
     } 
     
@@ -69,17 +74,21 @@ function Menu(context) {
     
     this.draw = function() {
         if (images) {
-            context.drawImage(images.background, 0, 0);
-            context.drawImage(images.logo, 0, 50);
+            context.fillStyle = "rgb(32, 46, 59)";
+            context.fillRect(0, 245, canvas.width, 185);
+            context.drawImage(images.logo, (canvas.width - images.logo.width)/2+9, 183);
+            //context.drawImage(images.button, 153, 514);
 
-            if (buttonHover && buttonClick) { // Hover
-                context.drawImage(images.buttonClick, buttonRect.x, buttonRect.y);
+            if (buttonHover && buttonClick) { // Click
+                //context.drawImage(images.button, buttonRect.x, buttonRect.y);
 
-            } else if (buttonHover) { // Click
-		context.drawImage(images.buttonHover, buttonRect.x, buttonRect.y);
+            } else if (buttonHover) { // Hover
+		        context.drawImage(images.button, buttonCircle.x+3, buttonCircle.y+3);
+                context.drawImage(images.playIcon, buttonCircle.x+35, buttonCircle.y+21);
                 
             } else { // Idle
-                context.drawImage(images.buttonIdle, buttonRect.x, buttonRect.y);
+                context.drawImage(images.button, buttonCircle.x, buttonCircle.y);
+                context.drawImage(images.playIcon, buttonCircle.x+32, buttonCircle.y+18);
             }
         }
     };
@@ -107,15 +116,48 @@ function Hud(context) {
 };
 
 function GameOver(context) {
-    
+    "use strict";
+
+    var that = this;
+
     var score = 0,
-        textGameOver = "Game Over";
+        buttonCircle = new Circle(canvas.width/2, 500, 45),
+        buttonClick = false,
+        buttonHover = false;
+        //textGameOver = "Game Over";
     
     this.setScore = function(newScore) {
         score = ~~newScore;
     };
-    
+
+    function onMouseMove(event) {
+        var canvasRect = context.canvas.getBoundingClientRect();
+        buttonHover = Intersection.pointCircle(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonCircle);
+    }
+
+    function onMouseUp() {
+        buttonClick = false;
+    }
+
+    function onMouseDown(event) {
+        var canvasRect = context.canvas.getBoundingClientRect();
+        buttonClick = Intersection.pointCircle(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonCircle);
+        if (buttonClick && that.onStartClicked !== void 0) that.onStartClicked();
+    }
+
+    context.canvas.addEventListener("mousemove", onMouseMove, false);
+    context.canvas.addEventListener("mouseup", onMouseUp, false);
+    context.canvas.addEventListener("mousedown", onMouseDown, false);
+
+    this.dissable = function() {
+        context.canvas.removeEventListener("mousemove", onMouseMove, false);
+        context.canvas.removeEventListener("mouseup", onMouseUp, false);
+        context.canvas.removeEventListener("mousedown", onMouseDown, false);
+    };
+
+
     this.draw = function() {
+        /*
         // Draw background
         context.fillStyle = "rgb(0, 0, 0)";
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
@@ -133,5 +175,22 @@ function GameOver(context) {
                 scoreText,
                 (context.canvas.width - context.measureText(scoreText).width) / 2,
                 350);
+        */
+        context.fillStyle = "rgb(32, 46, 59)";
+        context.fillRect(0, 245, canvas.width, 148);
+        context.drawImage(images.brokenEgg, (canvas.width - images.brokenEgg.width)/2, 200);
+        context.drawImage(images.ribbon, (canvas.width - images.ribbon.width)/2, 295);
+
+        if (buttonHover && buttonClick) { // Click
+            context.drawImage(images.button, buttonCircle.x, buttonCircle.y);
+
+        } else if (buttonHover) { // Hover
+            context.drawImage(images.button, buttonCircle.x+3, buttonCircle.y+3);
+            context.drawImage(images.refreshIcon, buttonCircle.x+22, buttonCircle.y+20);
+
+        } else { // Idle
+            context.drawImage(images.button, buttonCircle.x, buttonCircle.y);
+            context.drawImage(images.refreshIcon, buttonCircle.x+19, buttonCircle.y+17);
+        }
     };
 };

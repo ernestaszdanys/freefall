@@ -95,6 +95,9 @@ var Game = function(context) {
 				if (KEYS.isDown(87)) {
 					totalForce.y -= 1000;
 				}
+                if (KEYS.isDown(13)) {
+                    player.type.health = 5;
+                }
 				//Air resistance
 				dragForce = Physics.calculateDrag(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
 				

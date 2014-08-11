@@ -3,6 +3,14 @@ var Intersection = {
         return (x >= rect.x && x <= rect.x + rect.width)
                 && (y >= rect.y && y <= rect.y + rect.height);
     },
+    pointCircle: function(x, y, circle) {
+        var center = new Vec2(circle.getCenterX(), circle.getCenterY()),
+            point = new Vec2(x, y);
+        if (Physics.distanceTwoPoints(point, center) <= circle.radius) {
+            return true;
+        } else return false;
+
+    },
     circlePoly: function(circle, poly, intersectionData) {
         if (!intersectionData)
             intersectionData = {};
