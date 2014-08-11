@@ -102,6 +102,4 @@ function Player(mass) {
     
     this.onHealthChanged;
     this.onScoreChanged;
-
-
 }

@@ -27,13 +27,13 @@ Circle.prototype = {
     }
 }
 
-
 function Rect(x, y, width, height) {
     this.x = x;
     this.y = y;
     this.width = width;
     this.height = height;
 }
+
 Rect.prototype = {
     draw: function(context) {
         context.rect(this.x, this.y, this.width, this.height);
@@ -47,10 +47,10 @@ Rect.prototype = {
     }
 }
 
-
-function Poly(vertices) {
+function Poly(vertices, image) {
     this.vertices = vertices;
 	this.dragCoef = 1.05;     // TODO: find the way to calculate it. god damn...
+	this.image = image;
 	
     // Calculates bounding box of the given polygon
     this.x = vertices[0].x;
@@ -79,46 +79,16 @@ function Poly(vertices) {
     }
     this.x = this.y = 0;
 }
+
 Poly.prototype = {
-    draw: function(context, type) {   // TODO: temp
-        context.beginPath();
-        context.moveTo(this.vertices[this.vertices.length - 1].x + this.x, this.vertices[this.vertices.length - 1].y + this.y);
-        for (var i = 0; i < this.vertices.length; i++) {
-            context.lineTo(this.vertices[i].x + this.x, this.vertices[i].y + this.y);
-            context.stroke();
-        }
-        context.closePath();
+    draw: function(context) {// TODO: temp
         // TODO: loader
-        var imageObj = new Image();
-		
-        imageObj.src = type instanceof Liquid ? "assets/images/background4.png" : "assets/images/texture_wood.png";
-		
-        var pattern = context.createPattern(imageObj, 'repeat');
-        context.fillStyle = pattern;
-        context.fill();
+		if (this.image) context.drawImage(this.image, this.x, this.y);
     },
     calculateVerticalCrossSectionalArea: function() {
         return this.height * this.height;
     },
     calculateHorizontalCrossSectionalArea: function() {
         return this.width * this.height;
-    },
-	project: function(axis) {
-		var point = new Vec2(this.vertices[0].x + this.x, this.vertices[0].y + this.y);
-		var min = axis.dot(point);
-		var max = min;
-		var dotP;
-		for (var i = 0; i < this.vertices.length; i++) {
-			point.x = this.vertices[i].x + this.x;
-			point.y = this.vertices[i].y + this.y;
-			dotP = axis.dot(point);
-			if (dotP < min) {
-				min = dotP;
-			} else if (dotP > max) {
-				max = dotP;
-			}
-		}
-		return [min, max];
-	}
+    }
 }
-

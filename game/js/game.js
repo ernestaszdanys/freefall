@@ -12,7 +12,7 @@ var Game = function(context) {
 
     // Level stuff
     var spatialMap = new SpatialHashMap(10),		
-        player = new Body(new Poly([new Vec2(0, 0), new Vec2(30, 0), new Vec2(30, 30), new Vec2(0, 30)]), new Player(100)); // TODO:
+        player = new Body(new Circle(200, 100, 10), new Player(100)); // TODO:
 		
         player.type.onHealthChanged = function(oldHealth, newHealth) {
             if (that.onPlayerHealthChanged !== void 0) that.onPlayerHealthChanged(oldHealth, newHealth);
@@ -99,11 +99,8 @@ var Game = function(context) {
 				dragForce = Physics.calculateDrag(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
 				
 				for(var i = 0; i < obstacles.length; i++) {
-					intersects = Intersection.polyPoly(player.shape, obstacles[i].shape, data);
-					if (intersects && obstacles[i].type instanceof Liquid) {
-						dragForce = Physics.calculateDrag(player.velocity, obstacles[i].type.density, player.shape.dragCoef, player.shape.crossSectionalArea);
-						dragForce.scale(obstacles[i].type.multiplier);
-					} else if (intersects && data.penetration >= 0) {						
+					intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
+					if (intersects && data.penetration >= 0) {						
 						// Remember last velocity
 						var lastSpeed = player.velocity.length();
 						
