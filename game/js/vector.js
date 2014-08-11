@@ -52,41 +52,16 @@ Vec2.prototype = {
         this.y -= dotTimesTwo * normal.y;
     },
     toUnitVector: function() {
-        var magnitude = this.magnitude();
-        return new Vec2(this.x / magnitude, this.y / magnitude);
+        var length = this.length();
+        return new Vec2(this.x / length, this.y / length);
     },
     toString: function() {
         return JSON.stringify(this);
     }
 };
 
-//returns normal of vector between 2 points
-//TODO: optimize (clock_wise_normal = new Vec2(-end.y + start.y, end.x - start.x).toUnitVector();)
-Vec2.createNormal = function(p1, p2, shape) {
-    var e = 0.1;
-    var normal = new Vec2(p2.y - p1.y, p2.x - p1.x);
-    var middle;
-
-    if ((normal.x >= 0 && normal.y >= 0) || (normal.x < 0 && normal.y <= 0)) {
-        middle = new Circle((p1.x + p2.x) / 2 + shape.x - e, (p1.y + p2.y) / 2 + shape.y + e, e / 2);
-        if (Intersection.circlePoly(middle, shape)) {
-            normal.x = Math.abs(normal.x);
-            normal.y = -Math.abs(normal.y);
-        } else {
-            normal.x = -Math.abs(normal.x);
-            normal.y = Math.abs(normal.y);
-        }
-    } else
-    if ((normal.x <= 0 && normal.y >= 0) || (normal.x >= 0 && normal.y <= 0)) {
-        middle = new Circle((p1.x + p2.x) / 2 + shape.x + e, (p1.y + p2.y) / 2 + shape.y + e, e / 2);
-        if (Intersection.circlePoly(middle, shape)) {
-            normal.x = -Math.abs(normal.x);
-            normal.y = -Math.abs(normal.y);
-        } else {
-            normal.x = Math.abs(normal.x);
-            normal.y = Math.abs(normal.y);
-        }
-    }
-
-    return normal;
+// Returns normal of vector between 2 points
+Vec2.createNormal = function(p1, p2) {
+	var normal = new Vec2(p2.y-p1.y, -p2.x+p1.x);
+    return normal.toUnitVector();
 };

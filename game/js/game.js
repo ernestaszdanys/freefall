@@ -11,15 +11,16 @@ var Game = function(context) {
     var cameraRect = {x: 0, y: 0, width: context.canvas.width, height: context.canvas.height};
 
     // Level stuff
-    var spatialMap = new SpatialHashMap(10),
-        player = new Body(new Circle(200, 100, 10), new Player(100)); // TODO:
+    var spatialMap = new SpatialHashMap(10),		
+        player = new Body(new Poly([new Vec2(0, 0), new Vec2(30, 0), new Vec2(30, 30), new Vec2(0, 30)]), new Player(100)); // TODO:
+		
         player.type.onHealthChanged = function(oldHealth, newHealth) {
             if (that.onPlayerHealthChanged !== void 0) that.onPlayerHealthChanged(oldHealth, newHealth);
         }
         player.type.onScoreChanged = function(oldScore, newScore) {
             if (that.onPlayerScoreChanged !== void 0) that.onPlayerScoreChanged(oldScore, newScore);
         }
-		
+	
 	var level;
 
     this.setTimeScale = function(newTimeScale) {
@@ -37,6 +38,7 @@ var Game = function(context) {
 		level = newLevel;
         spatialMap.clear();
         spatialMap.addArray(newLevel.obstacles);
+		player.shape.x = canvas.width/2;
 		player.shape.y = 100;
     };
 	
@@ -76,7 +78,6 @@ var Game = function(context) {
                 data = {},
                 intersects = false;
              
-            for(var i = 0; i < obstacles.length; i++) {	
 				totalForce.y = level.gravity * player.type.mass;
 				totalForce.x = 0;
 				if (KEYS.isDown(68)) {
@@ -88,7 +89,7 @@ var Game = function(context) {
 				}
 
 				if (KEYS.isDown(83)) {
-					totalForce.y += 1000;
+					totalForce.y += 3000;
 				}
 
 				if (KEYS.isDown(87)) {
@@ -98,11 +99,11 @@ var Game = function(context) {
 				dragForce = Physics.calculateDrag(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
 				
 				for(var i = 0; i < obstacles.length; i++) {
-					intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
+					intersects = Intersection.polyPoly(player.shape, obstacles[i].shape, data);
 					if (intersects && obstacles[i].type instanceof Liquid) {
 						dragForce = Physics.calculateDrag(player.velocity, obstacles[i].type.density, player.shape.dragCoef, player.shape.crossSectionalArea);
 						dragForce.scale(obstacles[i].type.multiplier);
-					} else if (data.penetration >= 0) {						
+					} else if (intersects && data.penetration >= 0) {						
 						// Remember last velocity
 						var lastSpeed = player.velocity.length();
 						
@@ -129,7 +130,7 @@ var Game = function(context) {
                 // TODO: Camera
                 cameraRect.y = player.shape.y - 50;
                 if(cameraRect.y + cameraRect.height > level.height + level.offset && that.onLevelEnd !== void 0) that.onLevelEnd();
-            }
+            
             
             if (totalTime - player.type.lastTimeHealed > 0.5) {
                 player.type.lastTimeHealed = totalTime;

@@ -79,12 +79,53 @@ var Intersection = {
         return hits % 2 == 1;
     },
     rectRect: function(rect1, rect2) {
-        if (rect1.x + rect1.width > rect2.x || rect1.x - rect1.width < rect2.x + rect2.width
-                || rect1.y + rect1.height > rect2.y || rect1.y - rect1.height < rect2.y + rect2.height) {
-            return true;
-        }
-        return false;
-    }
+        if (rect1.x + rect1.width < rect2.x || rect1.x > rect2.x + rect2.width
+                || rect1.y + rect1.height < rect2.y || rect1.y > rect2.y + rect2.height) return false;
+        return true;
+    },
+	polyPoly: function(poly1, poly2, intersectionData) {
+		if (!Intersection.rectRect(poly1, poly2)) return false;
+		
+		var overlap;
+		var minOverlap = Number.MAX_VALUE;
+		var axes = [];
+		for (var i = 0; i < poly1.vertices.length; i++) {
+			axes[i] = Vec2.createNormal(poly1.vertices[i], poly1.vertices[i + 1 == poly1.vertices.length ? 0 : i + 1]);
+		}
+		var arrayLength = axes.length;
+		
+		for (var i = 0; i < poly2.vertices.length; i++) {
+			axes[i + arrayLength] = Vec2.createNormal(poly2.vertices[i], poly2.vertices[i + 1 == poly2.vertices.length ? 0 : i + 1]);
+		}
+		var p1 = [], p2 = [];
+		
+		for (var i = 0; i < axes.length; i++) {
+			p1 = poly1.project(axes[i]);
+			p2 = poly2.project(axes[i]);
+			if (p1[1] < p2[0] || p2[1] < p1[0])
+				return false;
+			if (p1[0] <= p2[0] && p1[1] >= p2[0]) overlap = Math.abs(p1[1] - p2[0]);
+			else overlap = Math.abs(p1[0] - p2[1]);
+			
+			if (overlap < minOverlap) {
+				minOverlap = overlap;
+				intersectionData.normalX = axes[i].x;
+				intersectionData.normalY = axes[i].y;
+			}
+		}
+		
+		var direction = new Vec2((poly2.x + poly2.width/2) - (poly1.x + poly1.width/2), (poly2.y + poly2.height/2) - (poly1.y + poly1.height/2));
+		if (direction.dot(intersectionData.normalX, intersectionData.normalY) > 0) {
+			intersectionData.normalX *= -1;
+			intersectionData.normalY *= -1;
+		}
+		
+		intersectionData.penetration = minOverlap;
+        intersectionData.penetrationX = intersectionData.normalX * intersectionData.penetration;
+        intersectionData.penetrationY = intersectionData.normalY * intersectionData.penetration;
+	
+		return true;
+	}
 }
 
 var Physics = {};
@@ -130,4 +171,3 @@ Physics.calculateDrag = function(velocity, density, dragCoef, crossSectionalArea
 					   : 0.5*velocity.y*velocity.y*density*dragCoef*crossSectionalArea);
 	return force;
 }
-
