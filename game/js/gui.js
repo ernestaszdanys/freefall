@@ -112,6 +112,12 @@ function Hud(context) {
         context.fillStyle = "rgb(0, 0, 0)";
         context.fillText("Score: " + ~~score, 10, 30);
         context.fillText("Health: " + ~~health, 10, 60);
+
+        // transparent rect in the bottom of the screen
+        context.fillStyle = "rgb(32, 46, 59)";
+        context.globalAlpha = 0.8;
+        context.fillRect(0, canvas.height - 60, canvas.width, 60);
+        context.globalAlpha = 1;
     };
 };
 

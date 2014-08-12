@@ -6,10 +6,7 @@ var Intersection = {
     pointCircle: function(x, y, circle) {
         var center = new Vec2(circle.getCenterX(), circle.getCenterY()),
             point = new Vec2(x, y);
-        if (Physics.distanceTwoPoints(point, center) <= circle.radius) {
-            return true;
-        } else return false;
-
+        return Physics.distanceTwoPoints(point, center) <= circle.radius;
     },
     circlePoly: function(circle, poly, intersectionData) {
         if (!intersectionData)
