@@ -2,7 +2,7 @@ var canvas = document.getElementById("game"),
     context = canvas.getContext("2d"),
     frameRequestId = null;
 
-canvas.width = 400;
+canvas.width = 480;
 canvas.height = 720;
 
 var lastTime = 0;
