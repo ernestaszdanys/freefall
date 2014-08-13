@@ -21,6 +21,9 @@ function onDraw(time) {
     requestFrame();
 }
 
+var playerImage = new Image();
+playerImage.src = 'assets/images/egg.png';
+
 var currentLevel = 0;
 var States = {MENU : 0, GAME : 1, GAME_OVER : 2};
 var state = States.MENU;

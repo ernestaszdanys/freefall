@@ -12,14 +12,17 @@ var Game = function(context) {
 
     // Level stuff
     var spatialMap = new SpatialHashMap(10),		
-        player = new Body(new Circle(200, 100, 10), new Player(100)); // TODO:
+        player = new Body(new Poly([new Vec2(0, 26), new Vec2(3, 18), new Vec2(7, 11), new Vec2(12, 5), new Vec2(19, 0),
+            new Vec2(28, 0), new Vec2(34, 5), new Vec2(39, 11), new Vec2(43, 18), new Vec2(45, 26), new Vec2(45, 38),
+            new Vec2(41, 48), new Vec2(35, 55), new Vec2(28, 59), new Vec2(18, 59), new Vec2(10, 59), new Vec2(3, 48),
+            new Vec2(0, 38)], playerImage), new Player(100)); // TODO:
 		
-        player.type.onHealthChanged = function(oldHealth, newHealth) {
-            if (that.onPlayerHealthChanged !== void 0) that.onPlayerHealthChanged(oldHealth, newHealth);
-        }
-        player.type.onScoreChanged = function(oldScore, newScore) {
-            if (that.onPlayerScoreChanged !== void 0) that.onPlayerScoreChanged(oldScore, newScore);
-        }
+    player.type.onHealthChanged = function(oldHealth, newHealth) {
+        if (that.onPlayerHealthChanged !== void 0) that.onPlayerHealthChanged(oldHealth, newHealth);
+    }
+    player.type.onScoreChanged = function(oldScore, newScore) {
+        if (that.onPlayerScoreChanged !== void 0) that.onPlayerScoreChanged(oldScore, newScore);
+    }
 	
 	var level;
 
@@ -102,7 +105,7 @@ var Game = function(context) {
 				dragForce = Physics.calculateDrag(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
 				
 				for(var i = 0; i < obstacles.length; i++) {
-					intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, data);
+					intersects = Intersection.polyPoly(player.shape, obstacles[i].shape, data);
 					if (intersects && data.penetration >= 0) {						
 						// Remember last velocity
 						var lastSpeed = player.velocity.length();

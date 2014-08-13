@@ -110,11 +110,6 @@ function Hud(context) {
     };
     
     this.draw = function() {
-        context.font = "20px Georgia";
-        context.fillStyle = "rgb(0, 0, 0)";
-        context.fillText("Score: " + ~~score, 10, 30);
-        context.fillText("Health: " + ~~health, 10, 60);
-
         // transparent rect in the bottom of the screen
         context.fillStyle = "rgb(32, 46, 59)";
         context.globalAlpha = 0.8;
@@ -123,7 +118,7 @@ function Hud(context) {
 
         // printing pts
         text.setMessage(~~score);
-        text.setX(10);
+        text.setX(15);
         text.setY(canvas.height-15);
         text.setSize(40);
 		text.setBold(true);
@@ -131,10 +126,24 @@ function Hud(context) {
 
         text.setMessage("PTS");
         count = Math.floor(Math.log(score)/Math.LN10) + 1;
-        text.setX(15 + 25 * (count == 0 ? 1 : count));
+        text.setX(20 + 25 * (count == 0 ? 1 : count));
         text.setY(canvas.height-15);
         text.setSize(30);
 		text.setBold(false);
+        text.draw(context);
+
+        // printing hp
+        text.setMessage("HP");
+        text.setX(canvas.width - 55);
+        text.setY(canvas.height-15);
+        text.draw(context);
+
+        text.setMessage(~~health);
+        count = Math.floor(Math.log(health)/Math.LN10) + 1;
+        text.setX(canvas.width-60 - 25 * (count == 0 ? 1 : count));
+        text.setY(canvas.height-15);
+        text.setSize(40);
+        text.setBold(true);
         text.draw(context);
     };
 };
