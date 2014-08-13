@@ -126,6 +126,7 @@ function Hud(context) {
         text.setX(10);
         text.setY(canvas.height-15);
         text.setSize(40);
+		text.setBold(true);
         text.draw(context);
 
         text.setMessage("PTS");
@@ -133,6 +134,7 @@ function Hud(context) {
         text.setX(15 + 25 * (count == 0 ? 1 : count));
         text.setY(canvas.height-15);
         text.setSize(30);
+		text.setBold(false);
         text.draw(context);
     };
 };

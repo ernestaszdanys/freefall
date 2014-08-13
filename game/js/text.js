@@ -13,10 +13,11 @@ WebFontConfig = {
     s.parentNode.insertBefore(wf, s);
 })();
 
-function Text(message, x, y) {
+function Text(message, x, y, bold) {
 	this.message = message;
 	this.x = x;
 	this.y = y;
+	this.bold = bold;
 	this.height;
 	this.width;
 	this.size;
@@ -24,12 +25,12 @@ function Text(message, x, y) {
 
 Text.prototype = {
 	draw: function(context) {
-		context.font = "bold " + this.size + 'px ' + 'Bitter';
+		context.font = (this.bold ? "bold " : "") + this.size + 'px ' + 'Bitter';
 		context.lineWidth = 7;
 		context.strokeStyle = "rgba(0, 0, 0, 0.2)";
 		context.strokeText(this.message, this.x - fontStrokeRatio*this.size, this.y + fontStrokeRatio*this.size);
 		
-		context.font = "bold " + this.size + 'px ' + 'Bitter';
+		context.font = (this.bold ? "bold " : "") + this.size + 'px ' + 'Bitter';
 		context.fillStyle = "rgba(255, 255, 255, 1)";
 		context.fillText(this.message, this.x, this.y);
 		
@@ -76,5 +77,8 @@ Text.prototype = {
     },
     setMessage: function (message) {
         this.message = message;
-    }
+    },
+	setBold: function(bold) {
+		this.bold = bold;
+	}
 }
