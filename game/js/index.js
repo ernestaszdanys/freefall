@@ -1,22 +1,26 @@
 var canvas = document.getElementById("game"),
-    context = canvas.getContext("2d");
+    context = canvas.getContext("2d"),
+    choreographer = new Choreographer(window);
 
+// Set canvas size
 canvas.width = 480;
 canvas.height = 720; 
-    
-var choreographer = new Choreographer(window);
+
+// Start game loop
 choreographer.requestFrameLoop();
 choreographer.addEventListener(Choreographer.EVENT_ON_FRAME, draw);
 
-var player = new Player(new Circle(100, 100, 50), 100);
+var game = new Game(context);
 
 function draw(eventName, dt) {
-    console.clear();
-    console.log(dt);
+    //console.clear();
+    //console.log(dt);
     
     context.clearRect(0, 0, canvas.width, canvas.height);
-    player.applyForce(new Vec2(50, 50), dt * 0.001);
-    player.draw(context);
+    //player.applyForce(new Vec2(50, 50), dt * 0.001);
+    //player.draw(context);
+    game.simulatePhysics(dt);
+    game.draw();
 }
 
 

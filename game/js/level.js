@@ -19,20 +19,14 @@ var Level = (function() {
 		
 		
 		for (var i = 0; i < numberOfObstacles; i++){
-			offsetY += obstacleVerticleSpacing;			
-			obstacleArray.push(new Body(new Poly(coordinates[Math.floor(Math.random() * 10) % coordinates.length]), Math.random() > 0.5 ? new Solid(1) : new Liquid(10000)));
+			offsetY += obstacleVerticleSpacing;
+                        var random = Math.floor(Math.random() * coordinates.length);
+			obstacleArray.push(new Body(new Poly(0, 0, coordinates[random]), 100));
 			obstacleArray[i].shape.x = (Math.floor(Math.random() * 10000)) % (width - obstacleArray[i].shape.width);
 			obstacleArray[i].shape.y = offsetY;
 		}
 		
 		offsetY = offset || 0;
-		var wallHeight = numberOfObstacles * obstacleVerticleSpacing;
-		obstacleArray.push(new Body(new Poly([new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, wallHeight), new Vec2(0, wallHeight)])));
-		obstacleArray[obstacleArray.length-1].shape.y = offsetY;
-		obstacleArray.push(new Body(new Poly([new Vec2(0, 0), new Vec2(20, 0), new Vec2(20, wallHeight), new Vec2(0, wallHeight)])));
-		obstacleArray[obstacleArray.length-1].shape.x = canvas.width-20;
-		obstacleArray[obstacleArray.length-1].shape.y = offsetY;
-
 		return obstacleArray;
 	}
 	
@@ -44,7 +38,6 @@ var Level = (function() {
 		this.numberOfObstacles = numberOfObstacles;
 		this.offset = offset || 0;
 		this.obstacles = generateObstacles(numberOfObstacles, width, height, offset);
-		
 	};
 })();
 

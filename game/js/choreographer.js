@@ -17,7 +17,7 @@
     if (!window.requestAnimationFrame || !window.cancelAnimationFrame) {
         window.requestAnimationFrame = function(callback) {
             var currTime = getTime();
-            var timeToCall = Math.max(0, 16 - (currTime - lastTime));
+            var timeToCall = Math.max(0, 16.33333333333 - (currTime - lastTime));
             var id = window.setTimeout(function() {
                 callback(currTime + timeToCall);
             }, timeToCall);
@@ -36,14 +36,14 @@ function Choreographer(window) {
     
     var self = this,
         frameId,
-        frameLastTimestamp;
+        lastFrameTimestamp;
         
     function onFrame(frameTimestamp) {
-        if (frameLastTimestamp === void 0) {
-            frameLastTimestamp = frameTimestamp;
+        if (lastFrameTimestamp === void 0) {
+            lastFrameTimestamp = frameTimestamp;
         }
-        self.dispatchEvent(Choreographer.EVENT_ON_FRAME, frameTimestamp - frameLastTimestamp);
-        frameLastTimestamp = frameTimestamp;
+        self.dispatchEvent(Choreographer.EVENT_ON_FRAME, frameTimestamp - lastFrameTimestamp);
+        lastFrameTimestamp = frameTimestamp;
         if (frameId !== void 0) {
             frameId = window.requestAnimationFrame(onFrame);
         }

@@ -56,7 +56,7 @@ Vec2.prototype = {
         this.x /= length;
         this.y /= length;
     },
-    reflectAlongNormal: function(normal, restitution) {
+    reflectAlongNormalVector: function(normal, restitution) {
         if (restitution === void 0 || restitution > 1) {
             restitution = 1;
         } if (restitution < 0) {
@@ -66,6 +66,17 @@ Vec2.prototype = {
         var dotTimesTwo = this.dotVector(normal) * (1 + restitution);
         this.x -= dotTimesTwo * normal.x;
         this.y -= dotTimesTwo * normal.y;
+    },
+    reflectAlongNormalXY: function(x, y, restitution) {
+        if (restitution === void 0 || restitution > 1) {
+            restitution = 1;
+        } if (restitution < 0) {
+            resitution = 0;
+        }
+        // vectorReflection = vector - 2(vector dot normal) * normal
+        var dotTimesTwo = this.dotXY(x, y) * (1 + restitution);
+        this.x -= dotTimesTwo * x;
+        this.y -= dotTimesTwo * y;
     },
     toUnitVector: function() {
         var length = this.length();

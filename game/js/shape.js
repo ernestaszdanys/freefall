@@ -1,15 +1,16 @@
 function Circle(centerX, centerY, radius) {
     this.radius = radius;
-    this.position = new Vec2(centerX - this.radius, centerY - this.radius);
+    this.x = centerX - this.radius;
+    this.y = centerY - this.radius;
     this.width = this.height = 2 * this.radius;
 }
 Circle.TAU = Math.PI * 2;
 Circle.prototype = {
     getCenterX: function() {
-        return this.position.x + this.radius;
+        return this.x + this.radius;
     },
     getCenterY: function() {
-        return this.position.y + this.radius;
+        return this.y + this.radius;
     },
     draw: function(context) {
         this.drawBoundingBox(context);
@@ -24,12 +25,13 @@ Circle.prototype = {
     },
     drawBoundingBox: function(context) {
         context.strokeStyle = "rgba(0, 0, 0, 0.1)";
-        context.strokeRect(this.position.x, this.position.y, this.width, this.height);
+        context.strokeRect(this.x, this.y, this.width, this.height);
     }
 };
 
 function Rect(x, y, width, height) {
-    this.position = new Vec2(x, y);
+    this.x = x;
+    this.y = y;
     this.width = width;
     this.height = height;
 }
@@ -38,49 +40,50 @@ Rect.prototype = {
         this.drawBoundingBox(context);
 
         context.fillStyle = "rgba(0, 0, 255, 0.2)";
-        context.fillRect(this.position.x, this.position.y, this.width, this.height);
+        context.fillRect(this.x, this.y, this.width, this.height);
         context.strokeStyle = "rgba(0, 0, 255, 1)";
-        context.strokeRect(this.position.x, this.position.y, this.width, this.height);
+        context.strokeRect(this.x, this.y, this.width, this.height);
     },
     drawBoundingBox: function(context) {
         context.strokeStyle = "rgba(0, 0, 0, 0.1)";
-        context.strokeRect(this.position.x, this.position.y, this.width, this.height);
+        context.strokeRect(this.x, this.y, this.width, this.height);
     }
 };
 
 function Poly(x, y, vertices) {
     this.vertices = vertices;
-	
+
     // Calculates bounding box of the given polygon
-    this.position = new Vec2(vertices[0].x, vertices[0].y);
+    this.x = vertices[0].x;
+    this.y = vertices[0].y;
     this.width = vertices[0].x;
     this.height = vertices[0].y;	
     for (var i = 1; i < this.vertices.length; i++) {
-        if (this.vertices[i].x < this.position.x) this.position.x = this.vertices[i].x;
-        if (this.vertices[i].y < this.position.y) this.position.y = this.vertices[i].y;
+        if (this.vertices[i].x < this.x) this.x = this.vertices[i].x;
+        if (this.vertices[i].y < this.y) this.y = this.vertices[i].y;
         if (this.vertices[i].x > this.width) this.width = this.vertices[i].x;
         if (this.vertices[i].y > this.height) this.height = this.vertices[i].y;
     }
-    this.width -= this.position.x;
-    this.height -= this.position.y;
+    this.width -= this.x;
+    this.height -= this.y;
 
     // Align everything to x and y axes
     for (var i = 0; i < this.vertices.length; i++) {
-        this.vertices[i].x -= this.position.x;
-        this.vertices[i].y -= this.position.y;
+        this.vertices[i].x -= this.x;
+        this.vertices[i].y -= this.y;
     }
     
-    this.position.x = x;
-    this.position.y = y;
+    this.x = x;
+    this.y = y;
 }
 Poly.prototype = {
     draw: function(context) {
         this.drawBoundingBox(context);
 
         context.beginPath();
-        context.moveTo(this.vertices[this.vertices.length - 1].x + this.position.x, this.vertices[this.vertices.length - 1].y + this.position.y);
+        context.moveTo(this.vertices[this.vertices.length - 1].x + this.x, this.vertices[this.vertices.length - 1].y + this.y);
         for (var i = 0; i < this.vertices.length; i++) {
-            context.lineTo(this.vertices[i].x + this.position.x, this.vertices[i].y + this.position.y);
+            context.lineTo(this.vertices[i].x + this.x, this.vertices[i].y + this.y);
         }
         context.closePath();
         context.fillStyle = "rgba(0, 255, 0, 0.2)";
@@ -90,7 +93,7 @@ Poly.prototype = {
     },
     drawBoundingBox: function(context) {
         context.strokeStyle = "rgba(0, 0, 0, 0.1)";
-        context.strokeRect(this.position.x, this.position.y, this.width, this.height);
+        context.strokeRect(this.x, this.y, this.width, this.height);
     }
 };
 /*
