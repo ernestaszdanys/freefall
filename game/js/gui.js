@@ -97,7 +97,9 @@ function Menu(context) {
 function Hud(context) {
     
     var score = 0,
-        health = 0;
+        health = 0,
+        count = 0;
+        text = new Text("", 0, 0);
     
     this.setScore = function(newScore) {
         score = newScore;
@@ -118,6 +120,20 @@ function Hud(context) {
         context.globalAlpha = 0.8;
         context.fillRect(0, canvas.height - 60, canvas.width, 60);
         context.globalAlpha = 1;
+
+        // printing pts
+        text.setMessage(~~score);
+        text.setX(10);
+        text.setY(canvas.height-15);
+        text.setSize(40);
+        text.draw(context);
+
+        text.setMessage("PTS");
+        count = Math.floor(Math.log(score)/Math.LN10) + 1;
+        text.setX(15 + 25 * (count == 0 ? 1 : count));
+        text.setY(canvas.height-15);
+        text.setSize(30);
+        text.draw(context);
     };
 };
 

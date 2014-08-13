@@ -141,6 +141,7 @@ var Game = function(context) {
 
     function draw() {
 		if(level === void 0) throw new Error("level is not set");
+
         // Transform
         context.save();
         context.setTransform(1, 0, 0, 1, 0, -cameraRect.y);

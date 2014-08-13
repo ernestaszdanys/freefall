@@ -24,8 +24,8 @@ function Text(message, x, y) {
 
 Text.prototype = {
 	draw: function(context) {
-		context.font = "bold " + (this.size + fontStrokeRatio*this.size) + 'px ' + 'Bitter';
-		context.lineWidth = 6;
+		context.font = "bold " + this.size + 'px ' + 'Bitter';
+		context.lineWidth = 7;
 		context.strokeStyle = "rgba(0, 0, 0, 0.2)";
 		context.strokeText(this.message, this.x - fontStrokeRatio*this.size, this.y + fontStrokeRatio*this.size);
 		
@@ -34,8 +34,19 @@ Text.prototype = {
 		context.fillText(this.message, this.x, this.y);
 		
 		context.fillStyle = "rgba(198, 212, 222, 1)";
-		context.fillText(this.message, this.x, this.y + 2);
+        context.fillText(this.message, this.x, this.y + 2);
 	},
+    drawAngle: function(context){
+        context.save();
+
+        for (var i = 0; i < this.message.length; i++) {
+            context.font = "bold " + this.size + 'px ' + 'Bitter';
+            context.fillStyle = "rgba(198, 212, 222, 1)";
+            context.fillText(this.message[i], 300, 100);
+            context.rotate(-0.1);
+        }
+        context.restore();
+    },
 	setText: function(message) {
 		this.message = message;
 	},
@@ -56,5 +67,14 @@ Text.prototype = {
 	},
 	getHeight: function() {
 		return this.height;
-	}
+	},
+    setX: function(x) {
+        this.x = x;
+    },
+    setY: function(y) {
+        this.y = y;
+    },
+    setMessage: function (message) {
+        this.message = message;
+    }
 }
