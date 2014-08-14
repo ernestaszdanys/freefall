@@ -21,7 +21,7 @@ function Text(context) {
 	
 	function measureWidth() {
 		applyFontStyle();
-		width = context.measureText(this.text).width;
+		width = context.measureText(text).width;
 	};
 	function applyFontStyle() {
 		context.font = (bold ? "bold " : "") + size + 'px ' + 'Bitter';

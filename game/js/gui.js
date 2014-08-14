@@ -99,8 +99,25 @@ function Hud(context) {
     var score = 0,
         health = 0,
         count = 0;
-        text = new Text(context);
-    
+        scoreText = new Text(context);
+        ptsText = new Text(context);
+        healthText = new Text(context);
+        hpText = new Text(context);
+
+    scoreText.setSize(40);
+    scoreText.setBold(true);
+
+    ptsText.setText("PTS");
+    ptsText.setSize(30);
+    ptsText.setBold(false);
+
+    healthText.setSize(40);
+    healthText.setBold(true);
+
+    hpText.setText("HP");
+    hpText.setSize(30);
+    hpText.setBold(false);
+
     this.setScore = function(newScore) {
         score = newScore;
     };
@@ -117,26 +134,18 @@ function Hud(context) {
         context.globalAlpha = 1;
 
         // printing pts
-        text.setText(~~score);
-        text.setSize(40);
-		text.setBold(true);
-        text.draw(15, canvas.height-15);
+        scoreText.setText(~~score);
+        scoreText.draw(15, canvas.height-15);
 
-        text.setText("PTS");
         count = Math.floor(Math.log(score)/Math.LN10) + 1;
-        text.setSize(30);
-		text.setBold(false);
-        text.draw(20 + 25 * (count == 0 ? 1 : count), canvas.height-15);
+        ptsText.draw(20 + 25 * (count == 0 ? 1 : count), canvas.height-15);
 
         // printing hp
-        text.setText("HP");
-        text.draw(canvas.width - 55, canvas.height - 15);
-
-        text.setText(~~health);
+        healthText.setText(~~health);
         count = Math.floor(Math.log(health)/Math.LN10) + 1;
-        text.setSize(40);
-        text.setBold(true);
-        text.draw(canvas.width-60 - 25 * (count == 0 ? 1 : count), canvas.height-15);
+        healthText.draw(canvas.width-60 - 25 * (count == 0 ? 1 : count), canvas.height-15);
+
+        hpText.draw(canvas.width - 55, canvas.height - 15);
     };
 };
 
@@ -148,9 +157,17 @@ function GameOver(context) {
     var score = 0,
         buttonCircle = new Circle(canvas.width/2, 500, 45),
         buttonClick = false,
-        buttonHover = false;
-        //textGameOver = "Game Over";
-    
+        buttonHover = false,
+        scoreText = new Text(context),
+        ptsText = new Text(context);
+
+    scoreText.setSize(40);
+    scoreText.setBold(true);
+
+    ptsText.setText("PTS");
+    ptsText.setSize(30);
+    ptsText.setBold(false);
+
     this.setScore = function(newScore) {
         score = ~~newScore;
     };
@@ -182,29 +199,15 @@ function GameOver(context) {
 
 
     this.draw = function() {
-        /*
-        // Draw background
-        context.fillStyle = "rgb(0, 0, 0)";
-        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
-        // Draw "Game Over"
-        context.font = "70px Georgia";
-        context.fillStyle = "rgb(255, 255, 255)";
-        context.fillText(textGameOver,
-                (context.canvas.width - context.measureText(textGameOver).width) / 2,
-                300);
-        // Draw score
-        var scoreText = "Score: " + score;
-        context.font = "30px Georgia";
-        context.fillStyle = "rgb(255, 255, 255)";
-        context.fillText(
-                scoreText,
-                (context.canvas.width - context.measureText(scoreText).width) / 2,
-                350);
-        */
         context.fillStyle = "rgb(32, 46, 59)";
         context.fillRect(0, 245, canvas.width, 148);
         context.drawImage(images.brokenEgg, (canvas.width - images.brokenEgg.width)/2, 200);
         context.drawImage(images.ribbon, (canvas.width - images.ribbon.width)/2, 295);
+
+        // printing pts
+        scoreText.setText(score);
+        scoreText.draw((canvas.width-scoreText.getWidth()-ptsText.getWidth())/2 - 2, 390);
+        ptsText.draw((canvas.width-scoreText.getWidth()-ptsText.getWidth())/2 + scoreText.getWidth() + 4, 390);
 
         if (buttonHover && buttonClick) { // Click
             context.drawImage(images.button, buttonCircle.x, buttonCircle.y);
