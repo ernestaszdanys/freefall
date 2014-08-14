@@ -14,14 +14,16 @@ var Game = function(context) {
     var cameraRect = {x: 0, y: 0, width: context.canvas.width, height: context.canvas.height};
 
     // World (map) related stuff
-    var levelAreas = new SpatialMap(null, 8), // TODO:
-        staticBodies = new SpatialMap("shape", 8), // Spatial map containing all the shapes of the bodies
+    var staticBodies = new SpatialMap("shape", 8), // Spatial map containing all the solid shapes of the bodies
         staticEffectAreas = new SpatialMap("effect.shape", 8), // Spatial map containing all the effect areas of the bodies
         // TODO: dynamicBodies = new SpatialMap("shape", 8), // Spatial map containing all dynamic bodies
         player = new DynamicBody(new Circle(200, 100, 10), 100); // TODO: dynamicBodies
     
     
     var level = new Level(100, 0, 1000, 1000, 50, 0);
+    level.obstacles = [];
+    level.obstacles.push(new Body(new Poly(200, 200, [new Vec2(0, 50), new Vec2(70, 0), new Vec2(100, 100)]), void 0));
+    level.obstacles.push(new Body(new Poly(200, 400, [new Vec2(0, 0), new Vec2(100, 0), new Vec2(100, 100), new Vec2(0, 100)]), new Gravity(9999999999999)));
     
     staticBodies.addArray(level.obstacles);
     staticEffectAreas.addArray(level.obstacles);
@@ -39,63 +41,60 @@ var Game = function(context) {
 
         dt *= 0.001; // Convert milliseconds to seconds
         dt *= timeScale; // Apply time scale to allow slow-mo effects
-        totalTime += dt; // Keep track of total simulation time
+        totalTime += dt; // Keep track of the total simulation time
 		
-        var samplesLeft = sampleCount, // Number of physics runs per frame
+        var samplesLeft = sampleCount,
             sampleDt = dt / sampleCount; // Sample physics delta time
 			
-	var totalForce = new Vec2(),
-            dragForce = new Vec2();            
+	var forceOnPlayer = new Vec2();
             
         while (samplesLeft--) {
 
-            totalForce.y = 500; // level.gravity * player.mass;
-            totalForce.x = 0;
+            forceOnPlayer.y = 0 * player.mass;
+            forceOnPlayer.x = 0;
             
             // Air resistance
             // dragForce = Physics.calculateDrag(player.velocity, level.airDensity, player.shape.dragCoef, player.shape.crossSectionalArea);
             
             if (KEYS.isDown(68)) { // D
-                totalForce.x += 1000;
+                forceOnPlayer.x += 1000;
             } 
 
             if (KEYS.isDown(65)) { // A
-                totalForce.x += -1000;
+                forceOnPlayer.x += -1000;
             }
 
             if (KEYS.isDown(83)) { // S
-                totalForce.y += 1000;
+                forceOnPlayer.y += 1000;
             }
 
             if (KEYS.isDown(87)) { // W
-                totalForce.y -= 1000;
+                forceOnPlayer.y -= 1000;
             }
-                        
+            
+            
+            // Apply effects on player
+            var effectObstacles = staticEffectAreas.query(player.shape.x, player.shape.y, player.shape.width, player.shape.height),
+                intersectionData = {},
+                intersects = false,
+                effectObstacle;
+            
+            for (var i = 0, length = effectObstacles.length; i < length; i++) {
+                effectObstacle = effectObstacles[i];
+                intersects = intersect.apply(player.shape, effectObstacle.effect.shape, intersectionData);
+                if (intersects) console.log("Effect obstacle...");
+            }
+            
             // Move player
-            totalForce.addVector(dragForce);
-            player.applyForce(totalForce, sampleDt);
+            player.applyForce(forceOnPlayer, sampleDt);
                     
             // Check for collisions and resolve them
             var obstacles = staticBodies.query(player.shape.x, player.shape.y, player.shape.width, player.shape.height),
-                intersectionData = {},
-                intersects = false,
                 obstacle;
-            
             
             for(var i = 0, length = obstacles.length; i < length; i++) {
                 obstacle = obstacles[i];
-
-                /*if (obstacle.type instanceof GravityField) {
-                    var gravityForceOnPlayer = new Vec2(
-                            (obstacle.shape.x + obstacle.shape.width / 2) - (player.shape.x + player.shape.width / 2),
-                            (obstacle.shape.y + obstacle.shape.height / 2) - (player.shape.y + player.shape.height / 2)
-                        );
-                    var distance = gravityForceOnPlayer.length();
-                    gravityForceOnPlayer.scale((Physics.G * player.type.mass * obstacle.type.pointMass) / (distance * distance));
-                    totalForce.addVector(gravityForceOnPlayer);
-                }*/
-
-                intersects = Intersection.circlePoly(player.shape, obstacles[i].shape, intersectionData);
+                intersects = intersect.apply(player.shape, obstacle.shape, intersectionData);
                 if (intersects && intersectionData.penetration >= 0) {
                     // Move the player out of the obstacle
                     player.translate(intersectionData.penetrationX, intersectionData.penetrationY);

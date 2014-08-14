@@ -1,8 +1,7 @@
-
 var Intersection = {
     pointRect: function(x, y, rect) {
-        return (x >= rect.x && x <= rect.x + rect.width)
-                && (y >= rect.y && y <= rect.y + rect.height);
+        return (x >= rect.x && x <= rect.x + rect.width) 
+            && (y >= rect.y && y <= rect.y + rect.height);
     },
     circlePoly: function(circle, poly, intersectionData) {
         if (!intersectionData) {
@@ -83,18 +82,23 @@ var Intersection = {
         return (hits % 2 === 1);
     },
     rectRect: function(rect1, rect2) {
-        if (rect1.x + rect1.width > rect2.x || rect1.x - rect1.width < rect2.x + rect2.width
-                || rect1.y + rect1.height > rect2.y || rect1.y - rect1.height < rect2.y + rect2.height) {
-            return true;
-        }
-        return false;
+        return (rect1.x + rect1.width > rect2.x || rect1.x - rect1.width < rect2.x + rect2.width 
+            || rect1.y + rect1.height > rect2.y || rect1.y - rect1.height < rect2.y + rect2.height);
     }
-}
-
-var Physics = {
-    
-    
 };
+
+// Dynamic intersection checking
+var intersect = new Behaviour();
+
+// Circle-Poly and Poly-Circle
+intersect.set(Circle, Poly, Intersection.circlePoly);
+intersect.set(Poly, Circle, function(poly, circle, data) {
+    return Intersection.circlePoly(circle, poly, data);
+});
+
+
+
+var Physics = {};
 
 //Returns coefficients A, B, C of line equation between 2 points Ax+Bx+C=0
 Physics.equationTwoPoints = function(x1, x2) {

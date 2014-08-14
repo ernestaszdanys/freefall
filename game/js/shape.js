@@ -4,6 +4,7 @@ function Circle(centerX, centerY, radius) {
     this.y = centerY - this.radius;
     this.width = this.height = 2 * this.radius;
 }
+
 Circle.TAU = Math.PI * 2;
 Circle.prototype = {
     getCenterX: function() {
@@ -28,6 +29,7 @@ Circle.prototype = {
         context.strokeRect(this.x, this.y, this.width, this.height);
     }
 };
+Circle.prototype.constructor = Circle;
 
 function Rect(x, y, width, height) {
     this.x = x;
@@ -49,6 +51,7 @@ Rect.prototype = {
         context.strokeRect(this.x, this.y, this.width, this.height);
     }
 };
+Rect.prototype.constructor = Rect;
 
 function Poly(x, y, vertices) {
     this.vertices = vertices;
@@ -96,6 +99,8 @@ Poly.prototype = {
         context.strokeRect(this.x, this.y, this.width, this.height);
     }
 };
+Poly.prototype.constructor = Poly;
+
 /*
 function Poly2(x, y, vertices) {
     this.vertices = vertices;

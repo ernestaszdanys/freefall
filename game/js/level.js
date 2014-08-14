@@ -35,7 +35,6 @@ var Level = (function() {
 		this.gravity = gravity;
 		this.width = width;
 		this.height = height;
-		this.numberOfObstacles = numberOfObstacles;
 		this.offset = offset || 0;
 		this.obstacles = generateObstacles(numberOfObstacles, width, height, offset);
 	};

@@ -1,23 +1,9 @@
-// TODO: rewrite this thing ("cells" should be 2d array)
+// TODO: rewrite ("cells" should be 2d array)
 // TODO: style
-function SpatialMap(boundingBoxPath, shift) {
+function SpatialMap(boundingBoxPropertyPath, shift) {
     
     // Dynamically create funtion that returns bounding box
-    // TODO: is "eval" really that evil?
-    var getBoundingBox;
-    if (boundingBoxPath === null || boundingBoxPath === void 0) {
-        getBoundingBox = function(object) {
-            return object.shape;
-        };
-    } else if (typeof boundingBoxPath === "string") {
-        try {
-            getBoundingBox = eval("(function(object) {return object." + boundingBoxPath + ";})");
-        } catch(error) {
-            throw new Error("Bad boundingBoxPath.");
-        };
-    } else {
-        throw new Error("Parameter boundingBoxPath must be either a string or null or undefined.");
-    }
+    var getBoundingBox = PropertyChecker.compilePropertyGetter(boundingBoxPropertyPath);
         
     // Validate cell size parameter
     // TODO: maybe throwing error is better...
