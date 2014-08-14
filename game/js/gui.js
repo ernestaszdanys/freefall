@@ -99,7 +99,7 @@ function Hud(context) {
     var score = 0,
         health = 0,
         count = 0;
-        text = new Text("", 0, 0);
+        text = new Text(context);
     
     this.setScore = function(newScore) {
         score = newScore;
@@ -117,34 +117,26 @@ function Hud(context) {
         context.globalAlpha = 1;
 
         // printing pts
-        text.setMessage(~~score);
-        text.setX(15);
-        text.setY(canvas.height-15);
+        text.setText(~~score);
         text.setSize(40);
 		text.setBold(true);
-        text.draw(context);
+        text.draw(15, canvas.height-15);
 
-        text.setMessage("PTS");
+        text.setText("PTS");
         count = Math.floor(Math.log(score)/Math.LN10) + 1;
-        text.setX(20 + 25 * (count == 0 ? 1 : count));
-        text.setY(canvas.height-15);
         text.setSize(30);
 		text.setBold(false);
-        text.draw(context);
+        text.draw(20 + 25 * (count == 0 ? 1 : count), canvas.height-15);
 
         // printing hp
-        text.setMessage("HP");
-        text.setX(canvas.width - 55);
-        text.setY(canvas.height-15);
-        text.draw(context);
+        text.setText("HP");
+        text.draw(canvas.width - 55, canvas.height - 15);
 
-        text.setMessage(~~health);
+        text.setText(~~health);
         count = Math.floor(Math.log(health)/Math.LN10) + 1;
-        text.setX(canvas.width-60 - 25 * (count == 0 ? 1 : count));
-        text.setY(canvas.height-15);
         text.setSize(40);
         text.setBold(true);
-        text.draw(context);
+        text.draw(canvas.width-60 - 25 * (count == 0 ? 1 : count), canvas.height-15);
     };
 };
 
