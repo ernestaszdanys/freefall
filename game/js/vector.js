@@ -87,33 +87,38 @@ Vec2.prototype = {
     }
 };
 
-//returns normal of vector between 2 points
-//TODO: optimize (clock_wise_normal = new Vec2(-end.y + start.y, end.x - start.x).toUnitVector();)
-Vec2.createNormal = function(p1, p2, shape) {
-    var e = 0.1;
-    var normal = new Vec2(p2.y - p1.y, p2.x - p1.x);
-    var middle;
-
-    if ((normal.x >= 0 && normal.y >= 0) || (normal.x < 0 && normal.y <= 0)) {
-        middle = new Circle((p1.x + p2.x) / 2 + shape.x - e, (p1.y + p2.y) / 2 + shape.y + e, e / 2);
-        if (Intersection.circlePoly(middle, shape)) {
-            normal.x = Math.abs(normal.x);
-            normal.y = -Math.abs(normal.y);
-        } else {
-            normal.x = -Math.abs(normal.x);
-            normal.y = Math.abs(normal.y);
-        }
-    } else
-    if ((normal.x <= 0 && normal.y >= 0) || (normal.x >= 0 && normal.y <= 0)) {
-        middle = new Circle((p1.x + p2.x) / 2 + shape.x + e, (p1.y + p2.y) / 2 + shape.y + e, e / 2);
-        if (Intersection.circlePoly(middle, shape)) {
-            normal.x = -Math.abs(normal.x);
-            normal.y = -Math.abs(normal.y);
-        } else {
-            normal.x = Math.abs(normal.x);
-            normal.y = Math.abs(normal.y);
-        }
-    }
-
+// Returns normal of vector between 2 points
+Vec2.createNormal = function(p1, p2) {
+    var normal = new Vec2(p2.y-p1.y, -p2.x+p1.x);
+    normal.normalize();
     return normal;
+};
+
+Vec2.parseVectorPrimitiveArray = function(primitives) {
+    if (!(primitives instanceof Array)) {
+        throw new Error("Parameter 1 (primitives) must be an array of vector primitives: [x0, y0, x1, y1, ... , xn, yn]");
+    }
+    
+    if (primitives.length % 2 !== 0) {
+        throw new Error("Primitive array must have even number of entries.");
+    }
+    
+    var vectorArray = [];
+    for (var i = 0; i < primitives.length; i += 2) {
+        vectorArray.push(new Vec2(primitives[i], primitives[i + 1]));
+    }
+    
+    return vectorArray;
+};
+
+function Vec3(x, y, z) {
+    this.x = x || 0;
+    this.y = y || 0;
+    this.z = z || 0;
+}
+
+Vec3.prototype.perspectiveProjectToBucket = function(perspectiveOriginX, perspectiveOriginY, perspective, resultBucket) {
+    resultBucket.w = -perspective / (this.z - perspective),
+    resultBucket.x = (this.x - perspectiveOriginX) * resultBucket.w + perspectiveOriginX,
+    resultBucket.y = (this.y - perspectiveOriginY) * resultBucket.w + perspectiveOriginY;
 };

@@ -26,6 +26,14 @@ function SpatialMap(boundingBoxPropertyPath, shift) {
     };
 
     function generateRectKeys(x, y, width, height) {
+        if (width === void 0) {
+            width = 0;
+        }
+        
+        if (height === void 0) {
+            height = 0;
+        }
+        
         var sx = x >> shift,
             sy = y >> shift,
             ex = (x + width) >> shift,

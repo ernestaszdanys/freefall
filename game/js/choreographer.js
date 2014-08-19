@@ -49,13 +49,13 @@ function Choreographer(window) {
         }
     }
     
-    this.requestFrameLoop = function() {
+    this.startFrameLoop = function() {
         if (frameId === void 0) {
             frameId = window.requestAnimationFrame(onFrame);
         }
     };
 
-    this.cancelFrameLoop = function() {
+    this.stopFrameLoop = function() {
         if (frameId !== void 0) {
             window.cancelAnimationFrame(frameId);
             frameId = void 0;
