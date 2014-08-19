@@ -83,8 +83,8 @@ var Game = function(context, resources) {
     });
 
     // Level related stuff
-    var levelGravity = 4.8,
-        levelEnvironmentDensity = Physics.densityAir * 10,
+    var levelGravity = 6.8,
+        levelEnvironmentDensity = Physics.densityAir * 7,
         levelMinY = Number.MIN_VALUE,
         levelMaxY = Number.MIN_VALUE;
     
@@ -183,11 +183,11 @@ var Game = function(context, resources) {
             forceOnPlayer.x = 0;
 
             if (KEYS.isDown(68) || KEYS.isDown(39)) { // Right
-                forceOnPlayer.x += 2000;
+                forceOnPlayer.x += 2800;
             } 
 
             if (KEYS.isDown(65) || KEYS.isDown(37)) { // Left
-                forceOnPlayer.x += -2000;
+                forceOnPlayer.x += -2800;
             }
 
             if (KEYS.isDown(83) || KEYS.isDown(40)) { // Down

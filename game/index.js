@@ -112,7 +112,7 @@ Loader.loadResourceTree(resourceDescription,
         
         game.addEventListener(Game.EVENT_LEVEL_END_VISIBLE, function(eventName, levelEndY) {
             game.addObstacles(generateObstacles(10, canvas.width, canvas.height * 3, levelEndY, resources));
-            game.addBackgroundObjects(generateRandomBackgroundObjects(20, resources.backgroundObstaclesBlur2, canvas.width, canvas.height * 3, -200, 0, levelEndY, 0));
+            game.addBackgroundObjects(generateRandomBackgroundObjects(50, resources.backgroundObstaclesBlur2, canvas.width, canvas.height * 3, -200, 0, levelEndY, 0));
         });
         
         gameOver.addEventListener(GameOver.EVENT_RESTART_CLICKED, function(eventName) {
