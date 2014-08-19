@@ -143,35 +143,3 @@ Loader.loadResourceTree(resourceDescription,
         throw error;
     }
 );
-
-
-
-
-
-
-    /*
-    hud.setHealth(100); // TODO: temp REWRITE EVERYTHING!!!!!!!
-    game.onPlayerHealthChanged = function(oldHealth, newHealth) {
-        hud.setHealth(newHealth);
-        if (~~newHealth <= 0) appState = AppState.GAME_OVER;
-    }
-    game.onPlayerScoreChanged = function(oldScore, newScore) {
-        hud.setScore(newScore);
-        gameOver.setScore(newScore);
-    }
-    game.setLevel(new Level(100, 9.8, canvas.width, 1000, 1));
-    game.onLevelEnd = function(){
-        currentLevel++;
-        game.addLevel(new Level((1/(currentLevel/2))*100, 9.8, canvas.width, 5000, currentLevel * 2, game.getLevel().height + game.getLevel().offset));
-    }
-    menu.onStartClicked = function() {
-        appState = AppState.GAME;
-        menu.dissable();
-    };
-    gameOver.onStartClicked = function() {
-        //game.setLevel(new Level(100, 9.8, canvas.width, 1000, 1));
-        //state = States.GAME;
-        //gameOver.dissable();
-    };
-
-    */
