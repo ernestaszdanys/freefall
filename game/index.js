@@ -108,9 +108,9 @@ Loader.loadResourceTree(resourceDescription,
             hud.setHealth(~~health);
             if (health === 0) {
                 if (gameOver.getScore() > hud.getHighScore()) {
-                    setCookie("highscore", gameOver.getScore(), 1000);
+                    localStorage.setItem("highscore", gameOver.getScore());
                 }
-                gameOver.setHighScore(getCookie("highscore"));
+                gameOver.setHighScore(localStorage.getItem("highscore"));
                 setAppState(AppState.GAME_OVER);
             }
         });

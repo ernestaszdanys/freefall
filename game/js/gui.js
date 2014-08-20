@@ -142,7 +142,7 @@ function Hud(context, resources) {
     highScoreValueText.setBold(true);
 
     this.setHighScore = function() {
-        highScore = getCookie("highscore");
+        highScore = localStorage.getItem("highscore");
     };
 
     this.getHighScore = function() {
@@ -230,7 +230,7 @@ function GameOver(context, resources) {
     };
 
     this.setHighScore = function() {
-        highScore = getCookie("highscore");
+        highScore = localStorage.getItem("highscore");
     };
 
     this.getHighScore = function() {
@@ -282,7 +282,6 @@ function GameOver(context, resources) {
 
         // printing high score
         highScoreValueText.setText(this.getHighScore());
-        console.log(highScoreText.getWidth(), highScoreValueText.getWidth(), (context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2, (context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth());
         highScoreText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 - 4, context.canvas.height-15);
         highScoreValueText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth() + 8, context.canvas.height-15);
 
