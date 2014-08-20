@@ -110,12 +110,15 @@ Menu.EVENT_START_CLICKED = "MENU_START_CLICKED";
 function Hud(context, resources) {
     
     var score = 0,
+        highScore,
         health = 0,
         count = 0,
         scoreText = new Text(context),
         ptsText = new Text(context),
         healthText = new Text(context),
-        hpText = new Text(context);
+        hpText = new Text(context),
+        highScoreText = new Text(context),
+        highScoreValueText = new Text(context);
 
     scoreText.setSize(40);
     scoreText.setBold(true);
@@ -130,6 +133,21 @@ function Hud(context, resources) {
     hpText.setText("HP");
     hpText.setSize(30);
     hpText.setBold(false);
+
+    highScoreText.setText("HIGH SCORE");
+    highScoreText.setSize(20);
+    highScoreText.setBold(false);
+
+    highScoreValueText.setSize(20);
+    highScoreValueText.setBold(true);
+
+    this.setHighScore = function() {
+        highScore = getCookie("highscore");
+    };
+
+    this.getHighScore = function() {
+        return highScore;
+    };
 
     this.setScore = function(newScore) {
         score = newScore;
@@ -159,6 +177,12 @@ function Hud(context, resources) {
         healthText.draw(context.canvas.width-60 - 25 * (count === 0 ? 1 : count), context.canvas.height-15);
 
         hpText.draw(context.canvas.width - 55, context.canvas.height - 15);
+
+        // printing high score
+        highScoreValueText.setText(this.getHighScore());
+        console.log(highScoreText.getWidth(), highScoreValueText.getWidth(), (context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2, (context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth());
+        highScoreText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 - 4, context.canvas.height-15);
+        highScoreValueText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth() + 8, context.canvas.height-15);
     };
 };
 
@@ -168,11 +192,14 @@ function GameOver(context, resources) {
     var self = this;
 
     var score = 0,
+        highScore,
         buttonCircle = new Circle(45),
         buttonClick = false,
         buttonHover = false,
         scoreText = new Text(context),
-        ptsText = new Text(context);
+        ptsText = new Text(context),
+        highScoreText = new Text(context),
+        highScoreValueText = new Text(context);
 
     buttonCircle.layout(context.canvas.width/2, 500, 0, 0);
         
@@ -182,6 +209,13 @@ function GameOver(context, resources) {
     ptsText.setText("PTS");
     ptsText.setSize(30);
     ptsText.setBold(false);
+
+    highScoreText.setText("HIGH SCORE");
+    highScoreText.setSize(22);
+    highScoreText.setBold(false);
+
+    highScoreValueText.setSize(22);
+    highScoreValueText.setBold(true);
     
     var gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
     gradient.addColorStop(0, 'rgba(32, 46, 59, 1.000)');
@@ -190,6 +224,17 @@ function GameOver(context, resources) {
     
     this.setScore = function(newScore) {
         score = ~~newScore;
+    };
+    this.getScore = function() {
+        return score;
+    };
+
+    this.setHighScore = function() {
+        highScore = getCookie("highscore");
+    };
+
+    this.getHighScore = function() {
+        return highScore;
     };
 
     function onMouseMove(event) {
@@ -234,6 +279,12 @@ function GameOver(context, resources) {
         scoreText.setText(score);
         scoreText.draw((context.canvas.width-scoreText.getWidth()-ptsText.getWidth())/2 - 2, 390);
         ptsText.draw((context.canvas.width-scoreText.getWidth()-ptsText.getWidth())/2 + scoreText.getWidth() + 4, 390);
+
+        // printing high score
+        highScoreValueText.setText(this.getHighScore());
+        console.log(highScoreText.getWidth(), highScoreValueText.getWidth(), (context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2, (context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth());
+        highScoreText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 - 4, context.canvas.height-15);
+        highScoreValueText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth() + 8, context.canvas.height-15);
 
         if (buttonHover && buttonClick) { // Click
             context.drawImage(resources.imageButtonRedRound, buttonCircle.x, buttonCircle.y);

@@ -93,6 +93,7 @@ Loader.loadResourceTree(resourceDescription,
         setAppState(AppState.MENU);
         
         menu.addEventListener(Menu.EVENT_START_CLICKED, function() {
+            hud.setHighScore();
             setAppState(AppState.GAME);
         });
 
@@ -106,6 +107,10 @@ Loader.loadResourceTree(resourceDescription,
         game.addEventListener(Game.EVENT_PLAYER_HEALTH_CHANGED, function(eventName, health) {
             hud.setHealth(~~health);
             if (health === 0) {
+                if (gameOver.getScore() > hud.getHighScore()) {
+                    setCookie("highscore", gameOver.getScore(), 1000);
+                }
+                gameOver.setHighScore(getCookie("highscore"));
                 setAppState(AppState.GAME_OVER);
             }
         });
@@ -117,6 +122,7 @@ Loader.loadResourceTree(resourceDescription,
         
         gameOver.addEventListener(GameOver.EVENT_RESTART_CLICKED, function(eventName) {
             game.resetPlayer();
+            hud.setHighScore();
             setAppState(AppState.GAME);
         });
         
