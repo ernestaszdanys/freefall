@@ -179,8 +179,7 @@ function Hud(context, resources) {
         hpText.draw(context.canvas.width - 55, context.canvas.height - 15);
 
         // printing high score
-        highScoreValueText.setText(this.getHighScore());
-        console.log(highScoreText.getWidth(), highScoreValueText.getWidth(), (context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2, (context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth());
+        highScoreValueText.setText(this.getHighScore() === null ? 0 : this.getHighScore());
         highScoreText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 - 4, context.canvas.height-15);
         highScoreValueText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth() + 8, context.canvas.height-15);
     };
