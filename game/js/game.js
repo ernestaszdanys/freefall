@@ -156,6 +156,62 @@ var Game = function(context, resources) {
     // TODO: validate dt
     this.simulatePhysics = function(dt) {
         
+        
+        
+        
+        
+        
+        
+
+ 
+        
+        
+        
+
+
+
+/*        // Check that we have a valid context to draw on/with before adding event handlers
+        if (context) {
+            // React to mouse events on the canvas, and mouseup on the entire document
+            canvas.addEventListener('mousedown', sketchpad_mouseDown, false);
+            canvas.addEventListener('mousemove', sketchpad_mouseMove, false);
+            window.addEventListener('mouseup', sketchpad_mouseUp, false);
+
+            // React to touch events on the canvas
+            canvas.addEventListener('touchstart', sketchpad_touchStart, false);
+            canvas.addEventListener('touchmove', sketchpad_touchMove, false);
+        }
+        
+        
+        
+        
+        
+        
+                        // Draw something and prevent the default scrolling when touch movement is detected
+
+        // Update the touch co-ordinates
+        getTouchPos(e);
+
+        // During a touchmove event, unlike a mousemove event, we don't need to check if the touch is engaged, since there will always be contact with the screen by definition.
+        drawDot(ctx,touchX,touchY,12); 
+
+        // Prevent a scrolling action as a result of this touchmove triggering.
+        event.preventDefault();*/
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         // Don't simulate too much if game is running like crap
         // TODO: there should be stall and tab switch detection somewhewre (preferably not in this file)
         if (dt > 50) dt = 50; 
@@ -210,6 +266,7 @@ var Game = function(context, resources) {
 //            }
             
             // Apply air drag
+            
             // TODO: cross section area
             forceOnPlayer.x += Physics.calculateDrag(player.getVelocityX() / Metrics.PPM, currentEnvironmentDensity, Physics.dragCoeffCube, 1);
             forceOnPlayer.y += Physics.calculateDrag(player.getVelocityY() / Metrics.PPM, currentEnvironmentDensity, Physics.dragCoeffCube, 1);
@@ -266,7 +323,7 @@ var Game = function(context, resources) {
     };
 
 
-    var gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
+    var gradient = context.createLinearGradient(0, 0, context.canvas.width, context.canvas.height);
     gradient.addColorStop(0, 'rgba(32, 46, 59, 1.000)');
     gradient.addColorStop(0.5, 'rgba(65, 77, 89, 1.000)');
     gradient.addColorStop(1, 'rgba(90, 101, 111, 1.000)');

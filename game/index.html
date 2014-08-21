@@ -4,7 +4,7 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
 -->
 <html>
     <head>
-
+        
         <title>Free Fall pre-pre-alpha</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,10 +26,41 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
         <script src="js/gui.js"></script>
         <script src="js/level.js"></script>
         <script src="js/game.js"></script>
+        <script src="js/touch_screen.js"></script>
         
+        <style>
+            
+            body {margin: 0; padding: 0; width: 480px; height: 720px; overflow: hidden;}
+            
+            #outside {
+                /* Prevent nearby text being highlighted when accidentally dragging mouse outside confines of the canvas */
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                }
+            
+            #canvas {float:left; width: 100%; height: 100%; background-color: #eee;
+                
+                /*Touch-sreen stuff*/
+                position:relative; /* Necessary for correct mouse co-ords in Firefox */
+            }
+
+        </style>
     </head>
-    <body style="margin: 0; padding: 0; width: 480px; height: 720px; overflow: hidden;">
-        <canvas id="canvas" style="width: 100%; height: 100%; background-color: #eee"></canvas>
+
+<body>
+<!--    <body onload="init()">-->
+    <div id="outside">
+<!--        <canvas id="sketchpad" height="300" width="400">
+        </canvas>-->
+        <canvas id="canvas">
+            This text is displayed if your browser does not support HTML5 Canvas.
+        </canvas>
         <script type="text/javascript" src="index.js"></script>
-    </body>
+        
+    </div>
+</body>
 </html>
