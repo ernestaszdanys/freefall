@@ -23,13 +23,13 @@ function drawDot(context, x, y, size) {
     context.fill();
 }
 
-    // Clear the canvas context using the canvas width and height
+/*    // Clear the canvas context using the canvas width and height
 function clearCanvas(canvas, context) {
     
     "use strict";
     
     context.clearRect(0, 0, canvas.width, canvas.height);
-}
+}*/
 
     // Keep track of the mouse button being pressed and draw a dot at current location
 function sketchpad_mouseDown() {

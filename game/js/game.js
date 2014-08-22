@@ -152,25 +152,7 @@ var Game = function(context, resources) {
         timeScale = (newTimeScale > 0) ? newTimeScale : 0;
     };
     
-    // TODO: Simulate physics in fixed time steps.
-    // TODO: validate dt
-    this.simulatePhysics = function(dt) {
-        
-        
-        
-        
-        
-        
-        
-
- 
-        
-        
-        
-
-
-
-/*        // Check that we have a valid context to draw on/with before adding event handlers
+        // Check that we have a valid context to draw on/with before adding event handlers
         if (context) {
             // React to mouse events on the canvas, and mouseup on the entire document
             canvas.addEventListener('mousedown', sketchpad_mouseDown, false);
@@ -181,37 +163,11 @@ var Game = function(context, resources) {
             canvas.addEventListener('touchstart', sketchpad_touchStart, false);
             canvas.addEventListener('touchmove', sketchpad_touchMove, false);
         }
-        
-        
-        
-        
-        
-        
-                        // Draw something and prevent the default scrolling when touch movement is detected
+    
+    // TODO: Simulate physics in fixed time steps.
+    // TODO: validate dt    
+    this.simulatePhysics = function(dt) {
 
-        // Update the touch co-ordinates
-        getTouchPos(e);
-
-        // During a touchmove event, unlike a mousemove event, we don't need to check if the touch is engaged, since there will always be contact with the screen by definition.
-        drawDot(ctx,touchX,touchY,12); 
-
-        // Prevent a scrolling action as a result of this touchmove triggering.
-        event.preventDefault();*/
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         // Don't simulate too much if game is running like crap
         // TODO: there should be stall and tab switch detection somewhewre (preferably not in this file)
         if (dt > 50) dt = 50; 
@@ -266,7 +222,6 @@ var Game = function(context, resources) {
 //            }
             
             // Apply air drag
-            
             // TODO: cross section area
             forceOnPlayer.x += Physics.calculateDrag(player.getVelocityX() / Metrics.PPM, currentEnvironmentDensity, Physics.dragCoeffCube, 1);
             forceOnPlayer.y += Physics.calculateDrag(player.getVelocityY() / Metrics.PPM, currentEnvironmentDensity, Physics.dragCoeffCube, 1);
@@ -329,7 +284,6 @@ var Game = function(context, resources) {
     gradient.addColorStop(1, 'rgba(90, 101, 111, 1.000)');
 
     this.draw = function() {
-        
         // Transform
         context.save();
         context.setTransform(1, 0, 0, 1, 0, -cameraRect.y);
@@ -364,7 +318,7 @@ var Game = function(context, resources) {
                 backgroundObject.texture.naturalHeight / dataBucket.w);
         }
         context.restore();
-        
+
         // Draw solid bodies
         var obstacles = solidBodies.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height);
         for(var i = 0, length = obstacles.length; i < length; i++) {
@@ -373,8 +327,20 @@ var Game = function(context, resources) {
    
         // Draw player 
         player.geometry.solid.drawTextured(context);
-		
+
         // Restore transformation
+        context.restore();
+        
+        //Darwing mouse-touch stuff
+        
+        // Draw something and prevent the default scrolling when touch movement is detected
+        
+        // Update the touch co-ordinates
+        getTouchPos(e);
+        
+        // During a touchmove event, unlike a mousemove event, we don't need to check if the touch is engaged, since there will always be contact with the screen by definition.
+        drawDot(context,touchX,touchY,12); 
+        //maybe it should maybe it should not be here idk literally wtf is restore :D
         context.restore();
     };
 };
