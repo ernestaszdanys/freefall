@@ -65,7 +65,8 @@ Loader.loadResourceTree(resourceDescription,
         var AppState = {
                 MENU: 0,
                 GAME: 1,
-                GAME_OVER: 2
+                DEATH: 2,
+                GAME_OVER: 3
             },
             appState;
 
@@ -77,6 +78,11 @@ Loader.loadResourceTree(resourceDescription,
                     break;
                  
                 case AppState.GAME:
+                    menu.dissable();
+                    gameOver.dissable();
+                    break;
+                    
+                case AppState.DEATH:
                     menu.dissable();
                     gameOver.dissable();
                     break;
@@ -107,11 +113,15 @@ Loader.loadResourceTree(resourceDescription,
         game.addEventListener(Game.EVENT_PLAYER_HEALTH_CHANGED, function(eventName, health) {
             hud.setHealth(~~health);
             if (health === 0) {
-                if (gameOver.getScore() > hud.getHighScore()) {
-                    localStorage.setItem("highscore", gameOver.getScore());
-                }
-                gameOver.setHighScore(localStorage.getItem("highscore"));
-                setAppState(AppState.GAME_OVER);
+                setAppState(AppState.DEATH);
+                game.moveCamera();
+                setTimeout(function(){
+                    if (gameOver.getScore() > hud.getHighScore()) {
+                        localStorage.setItem("highscore", gameOver.getScore());
+                    }
+                    gameOver.setHighScore(localStorage.getItem("highscore"));
+                    setAppState(AppState.GAME_OVER);
+                }, 2000);
             }
         });
         
@@ -123,18 +133,49 @@ Loader.loadResourceTree(resourceDescription,
         gameOver.addEventListener(GameOver.EVENT_RESTART_CLICKED, function(eventName) {
             game.resetPlayer();
             hud.setHighScore();
+            game.setTimeScale(1);
             setAppState(AppState.GAME);
         });
         
+        var tS,
+            tE, 
+            vS = 0,
+            vE = 100;
         function onFrame(eventName, dt) {
+            console.clear();
+            
+            if (tS === void 0) {
+                tS = Date.now();
+                tE = tS + 10000;
+            }
+            
+            console.log(easeOutPower3(vS, vE, tS, tE, Date.now()));
+            
             context.clearRect(0, 0, canvas.width, canvas.height);
-
+            
             if (appState === AppState.MENU) {
                 menu.draw();
             } else if (appState === AppState.GAME) {
                 game.simulatePhysics(dt);
                 game.draw();
                 hud.draw();
+                
+            } else if (appState === AppState.DEATH) {
+                game.setTimeScale(0.1);
+                game.simulatePhysics(dt);
+                game.draw();
+                hud.draw();
+                
+                context.fillStyle = "rgb(32, 46, 59)";
+                context.globalAlpha = 0.8;
+                context.fillRect(0, 0, canvas.width, 150);
+                context.globalAlpha = 1;
+                
+                context.fillStyle = "rgb(32, 46, 59)";
+                context.globalAlpha = 0.8;
+                context.fillRect(0, canvas.height - 150, canvas.width, 150);
+                context.globalAlpha = 1;
+                
             } else if (appState === AppState.GAME_OVER) {
                 gameOver.draw();
             }

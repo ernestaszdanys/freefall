@@ -63,8 +63,8 @@ var Game = function(context, resources) {
         sampleCount = 10; // Number of physics runs per frame
 
     // Camera stuff
-    var cameraRect = {x: 0, y: 0, width: context.canvas.width, height: context.canvas.height};
-
+    var camera = new Camera(context.canvas.width / 2, 0, context.canvas.width, height: context.canvas.height);
+    
     // Game (map) related stuff
     var solidBodies = new SpatialMap("geometry.solid", 8), // Spatial map containing all the solid shapes of the bodies
         effectBodies = new SpatialMap("geometry.effect", 8), // Spatial map containing all the effect areas of the bodies
@@ -109,7 +109,7 @@ var Game = function(context, resources) {
             }
         }
     };
-    
+
     this.resetPlayer = function() {
         player.setHealth(100);
         player.setScore(0);
@@ -253,7 +253,7 @@ var Game = function(context, resources) {
             }
 
             // TODO: Camera
-            cameraRect.y = player.position.y - 50;
+            camera.setCenterY(player.position.y);
             
             // Check if level end is visible
             if(cameraRect.y + cameraRect.height > levelMaxY) {
@@ -275,8 +275,7 @@ var Game = function(context, resources) {
         
         // Transform
         context.save();
-        context.setTransform(1, 0, 0, 1, 0, -cameraRect.y);
-
+        camera.applyTransformation(context);
         /*// Draw effect bodies
         obstacles = effectBodies.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height);
         for(var i = 0, length = obstacles.length; i < length; i++) {
@@ -285,7 +284,7 @@ var Game = function(context, resources) {
         
         // Draw background
         context.fillStyle = gradient;
-        context.fillRect(cameraRect.x, cameraRect.y, context.canvas.width, context.canvas.height);
+        context.fillRect(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
             
         // Draw background objects
         context.save();
@@ -296,7 +295,7 @@ var Game = function(context, resources) {
             backgroundObject;
         for(var i = 0, length = backgroundObjects.length; i < length; i++) {
             backgroundObject = backgroundObjects[i];
-            backgroundObject.perspectiveProjectToBucket(cameraCenterX, cameraCenterY, 500, dataBucket);
+            backgroundObject.perspectiveProjectToBucket(camera.getX(), camera.getY(), 500, dataBucket);
             dataBucket.w *= 2;
             context.globalAlpha = 0.5 / dataBucket.w;
             context.drawImage(
