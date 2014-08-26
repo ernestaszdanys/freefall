@@ -55,7 +55,10 @@ var Game = function(context, resources) {
     Observable.apply(this);
     
     var self = this;
-
+    
+    var scaledTimeAnimator = new Animator(),
+        drawRealTimeAnimator = new Animator();
+    
     // Physics stuff
     var timeScale = 1, // 0 <= timeScale < infinity
         totalTime = 0, // seconds
@@ -63,7 +66,10 @@ var Game = function(context, resources) {
         sampleCount = 10; // Number of physics runs per frame
 
     // Camera stuff
-    var camera = new Camera(context.canvas.width / 2, 0, context.canvas.width, height: context.canvas.height);
+    var camera = new Camera(context.canvas.width / 2, 0, context.canvas.width, context.canvas.height),
+        cameraDefaultOffset = context.canvas.height / 2 - 75;
+    
+        camera.setOffsetY(cameraDefaultOffset);
     
     // Game (map) related stuff
     var solidBodies = new SpatialMap("geometry.solid", 8), // Spatial map containing all the solid shapes of the bodies
@@ -76,6 +82,11 @@ var Game = function(context, resources) {
         
     player.addEventListener(Player.EVENT_HEALTH_CHANGED, function(eventName, health) {
         self.dispatchEvent(Game.EVENT_PLAYER_HEALTH_CHANGED, health);
+        if (health === 0) {
+            drawRealTimeAnimator.animate(cameraDefaultOffset, 0, 1000, easeOutPower3, camera.setOffsetY);
+        } else {
+            camera.setOffsetY(cameraDefaultOffset);
+        }
     });
 
     player.addEventListener(Player.EVENT_SCORE_CHANGED, function(eventName, score) {
@@ -151,7 +162,7 @@ var Game = function(context, resources) {
     this.setTimeScale = function(newTimeScale) {
         timeScale = (newTimeScale > 0) ? newTimeScale : 0;
     };
-    
+        
     // TODO: Simulate physics in fixed time steps.
     // TODO: validate dt
     this.simulatePhysics = function(dt) {
@@ -159,12 +170,15 @@ var Game = function(context, resources) {
         // Don't simulate too much if game is running like crap
         // TODO: there should be stall and tab switch detection somewhewre (preferably not in this file)
         if (dt > 50) dt = 50; 
+        
+        scaledTimeAnimator.tick(scaledTimeAnimator.getCurrentTime + dt * timeScale); // milliseconds
+
 
         dt *= 0.001; // Convert milliseconds to seconds
         totalTime += dt; // Keep track of total unscaled simulation time
         dt *= timeScale; // Apply time scale to allow slow-mo effects
         totalScaledTime += dt; // Keep track of the total scaled simulation time
-		
+		        
         var samplesLeft = sampleCount,
             sampleDt = dt / sampleCount; // Sample physics delta time
 			
@@ -256,7 +270,7 @@ var Game = function(context, resources) {
             camera.setCenterY(player.position.y);
             
             // Check if level end is visible
-            if(cameraRect.y + cameraRect.height > levelMaxY) {
+            if(camera.getBottom() > levelMaxY) {
                 self.dispatchEvent(Game.EVENT_LEVEL_END_VISIBLE, levelMaxY);
             }
             
@@ -272,7 +286,8 @@ var Game = function(context, resources) {
     gradient.addColorStop(1, 'rgba(90, 101, 111, 1.000)');
 
     this.draw = function() {
-        
+        drawRealTimeAnimator.tick(Date.now()); // milliseconds
+
         // Transform
         context.save();
         camera.applyTransformation(context);
@@ -288,10 +303,8 @@ var Game = function(context, resources) {
             
         // Draw background objects
         context.save();
-        var backgroundObjects = backgroundObjectMap.query(cameraRect.x - 500, cameraRect.y - 500, cameraRect.width + 1000, cameraRect.height + 1000),
+        var backgroundObjects = backgroundObjectMap.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight()),
             dataBucket = {},
-            cameraCenterX = cameraRect.x + cameraRect.width / 2,
-            cameraCenterY = cameraRect.y + cameraRect.height / 2,
             backgroundObject;
         for(var i = 0, length = backgroundObjects.length; i < length; i++) {
             backgroundObject = backgroundObjects[i];
@@ -305,10 +318,11 @@ var Game = function(context, resources) {
                 backgroundObject.texture.naturalWidth / dataBucket.w,
                 backgroundObject.texture.naturalHeight / dataBucket.w);
         }
+        
         context.restore();
         
         // Draw solid bodies
-        var obstacles = solidBodies.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height);
+        var obstacles = solidBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
         for(var i = 0, length = obstacles.length; i < length; i++) {
             obstacles[i].geometry.solid.drawTextured(context);
         }
@@ -316,6 +330,17 @@ var Game = function(context, resources) {
         // Draw player 
         player.geometry.solid.drawTextured(context);
 		
+        
+        // Draw death rectangles
+        if (player.getHealth() === 0) {
+            context.fillStyle = "rgb(32, 46, 59)";
+            context.globalAlpha = 0.9;
+            var boxHeight = (cameraDefaultOffset - camera.getOffsetY()) * 0.8;
+            context.fillRect(camera.getLeft(), camera.getTop(), camera.getWidth(), boxHeight);
+            context.fillRect(camera.getLeft(), camera.getBottom() - boxHeight, camera.getWidth(), boxHeight);
+            context.globalAlpha = 1;
+        }
+        
         // Restore transformation
         context.restore();
     };

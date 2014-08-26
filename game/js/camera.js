@@ -59,6 +59,14 @@ function Camera(centerX, centerY, width, height, perspective) {
         return height;   
     }
     
+    this.getOffsetX = function() {
+        return offsetX;
+    }
+    
+    this.getOffsetY = function() {
+        return offsetY;
+    }
+    
     this.getX = function() {
         return centerX;   
     }
@@ -86,7 +94,7 @@ function Camera(centerX, centerY, width, height, perspective) {
         scaleY: Increases or decreases the size of the pixels in the Y direction
         translateX: Moves the whole coordinate system in the X direction (so [0,0] is moved left or right)
         translateY: Moves the whole coordinate system in the Y direction (so [0,0] is moved up or down)*/
-        context.setTransform(1, 0, 0, 1, this.getLeft(), this.getTop());
+        context.setTransform(1, 0, 0, 1, -this.getLeft(), -this.getTop());
     }
     
 }
