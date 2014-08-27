@@ -6,6 +6,10 @@ var canvas = document.getElementById("canvas"),
 canvas.width = 480;
 canvas.height = 720;
 
+var touch = new TouchObserver(canvas);
+
+
+
 // Load resources
 var resourceDescription = {
     // Egg
