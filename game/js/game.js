@@ -303,7 +303,7 @@ var Game = function(context, resources) {
             
         // Draw background objects
         context.save();
-        var backgroundObjects = backgroundObjectMap.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight()),
+        var backgroundObjects = backgroundObjectMap.query(camera.getLeft() - 1000, camera.getTop() - 1000, camera.getWidth() + 2000, camera.getHeight() + 2000),
             dataBucket = {},
             backgroundObject;
         for(var i = 0, length = backgroundObjects.length; i < length; i++) {
