@@ -8,7 +8,26 @@ canvas.height = 720;
 
 var touch = new TouchObserver(canvas);
 
+var PXR;
+resizeCanvas();
 
+window.addEventListener("resize", resizeCanvas, false);
+function resizeCanvas() {
+    var width = window.innerWidth,
+        height = window.innerHeight;
+
+    if (width > 2/3 * height){
+        width = 2/3 * height;
+    } else {
+        height = 3/2 * width;
+    }
+    
+    PXR = width / canvas.width;
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    canvas.style.top = (window.innerHeight - height)/2 + "px";
+    canvas.style.left = (window.innerWidth - width)/2 + "px";
+}
 
 // Load resources
 var resourceDescription = {
@@ -69,7 +88,8 @@ Loader.loadResourceTree(resourceDescription,
         var AppState = {
                 MENU: 0,
                 GAME: 1,
-                GAME_OVER: 2
+                DEATH: 2,
+                GAME_OVER: 3
             },
             appState;
 
@@ -81,6 +101,11 @@ Loader.loadResourceTree(resourceDescription,
                     break;
                  
                 case AppState.GAME:
+                    menu.dissable();
+                    gameOver.dissable();
+                    break;
+                    
+                case AppState.DEATH:
                     menu.dissable();
                     gameOver.dissable();
                     break;
@@ -111,11 +136,14 @@ Loader.loadResourceTree(resourceDescription,
         game.addEventListener(Game.EVENT_PLAYER_HEALTH_CHANGED, function(eventName, health) {
             hud.setHealth(~~health);
             if (health === 0) {
-                if (gameOver.getScore() > hud.getHighScore()) {
-                    localStorage.setItem("highscore", gameOver.getScore());
-                }
-                gameOver.setHighScore(localStorage.getItem("highscore"));
-                setAppState(AppState.GAME_OVER);
+                setAppState(AppState.DEATH);
+                setTimeout(function(){
+                    if (gameOver.getScore() > hud.getHighScore()) {
+                        localStorage.setItem("highscore", gameOver.getScore());
+                    }
+                    gameOver.setHighScore(localStorage.getItem("highscore"));
+                    setAppState(AppState.GAME_OVER);
+                }, 2000);
             }
         });
         
@@ -127,6 +155,7 @@ Loader.loadResourceTree(resourceDescription,
         gameOver.addEventListener(GameOver.EVENT_RESTART_CLICKED, function(eventName) {
             game.resetPlayer();
             hud.setHighScore();
+            game.setTimeScale(1);
             setAppState(AppState.GAME);
         });
         
@@ -139,16 +168,18 @@ Loader.loadResourceTree(resourceDescription,
                 game.simulatePhysics(dt);
                 game.draw();
                 hud.draw();
+            } else if (appState === AppState.DEATH) {
+                game.setTimeScale(0.1);
+                game.simulatePhysics(dt);
+                game.draw();
+                hud.draw();
             } else if (appState === AppState.GAME_OVER) {
                 gameOver.draw();
             }
         }
-        
-        
     },
     function onError(error) {
         // Error
-        
         
         throw error;
     }
