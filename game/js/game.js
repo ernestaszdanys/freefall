@@ -55,7 +55,10 @@ var Game = function(context, resources) {
     Observable.apply(this);
     
     var self = this;
-
+    
+    var scaledTimeAnimator = new Animator(),
+        drawRealTimeAnimator = new Animator();
+    
     // Physics stuff
     var timeScale = 1, // 0 <= timeScale < infinity
         totalTime = 0, // seconds
@@ -63,8 +66,11 @@ var Game = function(context, resources) {
         sampleCount = 10; // Number of physics runs per frame
 
     // Camera stuff
-    var cameraRect = {x: 0, y: 0, width: context.canvas.width, height: context.canvas.height};
-
+    var camera = new Camera(context.canvas.width / 2, 0, context.canvas.width, context.canvas.height),
+        cameraDefaultOffset = context.canvas.height / 2 - 75;
+    
+        camera.setOffsetY(cameraDefaultOffset);
+    
     // Game (map) related stuff
     var solidBodies = new SpatialMap("geometry.solid", 8), // Spatial map containing all the solid shapes of the bodies
         effectBodies = new SpatialMap("geometry.effect", 8), // Spatial map containing all the effect areas of the bodies
@@ -76,6 +82,11 @@ var Game = function(context, resources) {
         
     player.addEventListener(Player.EVENT_HEALTH_CHANGED, function(eventName, health) {
         self.dispatchEvent(Game.EVENT_PLAYER_HEALTH_CHANGED, health);
+        if (health === 0) {
+            drawRealTimeAnimator.animate(cameraDefaultOffset, 0, 1000, easeOutPower3, camera.setOffsetY);
+        } else {
+            camera.setOffsetY(cameraDefaultOffset);
+        }
     });
 
     player.addEventListener(Player.EVENT_SCORE_CHANGED, function(eventName, score) {
@@ -109,7 +120,7 @@ var Game = function(context, resources) {
             }
         }
     };
-    
+
     this.resetPlayer = function() {
         player.setHealth(100);
         player.setScore(0);
@@ -151,32 +162,23 @@ var Game = function(context, resources) {
     this.setTimeScale = function(newTimeScale) {
         timeScale = (newTimeScale > 0) ? newTimeScale : 0;
     };
-    
-        // Check that we have a valid context to draw on/with before adding event handlers
-        if (context) {
-            // React to mouse events on the canvas, and mouseup on the entire document
-            canvas.addEventListener('mousedown', sketchpad_mouseDown, false);
-            canvas.addEventListener('mousemove', sketchpad_mouseMove, false);
-            window.addEventListener('mouseup', sketchpad_mouseUp, false);
-
-            // React to touch events on the canvas
-            canvas.addEventListener('touchstart', sketchpad_touchStart, false);
-            canvas.addEventListener('touchmove', sketchpad_touchMove, false);
-        }
-    
+        
     // TODO: Simulate physics in fixed time steps.
-    // TODO: validate dt    
+    // TODO: validate dt
     this.simulatePhysics = function(dt) {
-
+        
         // Don't simulate too much if game is running like crap
         // TODO: there should be stall and tab switch detection somewhewre (preferably not in this file)
         if (dt > 50) dt = 50; 
+        
+        scaledTimeAnimator.tick(scaledTimeAnimator.getCurrentTime + dt * timeScale); // milliseconds
+
 
         dt *= 0.001; // Convert milliseconds to seconds
         totalTime += dt; // Keep track of total unscaled simulation time
         dt *= timeScale; // Apply time scale to allow slow-mo effects
         totalScaledTime += dt; // Keep track of the total scaled simulation time
-		
+		        
         var samplesLeft = sampleCount,
             sampleDt = dt / sampleCount; // Sample physics delta time
 			
@@ -265,10 +267,10 @@ var Game = function(context, resources) {
             }
 
             // TODO: Camera
-            cameraRect.y = player.position.y - 50;
+            camera.setCenterY(player.position.y);
             
             // Check if level end is visible
-            if(cameraRect.y + cameraRect.height > levelMaxY) {
+            if(camera.getBottom() > levelMaxY) {
                 self.dispatchEvent(Game.EVENT_LEVEL_END_VISIBLE, levelMaxY);
             }
             
@@ -278,16 +280,17 @@ var Game = function(context, resources) {
     };
 
 
-    var gradient = context.createLinearGradient(0, 0, context.canvas.width, context.canvas.height);
+    var gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
     gradient.addColorStop(0, 'rgba(32, 46, 59, 1.000)');
     gradient.addColorStop(0.5, 'rgba(65, 77, 89, 1.000)');
     gradient.addColorStop(1, 'rgba(90, 101, 111, 1.000)');
 
     this.draw = function() {
+        drawRealTimeAnimator.tick(Date.now()); // milliseconds
+
         // Transform
         context.save();
-        context.setTransform(1, 0, 0, 1, 0, -cameraRect.y);
-
+        camera.applyTransformation(context);
         /*// Draw effect bodies
         obstacles = effectBodies.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height);
         for(var i = 0, length = obstacles.length; i < length; i++) {
@@ -296,18 +299,16 @@ var Game = function(context, resources) {
         
         // Draw background
         context.fillStyle = gradient;
-        context.fillRect(cameraRect.x, cameraRect.y, context.canvas.width, context.canvas.height);
+        context.fillRect(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
             
         // Draw background objects
         context.save();
-        var backgroundObjects = backgroundObjectMap.query(cameraRect.x - 500, cameraRect.y - 500, cameraRect.width + 1000, cameraRect.height + 1000),
+        var backgroundObjects = backgroundObjectMap.query(camera.getLeft() - 1000, camera.getTop() - 1000, camera.getWidth() + 2000, camera.getHeight() + 2000),
             dataBucket = {},
-            cameraCenterX = cameraRect.x + cameraRect.width / 2,
-            cameraCenterY = cameraRect.y + cameraRect.height / 2,
             backgroundObject;
         for(var i = 0, length = backgroundObjects.length; i < length; i++) {
             backgroundObject = backgroundObjects[i];
-            backgroundObject.perspectiveProjectToBucket(cameraCenterX, cameraCenterY, 500, dataBucket);
+            backgroundObject.perspectiveProjectToBucket(camera.getX(), camera.getY(), 500, dataBucket);
             dataBucket.w *= 2;
             context.globalAlpha = 0.5 / dataBucket.w;
             context.drawImage(
@@ -317,30 +318,30 @@ var Game = function(context, resources) {
                 backgroundObject.texture.naturalWidth / dataBucket.w,
                 backgroundObject.texture.naturalHeight / dataBucket.w);
         }
+        
         context.restore();
-
+        
         // Draw solid bodies
-        var obstacles = solidBodies.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height);
+        var obstacles = solidBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
         for(var i = 0, length = obstacles.length; i < length; i++) {
             obstacles[i].geometry.solid.drawTextured(context);
         }
    
         // Draw player 
         player.geometry.solid.drawTextured(context);
-
+		
+        
+        // Draw death rectangles
+        if (player.getHealth() === 0) {
+            context.fillStyle = "rgb(32, 46, 59)";
+            context.globalAlpha = 0.9;
+            var boxHeight = (cameraDefaultOffset - camera.getOffsetY()) * 0.8;
+            context.fillRect(camera.getLeft(), camera.getTop(), camera.getWidth(), boxHeight);
+            context.fillRect(camera.getLeft(), camera.getBottom() - boxHeight, camera.getWidth(), boxHeight);
+            context.globalAlpha = 1;
+        }
+        
         // Restore transformation
-        context.restore();
-        
-        //Darwing mouse-touch stuff
-        
-        // Draw something and prevent the default scrolling when touch movement is detected
-        
-        // Update the touch co-ordinates
-        getTouchPos(e);
-        
-        // During a touchmove event, unlike a mousemove event, we don't need to check if the touch is engaged, since there will always be contact with the screen by definition.
-        drawDot(context,touchX,touchY,12); 
-        //maybe it should maybe it should not be here idk literally wtf is restore :D
         context.restore();
     };
 };
