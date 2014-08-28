@@ -56,7 +56,7 @@ function Menu(context, resources) {
     
     function onMouseMove(event) {
         var canvasRect = context.canvas.getBoundingClientRect();
-        buttonHover = Intersection.pointCircle(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonCircle);
+        buttonHover = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
     }
 
     function onMouseUp() {
@@ -65,7 +65,7 @@ function Menu(context, resources) {
 
     function onMouseDown(event) {
         var canvasRect = context.canvas.getBoundingClientRect();
-        buttonClick = Intersection.pointCircle(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonCircle);
+        buttonClick = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
         if (buttonClick) {
             self.dispatchEvent(Menu.EVENT_START_CLICKED);
         }
@@ -238,7 +238,7 @@ function GameOver(context, resources) {
 
     function onMouseMove(event) {
         var canvasRect = context.canvas.getBoundingClientRect();
-        buttonHover = Intersection.pointCircle(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonCircle);
+        buttonHover = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
     }
 
     function onMouseUp() {
@@ -247,7 +247,7 @@ function GameOver(context, resources) {
 
     function onMouseDown(event) {
         var canvasRect = context.canvas.getBoundingClientRect();
-        buttonClick = Intersection.pointCircle(event.clientX - canvasRect.left, event.clientY - canvasRect.top, buttonCircle);
+        buttonClick = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
         if (buttonClick) {
             self.dispatchEvent(GameOver.EVENT_RESTART_CLICKED);
         }

@@ -6,6 +6,27 @@ var canvas = document.getElementById("canvas"),
 canvas.width = 480;
 canvas.height = 720;
 
+var PXR;
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas, false);
+function resizeCanvas() {
+    var width = window.innerWidth,
+        height = window.innerHeight;
+
+    if (width > 2/3 * height){
+        width = 2/3 * height;
+    } else {
+        height = 3/2 * width;
+    }
+    
+    PXR = width / canvas.width;
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    canvas.style.top = (window.innerHeight - height)/2 + "px";
+    canvas.style.left = (window.innerWidth - width)/2 + "px";
+}
+
 // Load resources
 var resourceDescription = {
     // Egg
