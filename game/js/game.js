@@ -72,8 +72,8 @@ var Game = function(context, resources) {
                 touchDown = false;
                 break;
         }
-        lastTouchX = x;
-        lastTouchY = y;
+        lastTouchX = x / PXR;
+        lastTouchY = y / PXR;
     });
     
     // Physics stuff
