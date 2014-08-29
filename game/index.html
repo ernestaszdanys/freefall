@@ -2,7 +2,7 @@
 <!--
 WARNING: direct eye contact with source code might cause permanent brain damage.
 -->
-<html>
+<html manifest="offline.appcache">
     <head>
 
         <title>Free Fall pre-pre-alpha</title>
@@ -10,7 +10,7 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <!-- TODO: requere.js -->
-        <script src="js/camera.js"></script>
+        <!--<script src="js/camera.js"></script>
         <script src="js/animator.js"></script>
         <script src="js/loader.js"></script>
         <script src="js/dynamic_behaviour.js"></script>
@@ -28,11 +28,37 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
         <script src="js/gui.js"></script>
         <script src="js/level.js"></script>
         <script src="js/game.js"></script>
-        <script src="js/interpolator.js"></script>
+        <script src="js/interpolator.js"></script>-->
         
     </head>
     <body style="margin: 0; padding: 0; width: 480px; height: 720px; overflow: hidden;">
         <canvas id="canvas" style="width: 100%; height: 100%; background-color: #eee"></canvas>
-        <script type="text/javascript" src="index.js"></script>
+        <!--<script type="text/javascript" src="index.js"></script>-->
+        <script>
+            console.log("viduj1");
+            // Check if a new cache is available on page load.
+            window.addEventListener('load', function(e) {
+
+                console.log("viduj2");
+                var appCache = window.applicationCache;
+                appCache.update();
+                window.applicationCache.addEventListener('updateready', function(e) {
+                    console.log("viduj3");
+                    if (appCache.status == window.applicationCache.UPDATEREADY) {
+                        console.log("viduj4");
+                        appCache.swapCache();
+                        // Browser downloaded a new app cache.
+                        if (confirm('A new version of this site is available. Load it?')) {
+                            console.log("viduj5");
+                            window.location.reload();
+                        }
+                    } else {
+                        // Manifest didn't changed. Nothing new to server.
+                    }
+                }, false);
+
+            }, false);
+        </script>
+        <p>labas 6</p>
     </body>
 </html>
