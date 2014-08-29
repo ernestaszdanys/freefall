@@ -1,3 +1,39 @@
+function getElementTop ( elem ) 
+{		
+
+    var yPos = elem.offsetTop;
+    var tempEl = elem.offsetParent;
+
+    while ( tempEl != null ) 
+    {
+        yPos += tempEl.offsetTop;
+        tempEl = tempEl.offsetParent;
+    }  
+
+    return yPos;
+}   
+
+
+function getElementLeft ( elem ) 
+{
+
+    var xPos = elem.offsetLeft;
+    var tempEl = elem.offsetParent; 		
+
+    while ( tempEl != null ) 
+    {
+        xPos += tempEl.offsetLeft;
+        tempEl = tempEl.offsetParent;
+    }   		
+    return xPos;
+}
+
+var PointerEvent = {
+    DOWN: 0,
+    MOVE: 1,
+    UP: 2
+};
+
 function KeyObserver(window) {
 
     this.registerEventListeners = function() {
@@ -10,8 +46,10 @@ function KeyObserver(window) {
 }
 
 function TouchObserver(element) {
+    Observable.call(this);
     
-    var registered = false;
+    var self = this,
+        registered = false;
     
     this.registerEventListeners = function() {
         if (registered) {
@@ -44,21 +82,43 @@ function TouchObserver(element) {
 
         
     function onTouchStart(event) {
-        console.log("onTouchStart", event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+        self.dispatchEvent(
+            TouchObserver.EVENT_TOUCH,
+            PointerEvent.DOWN,
+            event.changedTouches[0].clientX - getElementLeft(element),
+            event.changedTouches[0].clientY - getElementTop(element)
+        );
     }
     
     function onTouchMove(event) {
-        console.log("onTouchMove", event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+        self.dispatchEvent(
+            TouchObserver.EVENT_TOUCH,
+            PointerEvent.MOVE,
+            event.changedTouches[0].clientX - getElementLeft(element),
+            event.changedTouches[0].clientY - getElementTop(element)
+        );
     }
     
     function onTouchEnd(event) {
-        console.log("onTouchEnd", event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+        self.dispatchEvent(
+            TouchObserver.EVENT_TOUCH,
+            PointerEvent.UP,
+            event.changedTouches[0].clientX - getElementLeft(element),
+            event.changedTouches[0].clientY - getElementTop(element)
+        );
     }
     
     function onTouchCancel(event) {
-        console.log("onTouchCancel", event.changedTouches[0].clientX, event.changedTouches[0].clientY);
+        self.dispatchEvent(
+            TouchObserver.EVENT_TOUCH,
+            PointerEvent.UP,
+            event.changedTouches[0].clientX - getElementLeft(element),
+            event.changedTouches[0].clientY - getElementTop(element)
+        );
     }
 }
+TouchObserver.EVENT_TOUCH = "TOUCH_OBSERVER_ON_TOUCH";
+
 
 function MouseObserver(element) {
     

@@ -160,6 +160,7 @@ Loader.loadResourceTree(resourceDescription,
         });
         
         function onFrame(eventName, dt) {
+            /*console.clear();*/
             context.clearRect(0, 0, canvas.width, canvas.height);
 
             if (appState === AppState.MENU) {
