@@ -216,7 +216,7 @@ var Game = function(context, resources) {
             /*console.log(lastTouchX / PXR);
             console.log((context.canvas.width / PXR) / 2);*/
             
-            if (lastTouchX > (context.canvas.width / PXR) / 2) {
+            if (lastTouchX > context.canvas.width / 2) {
                 if (touchDown) forceOnPlayer.x += 2800;
             } else {
                 if (touchDown) forceOnPlayer.x -= 2800;
