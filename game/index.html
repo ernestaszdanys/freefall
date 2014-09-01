@@ -4,21 +4,19 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
 -->
 <html>
     <head>
-
+        
         <title>Free Fall pre-pre-alpha</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         
         <!-- TODO: requere.js -->
-        <script src="js/camera.js"></script>
-        <script src="js/animator.js"></script>
         <script src="js/loader.js"></script>
         <script src="js/dynamic_behaviour.js"></script>
         <script src="js/property_checker.js"></script>
         <script src="js/metrics.js"></script>
         <script src="js/observable.js"></script>
         <script src="js/choreographer.js"></script>
-        <script src="js/vector.js"></script>        
+        <script src="js/vector.js"></script>
         <script src="js/spatialMap.js"></script>
         <script src="js/controls.js"></script>
         <script src="js/geometry.js"></script>
@@ -28,11 +26,33 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
         <script src="js/gui.js"></script>
         <script src="js/level.js"></script>
         <script src="js/game.js"></script>
+        <script src="js/touch_screen.js"></script>
+        <script src="js/camera.js"></script>
+        <script src="js/animator.js"></script>
         <script src="js/interpolator.js"></script>
         
+        <style>
+            
+            body {margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color:rgb(0, 0, 0);}
+            
+            #outside {
+                /* Prevent nearby text being highlighted when accidentally dragging mouse outside confines of the canvas */
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                }
+            
+            #canvas {position:absolute; background-color: rgb(238, 238, 238);}
+            
+        </style>
     </head>
-    <body style="margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color:black;">
-        <canvas id="canvas" width=480px height=720px style="position:absolute; background-color: #eee"></canvas>
+<body>
+    <div id="outside">
+        <canvas id="canvas" width=480px height=720px>This text is displayed if your browser does not support HTML5 Canvas.</canvas>outside text
         <script type="text/javascript" src="index.js"></script>
-    </body>
+    </div>
+</body>
 </html>

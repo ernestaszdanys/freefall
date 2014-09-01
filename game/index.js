@@ -6,6 +6,8 @@ var canvas = document.getElementById("canvas"),
 canvas.width = 480;
 canvas.height = 720;
 
+var touch = new TouchObserver(canvas);
+
 var PXR;
 resizeCanvas();
 
@@ -156,33 +158,29 @@ Loader.loadResourceTree(resourceDescription,
             game.setTimeScale(1);
             setAppState(AppState.GAME);
         });
-
+        
         function onFrame(eventName, dt) {
-           
+            /*console.clear();*/
             context.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             if (appState === AppState.MENU) {
                 menu.draw();
             } else if (appState === AppState.GAME) {
                 game.simulatePhysics(dt);
                 game.draw();
                 hud.draw();
-                
             } else if (appState === AppState.DEATH) {
                 game.setTimeScale(0.1);
                 game.simulatePhysics(dt);
                 game.draw();
-                hud.draw();                
+                hud.draw();
             } else if (appState === AppState.GAME_OVER) {
                 gameOver.draw();
             }
         }
-        
-        
     },
     function onError(error) {
         // Error
-        
         
         throw error;
     }
