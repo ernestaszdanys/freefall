@@ -313,7 +313,7 @@ var Game = function(context, resources) {
 
     this.draw = function() {
         drawRealTimeAnimator.tick(Date.now()); // milliseconds
-
+        
         // Transform
         context.save();
         camera.applyTransformation(context);
