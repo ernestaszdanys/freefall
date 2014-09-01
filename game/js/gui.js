@@ -198,9 +198,12 @@ function GameOver(context, resources) {
         scoreText = new Text(context),
         ptsText = new Text(context),
         highScoreText = new Text(context),
-        highScoreValueText = new Text(context);
+        highScoreValueText = new Text(context),
+        buttonFacebookShare = new Circle(45);
 
     buttonCircle.layout(context.canvas.width/2, 500, 0, 0);
+    
+    buttonFacebookShare.layout(context.canvas.width/2, 600, 0, 0);
         
     scoreText.setSize(40);
     scoreText.setBold(true);
@@ -215,12 +218,12 @@ function GameOver(context, resources) {
 
     highScoreValueText.setSize(22);
     highScoreValueText.setBold(true);
-    
+
     var gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
     gradient.addColorStop(0, 'rgba(32, 46, 59, 1.000)');
     gradient.addColorStop(0.5, 'rgba(65, 77, 89, 1.000)');
     gradient.addColorStop(1, 'rgba(90, 101, 111, 1.000)');
-    
+
     this.setScore = function(newScore) {
         score = ~~newScore;
     };
@@ -299,3 +302,4 @@ function GameOver(context, resources) {
     };
 };
 GameOver.EVENT_RESTART_CLICKED = "GAME_OVER_RESTART_CLICKED";
+GameOver.EVENT_FACEBOOK_SHARE_CLICKED = "EVENT_FACEBOOK_SHARE_CLICKED";

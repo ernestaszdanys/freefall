@@ -50,9 +50,45 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
         </style>
     </head>
 <body>
+    
+        <script>
+          window.fbAsyncInit = function() {
+            FB.init({
+              appId      : '812894278755270',
+              xfbml      : true,
+              version    : 'v2.0'
+            });
+              
+            FB.ui(
+             {
+              method: 'share',
+              href: '/index.html'
+            }, function(response){});
+              
+          };
+
+          (function(d, s, id){
+             var js, fjs = d.getElementsByTagName(s)[0];
+             if (d.getElementById(id)) {return;}
+             js = d.createElement(s); js.id = id;
+             js.src = "//connect.facebook.net/en_US/sdk.js";
+             fjs.parentNode.insertBefore(js, fjs);
+           }(document, 'script', 'facebook-jssdk'));
+        </script>
+    
     <div id="outside">
         <canvas id="canvas" width=480px height=720px>This text is displayed if your browser does not support HTML5 Canvas.</canvas>outside text
         <script type="text/javascript" src="index.js"></script>
     </div>
+    
+    
+    
+<!--    <div
+      class="fb-like"
+      data-send="true"
+      data-width="450"
+      data-show-faces="true">
+    </div>-->
+    
 </body>
 </html>

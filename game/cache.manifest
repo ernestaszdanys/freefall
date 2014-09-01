@@ -1,0 +1,18 @@
+CACHE MANIFEST
+# FREE FALL version 0.0.1
+
+#ALL ASSETS IMAGES
+assets/images/
+demoimages/clownfish.jpg
+
+ 
+NETWORK:
+# All URLs that start with the following lines
+# are whitelisted.
+http://127.0.0.1
+http://http://127.0.0.1:49779/
+ 
+CACHE:
+# Additional items to cache.
+ 
+FALLBACK:

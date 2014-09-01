@@ -69,7 +69,8 @@ var resourceDescription = {
     imageButtonRedRound: "assets/images/button_red_round.png",
     iconPlay: "assets/images/icon_play.png",
     iconRefresh: "assets/images/icon_refresh.png",
-    imageEggBroken: "assets/images/egg_broken.png"
+    imageEggBroken: "assets/images/egg_broken.png",
+    facebookShare: "assets/images/facebookShare.png"
 };
 
 Loader.loadResourceTree(resourceDescription,
@@ -157,6 +158,14 @@ Loader.loadResourceTree(resourceDescription,
             hud.setHighScore();
             game.setTimeScale(1);
             setAppState(AppState.GAME);
+        });
+        
+        gameOver.addEventListener(GameOver.EVENT_FACEBOOK_SHARE_CLICKED, function(eventName) {
+            FB.ui(
+             {
+              method: 'share',
+              href: 'https://developers.facebook.com/docs/'
+            }, function(response){});
         });
         
         function onFrame(eventName, dt) {
