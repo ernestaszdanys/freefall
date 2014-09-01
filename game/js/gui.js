@@ -1,86 +1,126 @@
-/*function loadImages(sources, callback) {
-    var sourceCount = 0,
-        loadedCount = 0,
-        images = {};
-    
-    for (var imageName in sources) {
-        if (sources.hasOwnProperty(imageName)) sourceCount++;
-    }
+"use strict";
 
-    for (var imageName in sources) {
-        if (sources.hasOwnProperty(imageName)) {
-            images[imageName] = new Image();
-            images[imageName].onload = function() {
-                if (++loadedCount >= sourceCount) callback(images);
-            };
-            images[imageName].onerror = function() {
-                throw new Error("Couldn't load " + imageName);
-            };
-            images[imageName].src = sources[imageName];
+// TODO: multiple images, hover state, remove global PXR
+function Button(context, image) {
+    Observable.call(this);
+
+    var self = this;
+    this.context = context;
+    
+    this.state = Button.State.NORMAL; // NORMAL|HOVERED|PRESSED
+    
+    this.x = 0;
+    this.y = 0;
+    this.width = image.naturalWidth;
+    this.height = image.naturalHeight;
+    this.image = image;
+    
+    this.handlePointerEvent = function(event) {
+        switch (event.type) {
+            // Touch event
+            case "touchstart":  
+                if (self.isHitByEvent(event.changedTouches[0])) {
+                    self.state = Button.State.PRESSED;
+                }
+                break;
+
+            case "touchend": 
+                if (self.isHitByEvent(event.changedTouches[0]) && self.state === Button.State.PRESSED) {
+                    self.dispatchEvent(Button.EVENT_CLICK);
+                } // NOTE: no break.
+            case "touchleave":
+            case "touchcancel":
+                self.state = Button.State.NORMAL;
+                
+            // Mouse event
+            case "mousedown":
+                if (self.isHitByEvent(event)) {
+                    self.state = Button.State.PRESSED;
+                }
+                break;
+                
+            case "mouseup":
+                if (self.isHitByEvent(event) && self.state === Button.State.PRESSED) {
+                    self.dispatchEvent(Button.EVENT_CLICK);
+                }
+                self.state = Button.State.NORMAL;
+                break;
+
         }
-    }
+    };
 }
 
-var images = void 0;
-loadImages({
-    //background : "assets/images/gui/main.png",
-    logo: "assets/images/logo.png",
-    button: "assets/images/button_red_round.png",
-    playIcon: "assets/images/icon_play.png",
-    refreshIcon: "assets/images/icon_refresh.png",
-    brokenEgg: "assets/images/egg_broken.png",
-    ribbon: "assets/images/ribbon.png"
+Button.prototype.layout = function(parentX, parentY, parentWidth, parentHeight) {
+    this.x = parentX + (parentWidth - this.width) * 0.5;
+    this.y = parentY + (parentHeight - this.height) * 0.5;
+};
 
-}, function(loadedImages) {
-    images = loadedImages;
-    console.log("Menu images loaded.");
-});
-*/
-"use strict";
+Button.prototype.draw = function() {
+    if (this.state === Button.State.NORMAL) {
+        this.context.drawImage(this.image, this.x, this.y, this.width, this.height);
+    } else {
+        this.context.drawImage(this.image, this.x + 2, this.y + 2, this.width - 4, this.height - 4);
+    }
+};
+
+Button.prototype.isHitByEvent = function(event) {
+    var canvasRect = this.context.canvas.getBoundingClientRect();
+    return this.isHit((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR); // TODO: evil global
+};
+
+Button.prototype.isHit = function(x, y) {
+    return (x >= this.x && x <= this.x + this.width) && (y >= this.y && y <= this.y + this.height);
+};
+
+Button.EVENT_CLICK = "BUTTON_ON_CLICK";
+Button.State = {
+    NORMAL: 0,
+    HOVERED: 1,
+    PRESSED: 2
+};
+
 
 function Menu(context, resources) {
     Observable.call(this);
     
     var self = this;
     
-    var buttonCircle = new Circle(45),
-        buttonClick = false,
-        buttonHover = false;
+    var button = new Button(context, resources.imageButtonRedRound);
+    button.layout(context.canvas.width / 2, 559, 0, 0);
     
     var gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
     gradient.addColorStop(0, 'rgba(32, 46, 59, 1.000)');
     gradient.addColorStop(0.5, 'rgba(65, 77, 89, 1.000)');
     gradient.addColorStop(1, 'rgba(90, 101, 111, 1.000)');
     
-    buttonCircle.layout(context.canvas.width / 2, 559, 0, 0);
-    
-    function onMouseMove(event) {
-        var canvasRect = context.canvas.getBoundingClientRect();
-        buttonHover = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
-    }
-
-    function onMouseUp() {
-        buttonClick = false;
-    }
-
-    function onMouseDown(event) {
-        var canvasRect = context.canvas.getBoundingClientRect();
-        buttonClick = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
-        if (buttonClick) {
-            self.dispatchEvent(Menu.EVENT_START_CLICKED);
-        }
-    } 
+    button.addEventListener(Button.EVENT_CLICK, function() {
+        self.dispatchEvent(Menu.EVENT_START_CLICKED);
+    });
     
     this.enable = function() {
-        context.canvas.addEventListener("mousemove", onMouseMove, false);
-        context.canvas.addEventListener("mouseup", onMouseUp, false);
-        context.canvas.addEventListener("mousedown", onMouseDown, false);
+        context.canvas.addEventListener("touchstart", button.handlePointerEvent, false);
+        context.canvas.addEventListener("touchend", button.handlePointerEvent, false);
+        context.canvas.addEventListener("touchmove", button.handlePointerEvent, false);
+        context.canvas.addEventListener("touchcancel", button.handlePointerEvent, false);
+        context.canvas.addEventListener("touchleave", button.handlePointerEvent, false);
+        context.canvas.addEventListener("mousedown", button.handlePointerEvent, false);
+        context.canvas.addEventListener("mousemove", button.handlePointerEvent, false);
+        // TODO: fix this monstrosity
+        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
+            .addEventListener("mouseup", button.handlePointerEvent, false);
     };
-
+    
     this.dissable = function() {
-        context.canvas.removeEventListener("mousemove", onMouseMove, false);
-        context.canvas.removeEventListener("mouseup", onMouseUp, false);
-        context.canvas.removeEventListener("mousedown", onMouseDown, false);
+        context.canvas.removeEventListener("touchstart", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchend", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchmove", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchcancel", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchleave", button.handlePointerEvent);
+        context.canvas.removeEventListener("mousedown", button.handlePointerEvent);
+        context.canvas.removeEventListener("mousemove", button.handlePointerEvent);
+        // TODO: fix this monstrosity
+        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
+            .removeEventListener("mouseup", button.handlePointerEvent, false);    
     };
     
     this.draw = function() {
@@ -90,19 +130,8 @@ function Menu(context, resources) {
         context.fillStyle = "rgb(32, 46, 59)";
         context.fillRect(0, 245, context.canvas.width, 185);
         context.drawImage(resources.imageLogo, (context.canvas.width - resources.imageLogo.width)/2+9, 183);
-        //context.drawImage(images.button, 153, 514);
 
-        if (buttonHover && buttonClick) { // Click
-            //context.drawImage(images.button, buttonRect.x, buttonRect.y);
-
-        } else if (buttonHover) { // Hover
-            context.drawImage(resources.imageButtonRedRound, buttonCircle.x+3, buttonCircle.y+3);
-            context.drawImage(resources.iconPlay, buttonCircle.x+35, buttonCircle.y+21);
-
-        } else { // Idle
-            context.drawImage(resources.imageButtonRedRound, buttonCircle.x, buttonCircle.y);
-            context.drawImage(resources.iconPlay, buttonCircle.x+32, buttonCircle.y+18);
-        }
+        button.draw(context);
     };
 };
 Menu.EVENT_START_CLICKED = "MENU_START_CLICKED";
@@ -192,16 +221,17 @@ function GameOver(context, resources) {
 
     var score = 0,
         highScore,
-        buttonCircle = new Circle(45),
-        buttonClick = false,
-        buttonHover = false,
         scoreText = new Text(context),
         ptsText = new Text(context),
         highScoreText = new Text(context),
         highScoreValueText = new Text(context);
 
-    buttonCircle.layout(context.canvas.width/2, 500, 0, 0);
-        
+    var button = new Button(context, resources.imageButtonRedRound);
+    button.layout(context.canvas.width/2, 500, 0, 0);
+    button.addEventListener(Button.EVENT_CLICK, function() {
+        self.dispatchEvent(GameOver.EVENT_RESTART_CLICKED);
+    });
+    
     scoreText.setSize(40);
     scoreText.setBold(true);
 
@@ -236,35 +266,32 @@ function GameOver(context, resources) {
         return highScore;
     };
 
-    function onMouseMove(event) {
-        var canvasRect = context.canvas.getBoundingClientRect();
-        buttonHover = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
-    }
-
-    function onMouseUp() {
-        buttonClick = false;
-    }
-
-    function onMouseDown(event) {
-        var canvasRect = context.canvas.getBoundingClientRect();
-        buttonClick = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
-        if (buttonClick) {
-            self.dispatchEvent(GameOver.EVENT_RESTART_CLICKED);
-        }
-    }
-
     this.enable = function() {
-        context.canvas.addEventListener("mousemove", onMouseMove, false);
-        context.canvas.addEventListener("mouseup", onMouseUp, false);
-        context.canvas.addEventListener("mousedown", onMouseDown, false);
+        context.canvas.addEventListener("touchstart", button.handlePointerEvent, false);
+        context.canvas.addEventListener("touchend", button.handlePointerEvent, false);
+        context.canvas.addEventListener("touchmove", button.handlePointerEvent, false);
+        context.canvas.addEventListener("touchcancel", button.handlePointerEvent, false);
+        context.canvas.addEventListener("touchleave", button.handlePointerEvent, false);
+        context.canvas.addEventListener("mousedown", button.handlePointerEvent, false);
+        context.canvas.addEventListener("mousemove", button.handlePointerEvent, false);
+        // TODO: fix this monstrosity
+        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
+            .addEventListener("mouseup", button.handlePointerEvent, false);
     };
-
+    
     this.dissable = function() {
-        context.canvas.removeEventListener("mousemove", onMouseMove, false);
-        context.canvas.removeEventListener("mouseup", onMouseUp, false);
-        context.canvas.removeEventListener("mousedown", onMouseDown, false);
+        context.canvas.removeEventListener("touchstart", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchend", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchmove", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchcancel", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchleave", button.handlePointerEvent);
+        context.canvas.removeEventListener("mousedown", button.handlePointerEvent);
+        context.canvas.removeEventListener("mousemove", button.handlePointerEvent);
+        // TODO: fix this monstrosity
+        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
+            .removeEventListener("mouseup", button.handlePointerEvent, false);    
     };
-
+    
     this.draw = function() {
         context.fillStyle = gradient;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
@@ -284,18 +311,7 @@ function GameOver(context, resources) {
         highScoreText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 - 4, context.canvas.height-15);
         highScoreValueText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth() + 8, context.canvas.height-15);
 
-        if (buttonHover && buttonClick) { // Click
-            context.drawImage(resources.imageButtonRedRound, buttonCircle.x, buttonCircle.y);
-            context.drawImage(resources.iconRefresh, buttonCircle.x+19, buttonCircle.y+17);
-
-        } else if (buttonHover) { // Hover
-            context.drawImage(resources.imageButtonRedRound, buttonCircle.x+3, buttonCircle.y+3);
-            context.drawImage(resources.iconRefresh, buttonCircle.x+22, buttonCircle.y+20);
-
-        } else { // Idle
-            context.drawImage(resources.imageButtonRedRound, buttonCircle.x, buttonCircle.y);
-            context.drawImage(resources.iconRefresh, buttonCircle.x+19, buttonCircle.y+17);
-        }
+        button.draw();
     };
 };
 GameOver.EVENT_RESTART_CLICKED = "GAME_OVER_RESTART_CLICKED";
