@@ -1,163 +1,243 @@
-var nextBodyUid = (function() {
-    var id = 1; // Consider 0 to be invalid UID
+function Body(geometry, x, y, orientation) {
+    if (!isFiniteNumber(x) || !isFiniteNumber(y) || !isFiniteNumber(orientation)) {
+        throw new Error("Invalid x, y or orientation. (", x, y, orientation, ")");
+    }
+    
+    // Define unique read-only id
+    Object.defineProperty(this, "uid", {
+        value: Body.generateUid()
+    });
+    
+    this.geometry = geometry;
+    
+    this.setMass(Number.POSITIVE_INFINITY);
+    this.setInertia(Number.POSITIVE_INFINITY);
+
+    this.linearVelocity = new Vec2(0, 0);
+    this.position = new Vec2(x, y);
+
+    this.angularVelocity = 0;
+    this.orientation = orientation;
+    
+    if (x !== 0 || y !== 0 || orientation !== 0) {
+        this.updateGeometryTransformations();
+    }
+}
+
+// Default friction and restitution values
+Body.prototype.friction = 0.3;
+Body.prototype.restitution = 0.3;
+
+/**
+ * @return {number} Unique id.
+ */
+Body.generateUid = (function() {
+    var id = 1;
     return function() {
         return id++;
     };
 })();
 
-function Body(x, y, geometry) {
-    
-    // Define unique read-only id
-    Object.defineProperty(this, "uid", {
-        value: nextBodyUid()
-    });
-    
-    this.lastPosition = new Vec2(x, y);
-    this.position = new Vec2(x, y);
-    this.geometry = geometry;
-    this.updateGeometryPositions();
-}
-
-Body.prototype.mass = Number.POSITIVE_INFINITY;
-
-Body.prototype.restitution = 0;
-
-Body.prototype.translate = function(dx, dy) {
-    this.lastPosition.x += dx;
-    this.lastPosition.y += dy;
-    this.position.x += dx;
-    this.position.y += dy;
-    this.updateGeometryPositions();
-};
-
-Body.prototype.moveTo = function(x, y) { // TODO: test
-    this.lastPosition.x = -this.lastPosition.x + this.position.x + x;
-    this.lastPosition.y = -this.lastPosition.y + this.position.y + y;
-    this.position.x = x;
-    this.position.y = y;
-    this.updateGeometryPositions();
-};
-
-Body.prototype.resetVelocity = function() {
-    this.lastPosition.x = this.position.x;
-    this.lastPosition.y = this.position.y;
-};
-
-Body.prototype.getVelocityX = function() {
-    if (this.lastDt === void 0) {
-        return 0;
-    } else {
-        return (this.position.x - this.lastPosition.x) / this.lastDt;
-    }
-};
-
-Body.prototype.getVelocityY = function() {
-    if (this.lastDt === void 0) {
-        return 0;
-    } else {
-        return (this.position.y - this.lastPosition.y) / this.lastDt;
-    }
-};
-
 /**
- * @param {Vec2} force
- * @param {number} dt
+ * TODO: factory for solid, slowing-down, speeding-up and gravity mixes!
+ * @param {Geometry} solidGeometry
+ * @param {number} density
+ * @param {number} x
+ * @param {number} y
+ * @param {number} orientation
+ * @return {Body}
  */
-Body.prototype.applyForce = function(force, dt) {
-    // Lame Euler intergration
-    //        this.velocity.x += (force.x / this.mass) * dt;
-    //        this.shape.position.x += this.velocity.x * dt * Metrics.PPM;
-    //        this.velocity.y += (force.y / this.mass) * dt;
-    //        this.shape.position.y += this.velocity.y * dt * Metrics.PPM;
-
-    // Somewhat ok Verlet (velocity) integration
-    // http://buildnewgames.com/gamephysics/
-    // http://jsfiddle.net/7hKzv/
-    //        var a;
-    //
-    //        this.shape.x += (this.velocityX * dt + (0.5 * lastAX * dt * dt)) * Metrics.PPM; // TODO: PPM conversions
-    //        a = forceX / this.mass;
-    //        this.velocityX += ((lastAX + a) / 2) * dt;
-    //        lastAX = a;
-    //
-    //        this.shape.y += (this.velocityY * dt + (0.5 * lastAY * dt * dt)) * Metrics.PPM;
-    //        a = forceY / this.mass;
-    //        this.velocityY += ((lastAY + a) / 2) * dt;
-    //        lastAY = a;
-
-    // Time-corrected Verlet (position) integration
-    // http://lonesock.net/article/verlet.html
-
-    // Simulating force for 0 time breaks integrator (because of division by 0).
-    // 
-    //                                                                                ┌──── division by 0 happens here
-    //                                                                                ▼
-    //        this.position.x += (this.position.x - this.lastPosition.x) * (dt / this.lastDt) + (force.x * Metrics.PPM / this.mass) * dt * dt;
-    //        this.position.y += (this.position.y - this.lastPosition.y) * (dt / this.lastDt) + (force.y * Metrics.PPM / this.mass) * dt * dt;
-    if (dt === 0) {
-        return;
+Body.createSolid = function(solidGeometry, density, x, y, orientation) {
+    if (!(solidGeometry instanceof Geometry)) {
+        throw new Error("Geomtery must be instace of Geomtery.");
     }
-
-    if (this.lastDt === void 0) {
-        this.lastDt = dt;
+    
+    if (typeof density !== "number" || density < 0) {
+        throw new Error("Parameter 2 (density) must be positive (non-zero) number.");
     }
-
-    // If the objects mass is infinite it wont move...
-    // TODO: ---> insert "yo mama is so fat" joke here <---
-    if (this.mass !== Number.POSITIVE_INFINITY) {
-        var lastX = this.position.x,
-            lastY = this.position.y;
-
-        force.scale(Metrics.PPM);
-
-        this.position.x += (this.position.x - this.lastPosition.x) * (dt / this.lastDt) + (force.x / this.mass) * dt * dt;
-        this.position.y += (this.position.y - this.lastPosition.y) * (dt / this.lastDt) + (force.y / this.mass) * dt * dt;        
-
-        this.lastPosition.x = lastX;
-        this.lastPosition.y = lastY;
-        
-        this.lastDt = dt;
-    }
-
-    // Update geometries
-    this.updateGeometryPositions();
+    
+    var body = new Body({solid: solidGeometry}, x, y, orientation);
+    body.setMass(solidGeometry.getArea() * density);
+    body.setInertia(solidGeometry.getInertia() * body.mass);
+    
+    return body;
 };
 
-Body.prototype.reflectVelocityAlongUnitVectorXY = function(normalX, normalY) {
-    // Verlet position integrator doesn't store velocity, instead it calculates it using objects current and last positions, so we need to modify last position...
-    this.lastPosition.x = this.position.x - this.lastPosition.x;
-    this.lastPosition.y = this.position.y - this.lastPosition.y;
-    this.lastPosition.reflectAlongNormalXY(normalX, normalY, this.restitution);
-    this.lastPosition.x = this.position.x - this.lastPosition.x;
-    this.lastPosition.y = this.position.y - this.lastPosition.y;
+Body.prototype.setMass = function(mass) {
+    if ((typeof mass === "number" && mass > 0)|| mass === Number.POSITIVE_INFINITY) {
+        this.mass = mass;
+        this.inverseMass = 1 / mass;
+    } else {
+        throw new Error("Mass must be either positive (non-zero) number or Number.POSITIVE_INFINITY");
+    }
 };
 
-Body.prototype.updateGeometryPositions = function() {
+Body.prototype.setInertia = function(inertia) {
+    if ((typeof inertia === "number" && inertia > 0)|| inertia === Number.POSITIVE_INFINITY) {
+        this.inertia = inertia;
+        this.inverseInertia = 1 / inertia;
+    } else {
+        throw new Error("Inertia must be either positive (non-zero) number or Number.POSITIVE_INFINITY");
+    }
+};
+
+Body.prototype.transform = function(dx, dy, dOrientation) {
+    if (isFiniteNumber(dx) && isFiniteNumber(dy) && isFiniteNumber(dOrientation)) {
+        this.position.x += dx;
+        this.position.y += dy;
+        this.orientation += dOrientation;
+        this.updateGeometryTransformations();
+    } else {
+        throw new Error("Can't transform by non-finite number: ", dx, dy, dOrientation);
+    }
+};
+
+Body.prototype.setTransformation = function(x, y, orientation) {
+    if (isFiniteNumber(x) && isFiniteNumber(y) && isFiniteNumber(orientation)) {
+        this.position.x = x;
+        this.position.y = y;
+        this.orientation = orientation;
+        this.updateGeometryTransformations();
+    } else {
+        throw new Error("Can't transform by non-finite number: ", x, y, orientation);
+    }
+};
+
+// TODO: slow!
+Body.prototype.updateGeometryTransformations = function() {
     for (var geometryName in this.geometry) {
         if (this.geometry.hasOwnProperty(geometryName)) {
-            this.geometry[geometryName].layout(this.position.x, this.position.y, 0, 0);
+            this.geometry[geometryName].setTransformation(this.position.x, this.position.y, this.orientation);
         }
     }
 };
 
+Body.prototype.applyForceAndTorque = function(force, torque, dt) {
+    this.linearVelocity.x += (force.x / this.mass) * dt;        
+    this.position.x += this.linearVelocity.x * dt;
+    this.linearVelocity.y += (force.y / this.mass) * dt;
+    this.position.y += this.linearVelocity.y * dt;
 
-function BackgroundObject(x, y, z, texture) {
-    if (!(texture instanceof Image)) {
-        throw new Error("Background objects must have a texture.");
-    }
-    
-    Vec3.call(this, x, y, z);
-    
-    // Define unique read-only id
-    Object.defineProperty(this, "uid", {
-        value: nextBodyUid()
-    });
-    
-    this.texture = texture;
-}
+    this.angularVelocity += torque * this.inverseInertia * dt;
+    this.orientation += this.angularVelocity * dt;
 
-BackgroundObject.prototype = Object.create(Vec3.prototype);
-BackgroundObject.prototype.constructor = BackgroundObject;
+    this.updateGeometryTransformations();
+};
+
+
+//function BackgroundObject(x, y, z, texture) {
+//    if (!(texture instanceof Image)) {
+//        throw new Error("Background objects must have a texture.");
+//    }
+//    
+//    Vec3.call(this, x, y, z);
+//    
+//    // Define unique read-only id
+//    Object.defineProperty(this, "uid", {
+//        value: nextBodyUid()
+//    });
+//    
+//    this.texture = texture;
+//}
+//
+//BackgroundObject.prototype = Object.create(Vec3.prototype);
+//BackgroundObject.prototype.constructor = BackgroundObject;
+
+//
+//Body.prototype.resetVelocity = function() {
+//    this.lastPosition.x = this.position.x;
+//    this.lastPosition.y = this.position.y;
+//};
+//
+//Body.prototype.getVelocityX = function() {
+//    if (this.lastDt === void 0) {
+//        return 0;
+//    } else {
+//        return (this.position.x - this.lastPosition.x) / this.lastDt;
+//    }
+//};
+//
+//Body.prototype.getVelocityY = function() {
+//    if (this.lastDt === void 0) {
+//        return 0;
+//    } else {
+//        return (this.position.y - this.lastPosition.y) / this.lastDt;
+//    }
+//};
+//
+///**
+// * @param {Vec2} force
+// * @param {number} dt
+// */
+//Body.prototype.applyForce = function(force, dt) {
+//    // Lame Euler intergration
+//    //        this.velocity.x += (force.x / this.mass) * dt;
+//    //        this.shape.position.x += this.velocity.x * dt * Metrics.PPM;
+//    //        this.velocity.y += (force.y / this.mass) * dt;
+//    //        this.shape.position.y += this.velocity.y * dt * Metrics.PPM;
+//
+//    // Somewhat ok Verlet (velocity) integration
+//    // http://buildnewgames.com/gamephysics/
+//    // http://jsfiddle.net/7hKzv/
+//    //        var a;
+//    //
+//    //        this.shape.x += (this.velocityX * dt + (0.5 * lastAX * dt * dt)) * Metrics.PPM; // TODO: PPM conversions
+//    //        a = forceX / this.mass;
+//    //        this.velocityX += ((lastAX + a) / 2) * dt;
+//    //        lastAX = a;
+//    //
+//    //        this.shape.y += (this.velocityY * dt + (0.5 * lastAY * dt * dt)) * Metrics.PPM;
+//    //        a = forceY / this.mass;
+//    //        this.velocityY += ((lastAY + a) / 2) * dt;
+//    //        lastAY = a;
+//
+//    // Time-corrected Verlet (position) integration
+//    // http://lonesock.net/article/verlet.html
+//
+//    // Simulating force for 0 time breaks integrator (because of division by 0).
+//    // 
+//    //                                                                                ┌──── division by 0 happens here
+//    //                                                                                ▼
+//    //        this.position.x += (this.position.x - this.lastPosition.x) * (dt / this.lastDt) + (force.x * Metrics.PPM / this.mass) * dt * dt;
+//    //        this.position.y += (this.position.y - this.lastPosition.y) * (dt / this.lastDt) + (force.y * Metrics.PPM / this.mass) * dt * dt;
+//    if (dt === 0) {
+//        return;
+//    }
+//
+//    if (this.lastDt === void 0) {
+//        this.lastDt = dt;
+//    }
+//
+//    // If the objects mass is infinite it wont move...
+//    // TODO: ---> insert "yo mama is so fat" joke here <---
+//    if (this.mass !== Number.POSITIVE_INFINITY) {
+//        var lastX = this.position.x,
+//            lastY = this.position.y;
+//
+//        force.scale(Metrics.PPM);
+//
+//        this.position.x += (this.position.x - this.lastPosition.x) * (dt / this.lastDt) + (force.x / this.mass) * dt * dt;
+//        this.position.y += (this.position.y - this.lastPosition.y) * (dt / this.lastDt) + (force.y / this.mass) * dt * dt;        
+//
+//        this.lastPosition.x = lastX;
+//        this.lastPosition.y = lastY;
+//        
+//        this.lastDt = dt;
+//    }
+//
+//    // Update geometries
+//    this.updateGeometryTransformations();
+//};
+//
+//Body.prototype.reflectVelocityAlongUnitVectorXY = function(normalX, normalY) {
+//    // Verlet position integrator doesn't store velocity, instead it calculates it using objects current and last positions, so we need to modify last position...
+//    this.lastPosition.x = this.position.x - this.lastPosition.x;
+//    this.lastPosition.y = this.position.y - this.lastPosition.y;
+//    this.lastPosition.reflectAlongNormalXY(normalX, normalY, this.restitution);
+//    this.lastPosition.x = this.position.x - this.lastPosition.x;
+//    this.lastPosition.y = this.position.y - this.lastPosition.y;
+//};
+
 
 /*var Body = (function() {
     

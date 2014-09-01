@@ -147,6 +147,10 @@ function SpatialMap(boundingBoxPropertyPath, shift) {
         return filterUnique(results);
     };
     
+    this.queryRect = function(rect) {
+        return this.query(rect.x, rect.y, rect.width, rect.height);
+    };
+    
     this.toString = function() {
         return JSON.stringify(cells);
     };

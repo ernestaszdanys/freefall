@@ -81,7 +81,7 @@ Loader.loadResourceTree(resourceDescription,
         choreographer.addEventListener(Choreographer.EVENT_ON_FRAME, onFrame);
 
         var menu = new Menu(context, resources),
-            game = new Game(context, resources),
+            game = new Game(context, resources, Metrics.PPM),
             hud = new Hud(context, resources),
             gameOver = new GameOver(context, resources);
         
@@ -126,13 +126,13 @@ Loader.loadResourceTree(resourceDescription,
             setAppState(AppState.GAME);
         });
 
-        hud.setScore(game.getPlayerScore());
+        //hud.setScore(game.getPlayerScore());
         game.addEventListener(Game.EVENT_PLAYER_SCORE_CHANGED, function(eventName, score) {
             hud.setScore(~~score);
             gameOver.setScore(~~score);
         });
         
-        hud.setHealth(game.getPlayerHealth());
+        //hud.setHealth(game.getPlayerHealth());
         game.addEventListener(Game.EVENT_PLAYER_HEALTH_CHANGED, function(eventName, health) {
             hud.setHealth(~~health);
             if (health === 0) {

@@ -1,5 +1,95 @@
 "use strict";
 
+/**
+ * @constructor
+ * @param {type} context
+ * @param {type} resources
+ * @param {type} PPM        Pixels per meter.
+ */
+function Game(context, resources, PPM) {
+    
+    // Extend Observable
+    Observable.apply(this);
+        
+    var self = this;
+        
+    // Physics stuff
+    var timeScale = 1, // 0 <= timeScale < infinity
+        sampleCount = 5; // Number of physics runs per frame
+        
+    // Camera stuff
+    var cameraWidth = context.canvas.width / PPM,       // meters
+        cameraHeight = context.canvas.height / PPM,     // meters
+        cameraDefaultOffsetY = cameraHeight / 2,        // meters
+        camera = new Camera(cameraWidth / 2, 0, cameraWidth, cameraHeight);
+    camera.setOffsetY(cameraDefaultOffsetY);
+    
+    // Game (map) related stuff
+    var solidBodies = new SpatialMap("geometry.solid.aabb", 2),      // Spatial map containing all the solid shapes of the bodies
+        effectBodies = new SpatialMap("geometry.effect.aabb", 2);    // Spatial map containing all the effect areas of the bodies
+    
+    // Parse and scale egg vertices
+    var eggVertices = Vec2.parseVectorPrimitiveArray(resources.eggVertices);
+    eggVertices.forEach(function(vertex) {vertex.scale(1 / PPM);});
+    
+    var player = Body.createSolid(new Poly(eggVertices, resources.eggTexture), Physics.densityEgg, cameraWidth / 2, 1, 0);
+        
+    solidBodies.add(Body.createSolid(new Poly([0, 0, 1, 0, 1, 1, 0, 1]), Number.POSITIVE_INFINITY, cameraWidth / 2, 8, 2));
+    
+        
+    /**
+     * @param {number} dt Simulation length (delta time) in milliseconds.
+     */
+    this.simulatePhysics = function(dt) {
+        // Don't simulate too much if game is running like crap
+        if (dt > 50) dt = 50; 
+        
+        dt *= 0.001; // Converts milliseconds to seconds
+        player.applyForceAndTorque(new Vec2(0, player.mass * 9.8), 20, dt);
+        
+        var obstacles = solidBodies.queryRect(player.geometry.solid.aabb),
+            intersectionData = {};
+        obstacles.forEach(function(obstacle) {
+            if (Physics.intersectPolyPoly(player.geometry.solid, obstacle.geometry.solid, intersectionData)) {
+                Physics.resolveCollision(player, obstacle, intersectionData);
+            }
+        });
+    };
+    
+    var backgroundFill = context.createLinearGradient(0, 0, 0, cameraHeight);
+    backgroundFill.addColorStop(0, "rgb(32, 46, 59)");
+    backgroundFill.addColorStop(0.5, "rgb(65, 77, 89)");
+    backgroundFill.addColorStop(1, "rgb(90, 101, 111)");
+    
+    this.draw = function() {
+        context.save();
+        
+        // Scale canvas
+        context.scale(PPM, PPM);
+        context.lineWidth /= PPM;
+        
+        // Draw background
+        context.fillStyle = backgroundFill;
+        context.fillRect(0, 0, camera.getWidth(), camera.getHeight());
+        
+            context.save();
+            
+            // Draw obstacles
+            var obstacles = solidBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
+            obstacles.forEach(function(obstacle) {
+                obstacle.geometry.solid.drawShape(context);
+            });
+            
+            // Draw player
+            player.geometry.solid.drawShape(context);
+            
+            context.restore();
+        
+        context.restore();
+    };
+}
+
+/*
 function Player() {
     Body.apply(this, arguments);
     Observable.apply(this);
@@ -47,8 +137,8 @@ Player.prototype.constructor = Player;
 
 Player.EVENT_HEALTH_CHANGED = "PLAYER_HEALTH_CHANGED";
 Player.EVENT_SCORE_CHANGED = "PLAYER_SCORE_CHANGED";
-
-
+*/
+/*
 var Game = function(context, resources) {
     
     // Extend Observable
@@ -213,9 +303,6 @@ var Game = function(context, resources) {
             forceOnPlayer.y = (levelGravity + (player.position.y / 10000)) * player.mass;
             forceOnPlayer.x = 0;
             
-            /*console.log(lastTouchX / PXR);
-            console.log((context.canvas.width / PXR) / 2);*/
-            
             if (lastTouchX > (context.canvas.width / PXR) / 2) {
                 if (touchDown) forceOnPlayer.x += 2800;
             } else {
@@ -317,12 +404,7 @@ var Game = function(context, resources) {
         // Transform
         context.save();
         camera.applyTransformation(context);
-        /*// Draw effect bodies
-        obstacles = effectBodies.query(cameraRect.x, cameraRect.y, cameraRect.width, cameraRect.height);
-        for(var i = 0, length = obstacles.length; i < length; i++) {
-            obstacles[i].geometry.effect.draw(context);
-        }*/
-        
+
         // Draw background
         context.fillStyle = gradient;
         context.fillRect(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
@@ -374,3 +456,4 @@ var Game = function(context, resources) {
 Game.EVENT_LEVEL_END_VISIBLE = "GAME_LEVEL_END_VISIBLE";
 Game.EVENT_PLAYER_HEALTH_CHANGED = "GAME_PLAYER_HEALTH_CHANGED";
 Game.EVENT_PLAYER_SCORE_CHANGED = "GAME_PLAYER_SCORE_CHANGED";
+*/
