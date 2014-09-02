@@ -13,8 +13,16 @@ function Camera(centerX, centerY, width, height, perspective) {
         centerX = newCenterX;
     }
     
+    this.start(centerY, centerY, 0, centerY);
+    var diff;
     this.setCenterY = function(newCenterY) {
+        diff = newCenterY - centerY;
         centerY = newCenterY;
+        this.anchorPos = newCenterY;
+        this.accelaration = diff;
+        this.setStepTrigger();
+        offsetY = 285 - (this.anchorPos - this.massPos);
+        //285 - default camera offset
     }
     
     this.setCenter = function(newCenterX, newCenterY) {
@@ -101,10 +109,9 @@ function Camera(centerX, centerY, width, height, perspective) {
         translateY: Moves the whole coordinate system in the Y direction (so [0,0] is moved up or down)*/
         context.setTransform(1, 0, 0, 1, -this.getLeft(), -this.getTop());
     }
-    
 }
 
-Camera.prototype.init = function () {
+Camera.prototype.init = function() {
     var spring = this;
     spring.interval = 0;
     spring.acceleration = 0;
@@ -115,14 +122,14 @@ Camera.prototype.init = function () {
     spring.totalForce = 0;
     spring.anchorPos = 0;
     spring.massPos = 0;
-    spring.stiffness = 120;
-    spring.mass = 10;
-    spring.friction = 3;
+    spring.stiffness = 240;
+    spring.mass = 30;
+    spring.friction = 8;
 }
 
 //this gives the spring an impulse
 //impulses can also be given while spring is in motion in order to alter its state
-Camera.prototype.start = function (acceleration, massPos, speed, anchorPos) {
+Camera.prototype.start = function(acceleration, massPos, speed, anchorPos) {
     var spring = this;
     spring.massPos = (typeof massPos != 'undefined') ? massPos : spring.massPos;
     spring.speed = (typeof speed != 'undefined') ? speed : spring.speed;
@@ -132,7 +139,7 @@ Camera.prototype.start = function (acceleration, massPos, speed, anchorPos) {
 }
 
 //one step is one recalculation of all spring variables when in motion
-Camera.prototype.step = function () {
+Camera.prototype.step = function() {
     var spring = this;
     spring.distance = spring.massPos - spring.anchorPos;
     spring.dampingForce = -spring.friction * spring.speed;
@@ -148,19 +155,19 @@ Camera.prototype.step = function () {
         /*spring.onSpringChange(Math.round(spring.massPos), {distance: spring.distance,
                                                            acceleration: spring.acceleration,
                                                            speed: spring.speed });*/
-        this.setStepTrigger();
+        //this.setStepTrigger();
     }
 }
 
 //this sets the timer for the next step
-Camera.prototype.setStepTrigger = function () {
+Camera.prototype.setStepTrigger = function() {
     var spring = this;
     clearTimeout(spring.stepTrigger);
-    spring.stepTrigger = setTimeout(function () {spring.step()}, spring.interval);
+    spring.stepTrigger = setTimeout(function() {spring.step()}, spring.interval);
 }
 
 //this stops the spring from performing the next step
-Camera.prototype.removeStepTrigger = function () {
+Camera.prototype.removeStepTrigger = function() {
     var spring = this;
     spring.stepTrigger = false; //removeTimeout(spring.step(), 10);
 }
