@@ -83,10 +83,7 @@ var Game = function(context, resources) {
         sampleCount = 10; // Number of physics runs per frame
 
     // Camera stuff
-    var camera = new Camera(context.canvas.width / 2, 0, context.canvas.width, context.canvas.height),
-        cameraDefaultOffset = context.canvas.height / 2 - 75;
-    
-        camera.setOffsetY(cameraDefaultOffset);
+    var camera = new Camera(context.canvas.width / 2, 0, context.canvas.width, context.canvas.height);
     
     // Game (map) related stuff
     var solidBodies = new SpatialMap("geometry.solid", 8), // Spatial map containing all the solid shapes of the bodies
@@ -100,7 +97,8 @@ var Game = function(context, resources) {
     player.addEventListener(Player.EVENT_HEALTH_CHANGED, function(eventName, health) {
         self.dispatchEvent(Game.EVENT_PLAYER_HEALTH_CHANGED, health);
         if (health === 0) {
-            drawRealTimeAnimator.animate(cameraDefaultOffset, 0, 1000, easeOutPower3, camera.setOffsetY);
+            camera.disableSpring();
+            drawRealTimeAnimator.animate(camera.getOffsetY(), 0, 1000, easeOutPower3, camera.setOffsetY);
         } else {
             camera.setOffsetY(cameraDefaultOffset);
         }
@@ -143,6 +141,9 @@ var Game = function(context, resources) {
         player.setScore(0);
         player.moveTo(context.canvas.width / 2, 0);
         player.resetVelocity();
+        camera.setCenterY(player.position.y);
+        camera.setOffsetY(cameraDefaultOffset);
+        camera.enableSpring();
     };
     
     this.addBackgroundObjects = function(backgroundObjects) {
