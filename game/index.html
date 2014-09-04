@@ -2,7 +2,7 @@
 <!--
 WARNING: direct eye contact with source code might cause permanent brain damage.
 -->
-<html lang="en" manifest="offline.manifest">
+<html>
     <head>
         
         <title>Free Fall pre-pre-alpha</title>
@@ -26,14 +26,14 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
         <script src="js/gui.js"></script>
         <script src="js/level.js"></script>
         <script src="js/game.js"></script>
-        <!--<script src="js/touch_screen.js"></script>-->
+        <script src="js/touch_screen.js"></script>
         <script src="js/camera.js"></script>
         <script src="js/animator.js"></script>
         <script src="js/interpolator.js"></script>
         
         <style>
             
-            body {margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: rgb(131, 13, 119);}
+            body {margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color:rgb(0, 0, 0);}
             
             #outside {
                 /* Prevent nearby text being highlighted when accidentally dragging mouse outside confines of the canvas */
@@ -50,72 +50,9 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
         </style>
     </head>
 <body>
-    
-        <script>
-          window.fbAsyncInit = function() {
-            FB.init({
-              appId      : '812894278755270',
-              xfbml      : true,
-              version    : 'v2.0'
-            });
-              
-			/*FB.ui({
-			 method: 'share_open_graph',
-			 action_type: 'og.likes',
-			 action_properties: JSON.stringify({
-			  object:'http://37.157.0.108/game/',
-			 })
-			}, function(response){});*/
-			
-			
-    function openFbPopUp() {
-        FB.ui(
-          {
-            method: 'feed',
-            name: 'Facebook Dialogs',
-            link: 'http://37.157.0.108/game/',
-            picture: 'http://fbrell.com/f8.jpg',
-            caption: 'Reference Documentation',
-            description: 'Dialogs provide a simple, consistent interface for applications to interface with users.'
-          },
-          function(response) {
-            if (response && response.post_id) {
-              alert('Post was published.');
-            } else {
-              alert('Post was not published.');
-            }
-          }
-        );
-    }
-			openFbPopUp(true);
-			
-              
-          };
-
-          (function(d, s, id){
-             var js, fjs = d.getElementsByTagName(s)[0];
-             if (d.getElementById(id)) {return;}
-             js = d.createElement(s); js.id = id;
-             js.src = "//connect.facebook.net/en_US/sdk.js";
-             fjs.parentNode.insertBefore(js, fjs);
-           }(document, 'script', 'facebook-jssdk'));
-        </script>
-    
     <div id="outside">
-        <canvas id="canvas" width=480px height=720px>This text is displayed if your browser does not support HTML5 Canvas.</canvas>
-        <!--<script type="text/javascript" src="index.js"></script>-->
+        <canvas id="canvas" width=480px height=720px>This text is displayed if your browser does not support HTML5 Canvas.</canvas>outside text
+        <script type="text/javascript" src="index.js"></script>
     </div>
-    
-    
-    
-<!--    <div
-      class="fb-like"
-      data-send="true"
-      data-width="450"
-      data-show-faces="true">
-    </div>-->
-    <p>labas 6</p>
-    <!--<h1 style="font-family:verdana;color:red;">A heading 10</h1>-->
-    
 </body>
 </html>

@@ -1,8 +1,16 @@
+var cameraDefaultOffset = 285;
+
 function Camera(centerX, centerY, width, height, perspective) {
     "use strict";
     
     var offsetX = 0,
-        offsetY = 0;
+        offsetY = cameraDefaultOffset;
+        
+    // Spring related
+    this.spring = true;
+    this.stepTrigger = false;
+    this.init();
+    this.start(centerY, centerY, 0, centerY);
     
     this.setCenterX = function(newCenterX) {
         centerX = newCenterX;
@@ -10,6 +18,11 @@ function Camera(centerX, centerY, width, height, perspective) {
     
     this.setCenterY = function(newCenterY) {
         centerY = newCenterY;
+        if (this.spring) {
+            this.anchorPos = newCenterY;
+            this.setStepTrigger();
+            offsetY = cameraDefaultOffset - (this.anchorPos - this.massPos);
+        }
     }
     
     this.setCenter = function(newCenterX, newCenterY) {
@@ -24,7 +37,7 @@ function Camera(centerX, centerY, width, height, perspective) {
     
     this.animateOffsetY = function(newOffsetY, time) {
         offsetY = newOffsetY;
-        // TODO:
+        // TODO:  
     }
     
     this.setOffsetX = function(newOffsetX) {
@@ -97,4 +110,65 @@ function Camera(centerX, centerY, width, height, perspective) {
         context.setTransform(1, 0, 0, 1, -this.getLeft(), -this.getTop());
     }
     
+    this.enableSpring = function() {
+        this.spring = true;
+        // Remove if you want bouncy restart effect!
+        this.init();
+    }
+    
+    this.disableSpring = function() {
+        this.spring = false;
+    }
+}
+
+Camera.prototype.init = function() {
+    this.interval = 0;
+    this.acceleration = 0;
+    this.distance = 0;
+    this.speed = 0;
+    this.springForce = 0;
+    this.dampingForce = 0;
+    this.totalForce = 0;
+    this.anchorPos = 0;
+    this.massPos = 0;
+    this.stiffness = 240;
+    this.mass = 60;
+    this.friction = 8;
+}
+
+//this gives the spring an impulse
+//impulses can also be given while spring is in motion in order to alter its state
+Camera.prototype.start = function(acceleration, massPos, speed, anchorPos) {
+    this.massPos = (typeof massPos != 'undefined') ? massPos : spring.massPos;
+    this.speed = (typeof speed != 'undefined') ? speed : spring.speed;
+    this.speed += acceleration*10 || 0;
+    this.anchorPos = (typeof anchorPos != 'undefined') ? anchorPos : spring.anchorPos;
+    this.step();
+}
+
+//one step is one recalculation of all spring variables when in motion
+Camera.prototype.step = function() {
+    this.distance = this.massPos - this.anchorPos;
+    this.dampingForce = -this.friction * this.speed;
+    this.springForce = -this.stiffness * this.distance;
+    this.totalForce = this.springForce + this.dampingForce;
+    this.acceleration = this.totalForce / this.mass;
+    this.speed += this.acceleration;
+    this.massPos += this.speed/100;
+    if (Math.round(this.massPos) == this.anchorPos && Math.abs(this.speed) < 0.2) {
+        this.removeStepTrigger();
+    }
+}
+
+//this sets the timer for the next step
+Camera.prototype.setStepTrigger = function() {
+    var spring = this;
+    clearTimeout(this.stepTrigger);
+    this.stepTrigger = setTimeout(function() {spring.step()}, this.interval);
+}
+
+//this stops the spring from performing the next step
+Camera.prototype.removeStepTrigger = function() {
+    this.init();
+    this.stepTrigger = false; //removeTimeout(spring.step(), 10);
 }

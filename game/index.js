@@ -6,6 +6,29 @@ var canvas = document.getElementById("canvas"),
 canvas.width = 480;
 canvas.height = 720;
 
+var touch = new TouchObserver(canvas);
+
+var PXR;
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas, false);
+function resizeCanvas() {
+    var width = window.innerWidth,
+        height = window.innerHeight;
+
+    if (width > 2/3 * height){
+        width = 2/3 * height;
+    } else {
+        height = 3/2 * width;
+    }
+    
+    PXR = width / canvas.width;
+    canvas.style.width = width + "px";
+    canvas.style.height = height + "px";
+    canvas.style.top = (window.innerHeight - height)/2 + "px";
+    canvas.style.left = (window.innerWidth - width)/2 + "px";
+}
+
 // Load resources
 var resourceDescription = {
     // Egg
@@ -135,33 +158,29 @@ Loader.loadResourceTree(resourceDescription,
             game.setTimeScale(1);
             setAppState(AppState.GAME);
         });
-
+        
         function onFrame(eventName, dt) {
-           
+            /*console.clear();*/
             context.clearRect(0, 0, canvas.width, canvas.height);
-            
+
             if (appState === AppState.MENU) {
                 menu.draw();
             } else if (appState === AppState.GAME) {
                 game.simulatePhysics(dt);
                 game.draw();
                 hud.draw();
-                
             } else if (appState === AppState.DEATH) {
                 game.setTimeScale(0.1);
                 game.simulatePhysics(dt);
                 game.draw();
-                hud.draw();                
+                hud.draw();
             } else if (appState === AppState.GAME_OVER) {
                 gameOver.draw();
             }
         }
-        
-        
     },
     function onError(error) {
         // Error
-        
         
         throw error;
     }
