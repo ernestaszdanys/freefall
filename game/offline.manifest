@@ -1,0 +1,20 @@
+CACHE MANIFEST
+
+# FREE FALL version 0.1.9
+
+
+#ALL ASSETS IMAGES
+
+# Main page
+index.html
+
+
+NETWORK:
+# All URLs that start with the following lines
+# are whitelisted.
+*
+
+CACHE:
+# Additional items to cache.
+
+FALLBACK:
