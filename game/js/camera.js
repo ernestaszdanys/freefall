@@ -95,6 +95,6 @@ function Camera(centerX, centerY, width, height, perspective) {
         translateX: Moves the whole coordinate system in the X direction (so [0,0] is moved left or right)
         translateY: Moves the whole coordinate system in the Y direction (so [0,0] is moved up or down)*/
         context.setTransform(1, 0, 0, 1, -this.getLeft(), -this.getTop());
-    }
+    };
     
 }

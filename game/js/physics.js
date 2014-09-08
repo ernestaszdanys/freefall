@@ -61,7 +61,7 @@ var Physics = {
             bestPoint,
             supportPointOnA = false;
 
-        // Support point belongs to poly2
+        // Support point belongs to b
         for (var i = 0; i < a.vertices.length; i++) {
             normal = a.normals[i];
             vertex = a.vertices[i];
@@ -78,7 +78,7 @@ var Physics = {
             return false;
         }
 
-        // Support point belongs to poly1
+        // Support point belongs to a
         for (var i = 0; i < b.vertices.length; i++) {
             normal = b.normals[i];
             vertex = b.vertices[i];
@@ -189,7 +189,7 @@ var Physics = {
         if (normalVelocity < 0) {
             return;
         }
-
+        
         // normalImpulseMagnitude = (1 + restitution) * (relativeVelocity dot contactNormal)
         //                          --------------------------------------------------------
         //                                 1       1     (aR cross n)^2   (bR cross n)^2
@@ -270,7 +270,7 @@ var Physics = {
         // ---------------------------------------------------------------------------------------------------------
     },
 
-    calculateDrag: function(velocity, density, dragCoef, crossSectionalArea) {
+    calculateDragForce1d: function(velocity, density, dragCoef, crossSectionalArea) {
         return (velocity > 0 ? -0.5 : 0.5) * velocity * velocity * density * dragCoef * crossSectionalArea;
     }
 };

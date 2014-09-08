@@ -1,6 +1,6 @@
-function Body(geometry, x, y, orientation) {
+function Body(geometry, x, y, orientation, density) {
     if (!isFiniteNumber(x) || !isFiniteNumber(y) || !isFiniteNumber(orientation)) {
-        throw new Error("Invalid x, y or orientation. (", x, y, orientation, ")");
+        throw new Error("Invalid transformation (x: ", x, ", y: ", y, ", orientation: ", orientation, ")");
     }
     
     // Define unique read-only id
@@ -10,8 +10,13 @@ function Body(geometry, x, y, orientation) {
     
     this.geometry = geometry;
     
-    this.setMass(Number.POSITIVE_INFINITY);
-    this.setInertia(Number.POSITIVE_INFINITY);
+    if (this.geometry.solid !== void 0 && (isFiniteNumber(density) || density === Number.POSITIVE_INFINITY)) {
+        this.setMass(this.geometry.solid.getArea() * density);
+        this.setInertia(this.geometry.solid.getInertia() * this.mass);
+    } else {
+        this.setMass(Number.POSITIVE_INFINITY);
+        this.setInertia(Number.POSITIVE_INFINITY);
+    }
 
     this.linearVelocity = new Vec2(0, 0);
     this.position = new Vec2(x, y);
@@ -19,14 +24,12 @@ function Body(geometry, x, y, orientation) {
     this.angularVelocity = 0;
     this.orientation = orientation;
     
-    if (x !== 0 || y !== 0 || orientation !== 0) {
-        this.updateGeometryTransformations();
-    }
+    this.updateGeometryTransformations();
 }
 
 // Default friction and restitution values
-Body.prototype.friction = 0.3;
-Body.prototype.restitution = 0.3;
+Body.prototype.friction = 0.5;
+Body.prototype.restitution = 0.5;
 
 /**
  * @return {number} Unique id.
@@ -37,31 +40,6 @@ Body.generateUid = (function() {
         return id++;
     };
 })();
-
-/**
- * TODO: factory for solid, slowing-down, speeding-up and gravity mixes!
- * @param {Geometry} solidGeometry
- * @param {number} density
- * @param {number} x
- * @param {number} y
- * @param {number} orientation
- * @return {Body}
- */
-Body.createSolid = function(solidGeometry, density, x, y, orientation) {
-    if (!(solidGeometry instanceof Geometry)) {
-        throw new Error("Geomtery must be instace of Geomtery.");
-    }
-    
-    if (typeof density !== "number" || density < 0) {
-        throw new Error("Parameter 2 (density) must be positive (non-zero) number.");
-    }
-    
-    var body = new Body({solid: solidGeometry}, x, y, orientation);
-    body.setMass(solidGeometry.getArea() * density);
-    body.setInertia(solidGeometry.getInertia() * body.mass);
-    
-    return body;
-};
 
 Body.prototype.setMass = function(mass) {
     if ((typeof mass === "number" && mass > 0)|| mass === Number.POSITIVE_INFINITY) {
@@ -124,24 +102,32 @@ Body.prototype.applyForceAndTorque = function(force, torque, dt) {
     this.updateGeometryTransformations();
 };
 
+Body.prototype.resetVelocity = function() {
+    this.linearVelocity.x = 0;
+    this.linearVelocity.y = 0;
+    this.angularVelocity = 0;
+};
 
-//function BackgroundObject(x, y, z, texture) {
-//    if (!(texture instanceof Image)) {
-//        throw new Error("Background objects must have a texture.");
-//    }
-//    
-//    Vec3.call(this, x, y, z);
-//    
-//    // Define unique read-only id
-//    Object.defineProperty(this, "uid", {
-//        value: nextBodyUid()
-//    });
-//    
-//    this.texture = texture;
-//}
-//
-//BackgroundObject.prototype = Object.create(Vec3.prototype);
-//BackgroundObject.prototype.constructor = BackgroundObject;
+// TODO:
+function BackgroundObject(x, y, z, textureDescription) {
+    if (!isFiniteNumber(x) || !isFiniteNumber(y) || !isFiniteNumber(z)) {
+        throw new Error("Invalid position (x: ", x, ", y: ", y, ", z: ", z, ")");
+    }
+    
+    if (!(image instanceof Image)) {
+        throw new Error("Background objects must have an image.");
+    }
+    
+    Vec3.call(this, x, y, z);
+    
+    // Define unique read-only id
+    Object.defineProperty(this, "uid", {value: Body.generateUid()});
+    
+    this.textureDescription = textureDescription;
+}
+
+BackgroundObject.prototype = Object.create(Vec3.prototype);
+BackgroundObject.prototype.constructor = BackgroundObject;
 
 //
 //Body.prototype.resetVelocity = function() {

@@ -39,8 +39,10 @@ Vec2.prototype = {
     },
     normalize: function() {
         var length = this.length();
-        this.x /= length;
-        this.y /= length;
+        if (length !== 0) {
+            this.x /= length;
+            this.y /= length;
+        }
     },
     reflectAlongNormalVec2: function(normal) {
         // vectorReflection = vector - 2(vector dot normal) * normal

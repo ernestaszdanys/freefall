@@ -42,7 +42,7 @@ var resourceDescription = {
         "assets/images/obstacle_3.png",
         "assets/images/obstacle_4.png"
     ],
-    obstacleTextureVertices: [
+    obstacleVertices: [
         "assets/images/obstacle_1.json",
         "assets/images/obstacle_2.json",
         "assets/images/obstacle_3.json",
@@ -126,13 +126,13 @@ Loader.loadResourceTree(resourceDescription,
             setAppState(AppState.GAME);
         });
 
-        //hud.setScore(game.getPlayerScore());
+        hud.setScore(game.getPlayerScore());
         game.addEventListener(Game.EVENT_PLAYER_SCORE_CHANGED, function(eventName, score) {
             hud.setScore(~~score);
             gameOver.setScore(~~score);
         });
         
-        //hud.setHealth(game.getPlayerHealth());
+        hud.setHealth(game.getPlayerHealth());
         game.addEventListener(Game.EVENT_PLAYER_HEALTH_CHANGED, function(eventName, health) {
             hud.setHealth(~~health);
             if (health === 0) {
@@ -146,12 +146,12 @@ Loader.loadResourceTree(resourceDescription,
                 }, 2000);
             }
         });
-        
+        /*
         game.addEventListener(Game.EVENT_LEVEL_END_VISIBLE, function(eventName, levelEndY) {
             game.addObstacles(generateObstacles(10, canvas.width, canvas.height * 3, levelEndY, resources));
             game.addBackgroundObjects(generateRandomBackgroundObjects(50, resources.backgroundObstaclesBlur2, canvas.width, canvas.height * 3, -200, 0, levelEndY, 0));
         });
-        
+        */
         gameOver.addEventListener(GameOver.EVENT_RESTART_CLICKED, function(eventName) {
             game.resetPlayer();
             hud.setHighScore();
