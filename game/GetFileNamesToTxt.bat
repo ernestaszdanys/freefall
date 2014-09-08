@@ -58,11 +58,7 @@ dir "js\*" >> FileNames.txt
 @echo.>> output.txt
 
 
-set FileName=dir  /b *
-
-
-dir /d /b * >> output.txt
-echo 
+for /f "delims=" %%a in ('dir /b assets\images\*.png') do @echo assets\images\%%~a >> output.txt
 
 start notepad output.txt
 

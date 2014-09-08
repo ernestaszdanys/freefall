@@ -1,6 +1,6 @@
 #This is a list off all game files 
-Date when the GEN was executed: 2014.08.29
-#5120136393789 -GENERATION NUMBER 
+Date when the GEN was executed: 2014.09.02
+#85891610618852 -GENERATION NUMBER 
 
 ############################## 
 #Files in primarry dir       #
@@ -12,7 +12,6 @@ GetFileNamesToTxt.bat
 index.html
 index.js
 js
-output.txt
 
 ############################## 
 #All game images             #
@@ -20,6 +19,7 @@ output.txt
 button_red_round.png
 egg.png
 egg_broken.png
+facebookShare.png
 icon_play.png
 icon_refresh.png
 logo.png
@@ -80,12 +80,12 @@ C:\Users\WIN8\Documents\freefall\game\GetFileNamesToTxt.bat
 C:\Users\WIN8\Documents\freefall\game\index.html
 C:\Users\WIN8\Documents\freefall\game\index.js
 C:\Users\WIN8\Documents\freefall\game\js
-C:\Users\WIN8\Documents\freefall\game\output.txt
 C:\Users\WIN8\Documents\freefall\game\assets\images
 C:\Users\WIN8\Documents\freefall\game\assets\images\button_red_round.png
 C:\Users\WIN8\Documents\freefall\game\assets\images\egg.json
 C:\Users\WIN8\Documents\freefall\game\assets\images\egg.png
 C:\Users\WIN8\Documents\freefall\game\assets\images\egg_broken.png
+C:\Users\WIN8\Documents\freefall\game\assets\images\facebookShare.png
 C:\Users\WIN8\Documents\freefall\game\assets\images\icon_play.png
 C:\Users\WIN8\Documents\freefall\game\assets\images\icon_refresh.png
 C:\Users\WIN8\Documents\freefall\game\assets\images\logo.png
@@ -133,30 +133,30 @@ C:\Users\WIN8\Documents\freefall\game\js\vector.js
 
  Directory of C:\Users\WIN8\Documents\freefall\game
 
-08/29/2014  06:46 PM    <DIR>          .
-08/29/2014  06:46 PM    <DIR>          ..
+09/02/2014  12:21 PM    <DIR>          .
+09/02/2014  12:21 PM    <DIR>          ..
 08/19/2014  11:52 AM    <DIR>          assets
 08/29/2014  06:44 PM               295 cache.manifest
-08/29/2014  06:52 PM             4,685 FileNames.txt
-08/29/2014  06:52 PM             1,916 GetFileNamesToTxt.bat
-08/29/2014  01:56 PM             2,312 index.html
-08/29/2014  01:56 PM             6,215 index.js
-08/29/2014  02:50 PM    <DIR>          js
-08/29/2014  06:51 PM             1,430 output.txt
-               6 File(s)         16,853 bytes
-               4 Dir(s)  126,657,994,752 bytes free
+09/02/2014  12:21 PM             4,714 FileNames.txt
+09/02/2014  12:21 PM             1,945 GetFileNamesToTxt.bat
+09/01/2014  06:07 PM             3,266 index.html
+09/01/2014  04:15 PM             6,557 index.js
+09/01/2014  06:13 PM    <DIR>          js
+               5 File(s)         16,777 bytes
+               4 Dir(s)  128,936,415,232 bytes free
 
  Volume in drive C has no label.
  Volume Serial Number is 40E0-7DB1
 
  Directory of C:\Users\WIN8\Documents\freefall\game\assets\images
 
-08/29/2014  03:10 PM    <DIR>          .
-08/29/2014  03:10 PM    <DIR>          ..
+09/01/2014  04:12 PM    <DIR>          .
+09/01/2014  04:12 PM    <DIR>          ..
 08/20/2014  02:33 PM             3,782 button_red_round.png
 08/21/2014  02:13 PM               135 egg.json
 08/20/2014  02:33 PM             5,002 egg.png
 08/20/2014  02:33 PM            11,245 egg_broken.png
+08/23/2014  01:32 PM            17,129 facebookShare.png
 08/20/2014  02:33 PM             2,249 icon_play.png
 08/20/2014  02:33 PM             3,474 icon_refresh.png
 08/20/2014  02:33 PM            28,865 logo.png
@@ -177,25 +177,25 @@ C:\Users\WIN8\Documents\freefall\game\js\vector.js
 08/20/2014  02:33 PM             8,384 obstacle_4_blur_1.png
 08/20/2014  02:33 PM            13,054 obstacle_4_blur_2.png
 08/20/2014  02:33 PM             5,857 ribbon.png
-              24 File(s)        155,373 bytes
-               2 Dir(s)  126,657,994,752 bytes free
+              25 File(s)        172,502 bytes
+               2 Dir(s)  128,936,415,232 bytes free
 
  Volume in drive C has no label.
  Volume Serial Number is 40E0-7DB1
 
  Directory of C:\Users\WIN8\Documents\freefall\game\js
 
-08/29/2014  02:50 PM    <DIR>          .
-08/29/2014  02:50 PM    <DIR>          ..
+09/01/2014  06:13 PM    <DIR>          .
+09/01/2014  06:13 PM    <DIR>          ..
 08/28/2014  05:20 PM             1,712 animator.js
 08/20/2014  02:33 PM            11,811 body.js
 08/28/2014  05:20 PM             2,802 camera.js
 08/20/2014  02:33 PM             2,406 choreographer.js
 08/29/2014  01:56 PM             4,651 controls.js
 08/20/2014  02:33 PM             1,675 dynamic_behaviour.js
-08/29/2014  02:44 PM            14,337 game.js
+09/01/2014  06:13 PM            14,329 game.js
 08/20/2014  02:33 PM             6,911 geometry.js
-08/28/2014  05:20 PM            11,199 gui.js
+09/01/2014  04:23 PM            11,385 gui.js
 08/28/2014  05:20 PM               541 interpolator.js
 08/20/2014  02:33 PM             1,570 level.js
 08/20/2014  02:33 PM             7,039 loader.js
@@ -208,5 +208,5 @@ C:\Users\WIN8\Documents\freefall\game\js\vector.js
 08/20/2014  02:33 PM             1,900 text.js
 08/29/2014  01:56 PM             4,869 touch_screen.js
 08/20/2014  02:33 PM             3,724 vector.js
-              21 File(s)        100,740 bytes
-               2 Dir(s)  126,657,990,656 bytes free
+              21 File(s)        100,918 bytes
+               2 Dir(s)  128,936,411,136 bytes free
