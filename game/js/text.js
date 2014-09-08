@@ -1,4 +1,4 @@
-
+/*
 WebFontConfig = {
 	google: { families: [ 'Bitter:400,700:latin,latin-ext' ] }
 };
@@ -10,7 +10,7 @@ WebFontConfig = {
     wf.async = 'true';
     var s = document.getElementsByTagName('script')[0];
     s.parentNode.insertBefore(wf, s);
-})();
+})();*/
 
 function Text(context) {
     var fontStrokeRatio = 1/40,

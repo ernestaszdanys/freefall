@@ -46,6 +46,42 @@ function Menu(context, resources) {
     var buttonCircle = new Circle(45),
         buttonClick = false,
         buttonHover = false;
+
+    // testing image saving to local storage
+    /*var img = new Image();
+
+    img.src = "assets/images/egg.png";
+    console.log(img);
+    var imgData = getBase64Image(img);
+    localStorage.setItem("imgData", imgData);
+
+    function getBase64Image(img) {
+        // Create an empty canvas element
+        var cvs = document.createElement("canvas");
+        console.log(img.width, img.height);
+        cvs.width = img.width;
+        cvs.height = img.height;
+
+        console.log(cvs.width, cvs.height);
+
+        console.log(cvs);
+        // Copy the image contents to the canvas
+        var ctx = cvs.getContext("2d");
+        ctx.drawImage(img, 0, 0);
+
+        console.log(ctx);
+        // Get the data-URL formatted image
+        // Firefox supports PNG and JPEG. You could check img.src to guess the
+        // original format, but be aware the using "image/jpg" will re-encode the image.
+        var dataURL = cvs.toDataURL("image/png");
+
+        return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
+    }
+
+    var dataImage = localStorage.getItem('imgData');
+    img.src = "data:image/png;base64," + dataImage;
+    context.drawImage(img, 100, 100);*/
+
     
     var gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
     gradient.addColorStop(0, 'rgba(32, 46, 59, 1.000)');
