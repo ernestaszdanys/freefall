@@ -100,7 +100,6 @@ var Game = function(context, resources) {
             camera.disableSpring();
             drawRealTimeAnimator.animate(camera.getOffsetY(), 0, 1000, easeOutPower3, camera.setOffsetY);
         } else {
-            camera.setOffsetY(cameraDefaultOffset);
         }
     });
 
@@ -141,9 +140,7 @@ var Game = function(context, resources) {
         player.setScore(0);
         player.moveTo(context.canvas.width / 2, 0);
         player.resetVelocity();
-        camera.setCenterY(player.position.y);
         camera.setOffsetY(cameraDefaultOffset);
-        camera.enableSpring();
     };
     
     this.addBackgroundObjects = function(backgroundObjects) {
@@ -290,6 +287,7 @@ var Game = function(context, resources) {
                 playerHealthLossX = playerHealthLossX >= 1 ? playerHealthLossX : 0;
                 playerHealthLossY = playerHealthLossY >= 1 ? playerHealthLossY : 0;
                 
+                camera.enableSpring(playerHealthLossX, playerHealthLossY);
                 player.setHealth(player.getHealth() - (playerHealthLossX + playerHealthLossY));        
             }
 
