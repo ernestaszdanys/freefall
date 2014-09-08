@@ -3,7 +3,7 @@ var Loader = (function() {
     var getTime = Date.now || function() {return new Date().getTime();}, // Date.now() pollyfill
         urlFileExtensionPattern = /.+\.([^?]+)/,
         extensionToLoader = {}, // Mappings between extensions (like "png", "json") and their loaders
-        cache = false; // TODO
+        cache = true; // TODO
         
     extensionToLoader["json"] = getJson;
     extensionToLoader["png"] = getImage;

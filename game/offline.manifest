@@ -1,20 +1,59 @@
 CACHE MANIFEST
 
-# FREE FALL version 0.1.9
-
-
-#ALL ASSETS IMAGES
+# FREE FALL version 0.0.3
 
 # Main page
 index.html
+index.js
 
+#Images
+assets\images\button_red_round.png
+assets\images\egg.json
+assets\images\egg.png
+assets\images\egg_broken.png
+assets\images\icon_play.png
+assets\images\icon_refresh.png
+assets\images\logo.png
+assets\images\obstacle_1.json
+assets\images\obstacle_1.png
+assets\images\obstacle_1_blur_1.png
+assets\images\obstacle_1_blur_2.png
+assets\images\obstacle_2.json
+assets\images\obstacle_2.png
+assets\images\obstacle_2_blur_1.png
+assets\images\obstacle_2_blur_2.png
+assets\images\obstacle_3.json
+assets\images\obstacle_3.png
+assets\images\obstacle_3_blur_1.png
+assets\images\obstacle_3_blur_2.png
+assets\images\obstacle_4.json
+assets\images\obstacle_4.png
+assets\images\obstacle_4_blur_1.png
+assets\images\obstacle_4_blur_2.png
+assets\images\ribbon.png
 
-NETWORK:
-# All URLs that start with the following lines
-# are whitelisted.
-*
+#Fonts
+assets\fonts\bitter\Bitter-Regular.otf
 
-CACHE:
-# Additional items to cache.
-
-FALLBACK:
+#JS files
+js\animator.js
+js\body.js
+js\camera.js
+js\choreographer.js
+js\controls.js
+js\dynamic_behaviour.js
+js\game.js
+js\geometry.js
+js\gui.js
+js\interpolator.js
+js\level.js
+js\loader.js
+js\matrix4x4_temp.js
+js\metrics.js
+js\observable.js
+js\physics.js
+js\property_checker.js
+js\spatialMap.js
+js\text.js
+js\touch_screen.js
+js\vector.js
