@@ -7,9 +7,10 @@ function Camera(centerX, centerY, width, height, perspective) {
         offsetY = cameraDefaultOffset;
         
     // Spring related
-    this.spring = false;
+    this.spring = true;
     this.stepTrigger = false;
     this.init();
+    this.start(centerY, centerY, 0, centerY);
     
     this.setCenterX = function(newCenterX) {
         centerX = newCenterX;
@@ -18,8 +19,9 @@ function Camera(centerX, centerY, width, height, perspective) {
     this.setCenterY = function(newCenterY) {
         centerY = newCenterY;
         if (this.spring) {
+            this.anchorPos = newCenterY;
             this.setStepTrigger();
-            offsetY = cameraDefaultOffset - this.massPos;
+            offsetY = cameraDefaultOffset - (this.anchorPos - this.massPos);
         }
     }
     
@@ -108,14 +110,10 @@ function Camera(centerX, centerY, width, height, perspective) {
         context.setTransform(1, 0, 0, 1, -this.getLeft(), -this.getTop());
     }
     
-    this.enableSpring = function(x, y) {
-        if (!this.spring){
-            this.spring = true;
-            // Remove if you want bouncy restart effect!
-            this.init();
-            console.log(y*y);
-            this.start(y*y, 0, 500, 0);
-        }
+    this.enableSpring = function() {
+        this.spring = true;
+        // Remove if you want bouncy restart effect!
+        this.init();
     }
     
     this.disableSpring = function() {
@@ -133,9 +131,9 @@ Camera.prototype.init = function() {
     this.totalForce = 0;
     this.anchorPos = 0;
     this.massPos = 0;
-    this.stiffness = 120;
-    this.mass = 45;
-    this.friction = 4;
+    this.stiffness = 240;
+    this.mass = 60;
+    this.friction = 8;
 }
 
 //this gives the spring an impulse
@@ -172,6 +170,5 @@ Camera.prototype.setStepTrigger = function() {
 //this stops the spring from performing the next step
 Camera.prototype.removeStepTrigger = function() {
     this.init();
-    this.spring = false;
     this.stepTrigger = false; //removeTimeout(spring.step(), 10);
 }
