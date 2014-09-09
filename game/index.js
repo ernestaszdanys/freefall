@@ -69,7 +69,8 @@ var resourceDescription = {
     imageButtonRedRound: "assets/images/button_red_round.png",
     iconPlay: "assets/images/icon_play.png",
     iconRefresh: "assets/images/icon_refresh.png",
-    imageEggBroken: "assets/images/egg_broken.png"
+    imageEggBroken: "assets/images/egg_broken.png",
+    facebookShare: "assets/images/facebookShare.png"
 };
 
 Loader.loadResourceTree(resourceDescription,
