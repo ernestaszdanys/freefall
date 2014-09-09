@@ -149,6 +149,25 @@ function Poly(vertexData, textureDescription) {
 Poly.prototype = Object.create(Geometry.prototype);
 Poly.prototype.constructor = Poly;
 
+Poly.createCircle = function(vertexCount, radius, textureDescription) {
+    if (!isFiniteNumber(vertexCount) || vertexCount < 3) {
+        throw new Error("Polygon circle must containt at least 3 vertices.");
+    }
+    
+    if (!isFiniteNumber(radius)) {
+        throw new Error("Radius must be a finite number.");
+    }
+    
+    var dAngle = (Math.PI * 2) / vertexCount,
+        vertices = [];
+    
+    for (var i = 0, angle = 0; i < vertexCount; i++, angle += dAngle) {
+        vertices.push(new Vec2(radius + Math.cos(angle) * radius, radius + Math.sin(angle) * radius));
+    }
+    
+    return new Poly(vertices, textureDescription);
+};
+
 /**
  * Creates a shallow clone of this polygon with the specified transformation.
  * @returns {Poly}
@@ -237,7 +256,26 @@ Poly.prototype.debugDraw = function(context) {
         context.beginPath();
         context.strokeStyle = "rgba(255, 0, 0, 1)";
         context.strokeRect(this.aabb.x, this.aabb.y, this.aabb.width, this.aabb.height);
-    
+        
+        // Draw normals
+        var vertex,
+            nextVertex,
+            normal,
+            middleX,
+            middleY;
+        for (var i = 0, length = this.vertices.length; i < length; i++) {
+            vertex = this.vertices[i];
+            nextVertex = this.vertices[(i + 1) === length ? 0 : (i + 1)];
+            normal = this.normals[i];
+            middleX = (vertex.x + nextVertex.x) / 2;
+            middleY = (vertex.y + nextVertex.y) / 2;
+            context.beginPath();
+            context.moveTo(middleX, middleY);
+            context.lineTo(middleX + normal.x / 10, middleY + normal.y / 10);
+            context.closePath();
+            context.stroke();
+        }
+        
     // Restore state
     context.restore();
     
