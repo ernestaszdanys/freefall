@@ -190,7 +190,7 @@ Spring.prototype.step = function() {
     this.springForce = -this.stiffness * this.distance;
     this.totalForce = this.springForce + this.dampingForce;
     this.acceleration = this.totalForce / this.mass;
-    this.speed += this.acceleration;
+    this.speed += this.acceleration * dt/15;
     this.massPos += this.speed/100;
     if (Math.round(this.massPos) == this.anchorPos && Math.abs(this.speed) < 0.2) {
         this.removeStepTrigger();
