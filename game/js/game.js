@@ -97,7 +97,6 @@ var Game = function(context, resources) {
     player.addEventListener(Player.EVENT_HEALTH_CHANGED, function(eventName, health) {
         self.dispatchEvent(Game.EVENT_PLAYER_HEALTH_CHANGED, health);
         if (health === 0) {
-            camera.disableSpring();
             drawRealTimeAnimator.animate(camera.getOffsetY(), 0, 1000, easeOutPower3, camera.setOffsetY);
         } else {
         }
@@ -287,8 +286,9 @@ var Game = function(context, resources) {
                 playerHealthLossX = playerHealthLossX >= 1 ? playerHealthLossX : 0;
                 playerHealthLossY = playerHealthLossY >= 1 ? playerHealthLossY : 0;
                 
-                camera.enableSpring(playerHealthLossX, playerHealthLossY);
-                player.setHealth(player.getHealth() - (playerHealthLossX + playerHealthLossY));        
+                player.setHealth(player.getHealth() - (playerHealthLossX + playerHealthLossY));
+                if (intersectionData.penetrationX < 0) playerHealthLossX *= -1;
+                if (player.getHealth() > 0) camera.enableSpring(playerHealthLossX, playerHealthLossY);
             }
 
             // TODO: Camera
@@ -358,6 +358,8 @@ var Game = function(context, resources) {
         
         // Draw death rectangles
         if (player.getHealth() === 0) {
+            // camera.disableSpring() Needed only for enter button kill
+            camera.disableSpring();
             context.fillStyle = "rgb(32, 46, 59)";
             context.globalAlpha = 0.9;
             var boxHeight = (cameraDefaultOffset - camera.getOffsetY()) * 0.8;
