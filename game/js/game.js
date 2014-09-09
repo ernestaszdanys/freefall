@@ -270,14 +270,12 @@ function Game(context, resources, PPM) {
             var obstacles = solidBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
             obstacles.forEach(function(obstacle) {
                 obstacle.geometry.solid.draw(context);
-                
-                                obstacle.geometry.solid.debugDraw(context);
-
+                //obstacle.geometry.solid.debugDraw(context);
             });
             
             // Draw player
             player.geometry.solid.draw(context);
-            player.geometry.solid.debugDraw(context);
+            //player.geometry.solid.debugDraw(context);
 
             context.restore();
         

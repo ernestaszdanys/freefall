@@ -41,6 +41,24 @@ var Physics = {
         return bestVertex;
     },
 
+    simpleIntersectPointPoly: function(point, poly) {
+        // http://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test
+        var i = 0,
+            j = poly.vertices.length - 1,
+            isInside = false;
+        for (i, j; i < poly.vertices.length; j = i++) {
+            if ((poly.vertices[i].y > point.y) !== (poly.vertices[j].y > point.y) && point.x < (poly.vertices[j].x - poly.vertices[i].x) * (point.y - poly.vertices[i].y) / (poly.vertices[j].y - poly.vertices[i].y) + poly.vertices[i].x ) {
+                isInside = !isInside;
+            }
+        }
+        return isInside;
+    },
+
+    intersectPolyCircle: function(circle, poly, bucket) {
+        // http://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test
+        // TODO:
+    },
+
     /**
      * Checks collision between 2 polygons.
      * @param {Vec2[]} a
