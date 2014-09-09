@@ -13,7 +13,7 @@ var Physics = {
     densityEgg: 1038,
     
     // Gravitational constant
-    G: 6.67384E-11, 
+    G: 6.67384E-11,
 
     /**
      * Finds farthest point opposite to the given direction.

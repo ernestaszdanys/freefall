@@ -52,6 +52,9 @@ var resourceDescription = {
     metalBallImage: "assets/images/metal_ball.png",
     metalBallDescription: "assets/images/metal_ball.json",
     
+    gravityGradientImage: "assets/images/gravity_gradient.png",
+    
+    
     // Blurred background objects
     backgroundObstaclesBlur1: [
         "assets/images/obstacle_1_blur_1.png",
