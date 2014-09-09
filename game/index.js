@@ -40,16 +40,17 @@ var resourceDescription = {
         "assets/images/obstacle_1.png",
         "assets/images/obstacle_2.png",
         "assets/images/obstacle_3.png",
-        "assets/images/obstacle_4.png",
-        "assets/images/metal_ball.png"
+        "assets/images/obstacle_4.png"
     ],
     meteorDescriptions: [
         "assets/images/obstacle_1.json",
         "assets/images/obstacle_2.json",
         "assets/images/obstacle_3.json",
-        "assets/images/obstacle_4.json",
-        "assets/images/metal_ball.json"
+        "assets/images/obstacle_4.json"
     ],
+    
+    metalBallImage: "assets/images/metal_ball.png",
+    metalBallDescription: "assets/images/metal_ball.json",
     
     // Blurred background objects
     backgroundObstaclesBlur1: [

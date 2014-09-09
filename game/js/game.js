@@ -108,7 +108,13 @@ function Game(context, resources, PPM) {
         });
     }
     // Metal thingy polygon
-    
+    var metalBallPoly = new Poly(resources.metalBallDescription.vertices, {
+        image: resources.metalBallImage,
+        width: resources.metalBallDescription.imageWidth,
+        height: resources.metalBallDescription.imageHeight,
+        offsetX: resources.metalBallDescription.imageOffsetX,
+        offsetY: resources.metalBallDescription.imageOffsetY
+    });
     
     // Create player
     var player = new Player({solid: eggPoly}, cameraWidth / 2, 1, 0, Physics.densityEgg);
@@ -176,12 +182,22 @@ function Game(context, resources, PPM) {
             forceOnPlayer.x += Physics.calculateDragForce1d(player.linearVelocity.x, currentEnvironmentDensity, Physics.dragCoeffCube, 10);
             forceOnPlayer.y += Physics.calculateDragForce1d(player.linearVelocity.y, currentEnvironmentDensity, Physics.dragCoeffCube, 10);
 
+            // Check and apply force-based obstacle effects on player
+            bodies = effectBodies.queryRect(player.geometry.solid.aabb);
+            for (i = 0; i < bodies.length; i++) {
+                body = bodies[i];
+                if (Physics.intersectPolyPoly(player.geometry.solid, body.geometry.effect, intersectionData, false)) {
+                    var distanceSqr = (player.position.x - body.position.x) * (player.position.x - body.position.x) + (player.position.y - body.position.y) * (player.position.y - body.position.y); // TODO: perf
+                    forceOnPlayer.x -= 50000 * intersectionData.normal.x / distanceSqr;
+                    forceOnPlayer.y -= 50000 * intersectionData.normal.y / distanceSqr;
+                }
+            }
+            
             // Move and rotate player
             player.applyForceAndTorque(
                 forceOnPlayer,
                 Physics.calculateDragForce1d(player.angularVelocity, currentEnvironmentDensity, Physics.dragCoeffCube, 0), // TODO:
                 sampleDt);
-
 
             // Check and resolve collisions between player and obstacles
             bodies = solidBodies.queryRect(player.geometry.solid.aabb);
@@ -191,23 +207,7 @@ function Game(context, resources, PPM) {
                     Physics.resolveCollision(player, body, intersectionData);
                 }
             }
-            /*
-            bodies = solidBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
-            for (i = 0; i < bodies.length; i++) {
-                body = bodies[i];
-                body.applyForceAndTorque(new Vec2(0, 0), 0, sampleDt);
-                
-                // Check and resolve collisions between player and obstacles
-                var colidedBodies = solidBodies.queryRect(body.geometry.solid.aabb);
-                for (var j = 0; j < colidedBodies.length; j++) {
-                    var colidedBody = colidedBodies[j];
-                    if (Physics.intersectPolyPoly(body.geometry.solid, colidedBody.geometry.solid, intersectionData)) {
-                        Physics.resolveCollision(body, colidedBody, intersectionData);
-                    }
-                }
-                solidBodies.update(body);
-            }
-            */
+            
         }
 
         playerHealthLossX = player.linearVelocity.x - playerHealthLossX;
@@ -265,8 +265,15 @@ function Game(context, resources, PPM) {
             context.save();
             context.translate(-camera.getLeft(), -camera.getTop());
             
-            // Draw obstacles
-            var obstacles = solidBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
+            // Draw effect obstacles
+            var obstacles = effectBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
+            obstacles.forEach(function(obstacle) {
+                obstacle.geometry.effect.draw(context);
+                obstacle.geometry.effect.debugDraw(context);
+            });
+            
+            // Draw solid obstacles
+            obstacles = solidBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
             obstacles.forEach(function(obstacle) {
                 obstacle.geometry.solid.draw(context);
                 obstacle.geometry.solid.debugDraw(context);
@@ -364,10 +371,15 @@ function Game(context, resources, PPM) {
 
         for (var i = 0; i < numberOfObstacles; i++){
             offsetY += obstacleVerticleSpacing;
-            random = Math.floor(Math.random() * meteorPolygons.length);
 
-            body = new Body({solid: meteorPolygons[random].shallowClone()}, Math.random() * width, offsetY, 0, Number.POSITIVE_INFINITY);
-            obstacleArray.push(body);
+            if (Math.random() > 0.5) {
+                random = Math.floor(Math.random() * meteorPolygons.length);
+                body = new Body({solid: meteorPolygons[random].shallowClone()}, Math.random() * width, offsetY, 0, Number.POSITIVE_INFINITY);
+                obstacleArray.push(body);
+            } else {
+                body = new Body({solid: metalBallPoly.shallowClone(), effect: Poly.createCircle(16, 5)}, Math.random() * width, offsetY, 0, Number.POSITIVE_INFINITY);
+                obstacleArray.push(body);
+            }
         }
 
         return obstacleArray;
