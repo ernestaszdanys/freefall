@@ -32,17 +32,17 @@ function resizeCanvas() {
 // Load resources
 var resourceDescription = {
     // Egg
-    eggTexture: "assets/images/egg.png",
-    eggVertices: "assets/images/egg.json",
+    eggImage: "assets/images/egg.png",
+    eggDescription: "assets/images/egg.json",
 
     // Obstacles
-    obstacleTextures: [
+    meteorImages: [
         "assets/images/obstacle_1.png",
         "assets/images/obstacle_2.png",
         "assets/images/obstacle_3.png",
         "assets/images/obstacle_4.png"
     ],
-    obstacleVertices: [
+    meteorDescriptions: [
         "assets/images/obstacle_1.json",
         "assets/images/obstacle_2.json",
         "assets/images/obstacle_3.json",

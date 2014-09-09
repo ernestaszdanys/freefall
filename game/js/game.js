@@ -61,30 +61,6 @@ function Game(context, resources, PPM) {
     Observable.apply(this);
         
     var self = this;
-    
-    // Prepare resources (create texture descriptions, parse and scale vertices)
-    // Egg resources
-    var eggVertices = Vec2.parseVectorPrimitiveArray(resources.eggVertices);
-    eggVertices.forEach(function(vertex) {vertex.scale(1 / PPM);});
-    var eggTextureDescription = {
-        image: resources.eggTexture,
-        width: resources.eggTexture.naturalWidth / PPM,
-        height: resources.eggTexture.naturalHeight / PPM
-    };
-    // Solid obstacle resources
-    var obstacleVertices = [],
-        obstacleTextureDescriptions = [];
-    for (var i = 0; i < resources.obstacleVertices.length; i++) {
-        obstacleVertices[i] = Vec2.parseVectorPrimitiveArray(resources.obstacleVertices[i]);
-        obstacleVertices[i].forEach(function(vertex) {vertex.scale(1 / PPM);});
-    }
-    for (var i = 0; i < resources.obstacleTextures.length; i++) {
-        obstacleTextureDescriptions[i] = {
-            image: resources.obstacleTextures[i],
-            width: resources.obstacleTextures[i].naturalWidth / PPM,
-            height: resources.obstacleTextures[i].naturalHeight / PPM
-        };
-    }
         
     // Physics stuff
     var timeScale = 1,      // 0 <= timeScale < infinity
@@ -112,7 +88,14 @@ function Game(context, resources, PPM) {
         effectBodies = new SpatialMap("geometry.effect.aabb", 2);    // Effect areas
     
     // Create player
-    var player = new Player({solid: new Poly(eggVertices, eggTextureDescription)}, cameraWidth / 2, 1, 0, Physics.densityEgg);
+    var eggPoly = new Poly(resources.eggDescription.vertices, {
+        image: resources.eggImage,
+        width: resources.eggDescription.imageWidth,
+        height: resources.eggDescription.imageHeight,
+        offsetX: resources.eggDescription.imageOffsetX,
+        offsetY: resources.eggDescription.imageOffsetY
+    });
+    var player = new Player({solid: eggPoly}, cameraWidth / 2, 1, 0, Physics.densityEgg);
     player.addEventListener(Player.EVENT_HEALTH_CHANGED, function(eventName, health) {
         self.dispatchEvent(Game.EVENT_PLAYER_HEALTH_CHANGED, health);
         if (health === 0) {
@@ -124,7 +107,21 @@ function Game(context, resources, PPM) {
     player.addEventListener(Player.EVENT_SCORE_CHANGED, function(eventName, score) {
         self.dispatchEvent(Game.EVENT_PLAYER_SCORE_CHANGED, score);
     });    
-        
+    
+    // Obstacle polygons
+    var meteorPolygons = [];
+    for (var i = 0; i < resources.meteorDescriptions.length; i++) {
+        meteorPolygons[i] = new Poly(resources.meteorDescriptions[i].vertices, {
+            image: resources.meteorImages[i],
+            width: resources.meteorDescriptions[i].imageWidth,
+            height: resources.meteorDescriptions[i].imageHeight,
+            offsetX: resources.meteorDescriptions[i].imageOffsetX,
+            offsetY: resources.meteorDescriptions[i].imageOffsetY
+        });
+        console.log(meteorPolygons[i]);
+    }
+    
+    
     /**
      * @param {number} dt Simulation length (delta time) in milliseconds.
      */
@@ -188,7 +185,7 @@ function Game(context, resources, PPM) {
             bodies = solidBodies.queryRect(player.geometry.solid.aabb);
             for (i = 0; i < bodies.length; i++) {
                 body = bodies[i];
-                if (Physics.intersectPolyPoly(player.geometry.solid, body.geometry.solid, intersectionData)) {
+                if (Physics.intersectPolyPoly(player.geometry.solid, body.geometry.solid, intersectionData, true)) {
                     Physics.resolveCollision(player, body, intersectionData);
                 }
             }
@@ -353,17 +350,21 @@ function Game(context, resources, PPM) {
             random,
             body;
 
-        var leftWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height, 0, height])}, 0, offsetY + height / 2, 0, Number.POSITIVE_INFINITY),
-            rightWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height, 0, height])}, cameraWidth, offsetY + height / 2, 0, Number.POSITIVE_INFINITY);
+        var leftWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height, 0, height])}, -0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY),
+            rightWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height, 0, height])}, cameraWidth + 0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY);
 
+        leftWall.restitution = 0;
+        leftWall.friction = 0.1;
+        rightWall.restitution = 0;
+        rightWall.friction = 0.1;
         obstacleArray.push(leftWall);
         obstacleArray.push(rightWall);
 
         for (var i = 0; i < numberOfObstacles; i++){
             offsetY += obstacleVerticleSpacing;
-            random = Math.floor(Math.random() * obstacleVertices.length);
+            random = Math.floor(Math.random() * meteorPolygons.length);
 
-            body = new Body({solid: new Poly(obstacleVertices[random], obstacleTextureDescriptions[random])}, Math.random() * width, offsetY, 0, Number.POSITIVE_INFINITY);
+            body = new Body({solid: meteorPolygons[random].shallowClone()}, Math.random() * width, offsetY, 0, Number.POSITIVE_INFINITY);
             obstacleArray.push(body);
         }
 

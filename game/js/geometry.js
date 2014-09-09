@@ -151,13 +151,10 @@ Poly.prototype.constructor = Poly;
 
 /**
  * Creates a shallow clone of this polygon with the specified transformation.
- * @param {number} x
- * @param {number} y
- * @param {number} orientation
  * @returns {Poly}
  */
-Poly.prototype.shallowClone = function(x, y, orientation) {
-    return new Poly(this._template, x, y, orientation, this.textureDescription);
+Poly.prototype.shallowClone = function() {
+    return new Poly(this._template, this.textureDescription);
 };
 
 Poly.prototype.getArea = function() {
