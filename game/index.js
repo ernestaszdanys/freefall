@@ -139,7 +139,10 @@ Loader.loadResourceTree(resourceDescription,
                 setAppState(AppState.DEATH);
                 setTimeout(function(){
                     if (gameOver.getScore() > hud.getHighScore()) {
+                        gameOver.setNewHighScore(true);
                         localStorage.setItem("highscore", gameOver.getScore());
+                    } else {
+                        gameOver.setNewHighScore(false);
                     }
                     gameOver.setHighScore(localStorage.getItem("highscore"));
                     setAppState(AppState.GAME_OVER);

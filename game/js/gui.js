@@ -228,13 +228,15 @@ function GameOver(context, resources) {
 
     var score = 0,
         highScore,
+        newHighScore = false,
         buttonCircle = new Circle(45),
         buttonClick = false,
         buttonHover = false,
         scoreText = new Text(context),
         ptsText = new Text(context),
         highScoreText = new Text(context),
-        highScoreValueText = new Text(context);
+        highScoreValueText = new Text(context),
+        newHighScoreText = new Text(context);
 
     buttonCircle.layout(context.canvas.width/2, 500, 0, 0);
         
@@ -251,6 +253,10 @@ function GameOver(context, resources) {
 
     highScoreValueText.setSize(22);
     highScoreValueText.setBold(true);
+    
+    newHighScoreText.setText("NEW HIGH SCORE!");
+    newHighScoreText.setSize(30);
+    newHighScoreText.setBold(false);
     
     var gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
     gradient.addColorStop(0, 'rgba(32, 46, 59, 1.000)');
@@ -270,6 +276,10 @@ function GameOver(context, resources) {
 
     this.getHighScore = function() {
         return highScore;
+    };
+    
+    this.setNewHighScore = function(value) {
+        newHighScore = value;
     };
 
     function onMouseMove(event) {
@@ -319,6 +329,9 @@ function GameOver(context, resources) {
         highScoreValueText.setText(this.getHighScore());
         highScoreText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 - 4, context.canvas.height-15);
         highScoreValueText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth() + 8, context.canvas.height-15);
+        if (newHighScore) {
+            newHighScoreText.draw((context.canvas.width - newHighScoreText.getWidth())/2, context.canvas.height-90);
+        }
 
         if (buttonHover && buttonClick) { // Click
             context.drawImage(resources.imageButtonRedRound, buttonCircle.x, buttonCircle.y);
