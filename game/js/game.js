@@ -87,7 +87,8 @@ function Game(context, resources, PPM) {
     var solidBodies = new SpatialMap("geometry.solid.aabb", 2),      // Solid shapes
         effectBodies = new SpatialMap("geometry.effect.aabb", 2);    // Effect areas
     
-    // Create player
+    // Prepare polygons
+    // Egg polygon
     var eggPoly = new Poly(resources.eggDescription.vertices, {
         image: resources.eggImage,
         width: resources.eggDescription.imageWidth,
@@ -95,6 +96,21 @@ function Game(context, resources, PPM) {
         offsetX: resources.eggDescription.imageOffsetX,
         offsetY: resources.eggDescription.imageOffsetY
     });
+    // Meteor polygons
+    var meteorPolygons = [];
+    for (var i = 0; i < resources.meteorDescriptions.length; i++) {
+        meteorPolygons[i] = new Poly(resources.meteorDescriptions[i].vertices, {
+            image: resources.meteorImages[i],
+            width: resources.meteorDescriptions[i].imageWidth,
+            height: resources.meteorDescriptions[i].imageHeight,
+            offsetX: resources.meteorDescriptions[i].imageOffsetX,
+            offsetY: resources.meteorDescriptions[i].imageOffsetY
+        });
+    }
+    // Metal thingy polygon
+    
+    
+    // Create player
     var player = new Player({solid: eggPoly}, cameraWidth / 2, 1, 0, Physics.densityEgg);
     player.addEventListener(Player.EVENT_HEALTH_CHANGED, function(eventName, health) {
         self.dispatchEvent(Game.EVENT_PLAYER_HEALTH_CHANGED, health);
@@ -107,20 +123,6 @@ function Game(context, resources, PPM) {
     player.addEventListener(Player.EVENT_SCORE_CHANGED, function(eventName, score) {
         self.dispatchEvent(Game.EVENT_PLAYER_SCORE_CHANGED, score);
     });    
-    
-    // Obstacle polygons
-    var meteorPolygons = [];
-    for (var i = 0; i < resources.meteorDescriptions.length; i++) {
-        meteorPolygons[i] = new Poly(resources.meteorDescriptions[i].vertices, {
-            image: resources.meteorImages[i],
-            width: resources.meteorDescriptions[i].imageWidth,
-            height: resources.meteorDescriptions[i].imageHeight,
-            offsetX: resources.meteorDescriptions[i].imageOffsetX,
-            offsetY: resources.meteorDescriptions[i].imageOffsetY
-        });
-        console.log(meteorPolygons[i]);
-    }
-    
     
     /**
      * @param {number} dt Simulation length (delta time) in milliseconds.
