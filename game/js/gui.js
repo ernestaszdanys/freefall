@@ -236,7 +236,7 @@ function GameOver(context, resources) {
     var buttonFb = new Button(context, resources.facebookShare);
     buttonFb.layout(context.canvas.width/2, 600, 0, 0);
     buttonFb.addEventListener(Button.EVENT_CLICK, function() {
-        console.log("whattt");
+        self.dispatchEvent(GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED);
     });
     
     scoreText.setSize(40);
@@ -345,3 +345,4 @@ function GameOver(context, resources) {
     };
 };
 GameOver.EVENT_RESTART_CLICKED = "GAME_OVER_RESTART_CLICKED";
+GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED = "GAME_OVER_FACEBOOK_SCORE_SHARE_CLICKED";

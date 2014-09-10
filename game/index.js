@@ -159,6 +159,26 @@ Loader.loadResourceTree(resourceDescription,
             game.setTimeScale(1);
             setAppState(AppState.GAME);
         });
+    
+		gameOver.addEventListener(GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED, function(eventName) {
+            FB.ui(
+            {
+                method: 'feed',
+                name: 'FREE FALL',
+                link: 'http://37.157.0.158/game/',
+                picture: window.location + '/assets/images/logo.png',
+                caption: 'Free fall page dot com',
+                description: ' Points collected: '
+            },
+            function(response) {
+                if (response && response.post_id) {
+                    //alert('Post was published.');
+                } else {
+                    //alert('Post was not published.');
+                }
+            }
+        );
+		});
         
         function onFrame(eventName, dt) {
             /*console.clear();*/
