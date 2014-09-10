@@ -31,6 +31,7 @@ function Button(context, image) {
             case "touchleave":
             case "touchcancel":
                 self.state = Button.State.NORMAL;
+                break;
                 
             // Mouse event
             case "mousedown":
@@ -283,22 +284,7 @@ function GameOver(context, resources) {
         // TODO: fix this monstrosity
         (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
             .addEventListener("mouseup", button.handlePointerEvent, false);
-    };
-    
-    this.dissable = function() {
-        context.canvas.removeEventListener("touchstart", button.handlePointerEvent);
-        context.canvas.removeEventListener("touchend", button.handlePointerEvent);
-        context.canvas.removeEventListener("touchmove", button.handlePointerEvent);
-        context.canvas.removeEventListener("touchcancel", button.handlePointerEvent);
-        context.canvas.removeEventListener("touchleave", button.handlePointerEvent);
-        context.canvas.removeEventListener("mousedown", button.handlePointerEvent);
-        context.canvas.removeEventListener("mousemove", button.handlePointerEvent);
-        // TODO: fix this monstrosity
-        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
-            .removeEventListener("mouseup", button.handlePointerEvent, false);    
-    };
-    
-        this.enable = function() {
+        
         context.canvas.addEventListener("touchstart", buttonFb.handlePointerEvent, false);
         context.canvas.addEventListener("touchend", buttonFb.handlePointerEvent, false);
         context.canvas.addEventListener("touchmove", buttonFb.handlePointerEvent, false);
@@ -312,6 +298,17 @@ function GameOver(context, resources) {
     };
     
     this.dissable = function() {
+        context.canvas.removeEventListener("touchstart", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchend", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchmove", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchcancel", button.handlePointerEvent);
+        context.canvas.removeEventListener("touchleave", button.handlePointerEvent);
+        context.canvas.removeEventListener("mousedown", button.handlePointerEvent);
+        context.canvas.removeEventListener("mousemove", button.handlePointerEvent);
+        // TODO: fix this monstrosity
+        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
+            .removeEventListener("mouseup", button.handlePointerEvent, false);    
+
         context.canvas.removeEventListener("touchstart", buttonFb.handlePointerEvent);
         context.canvas.removeEventListener("touchend", buttonFb.handlePointerEvent);
         context.canvas.removeEventListener("touchmove", buttonFb.handlePointerEvent);

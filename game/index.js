@@ -70,7 +70,7 @@ var resourceDescription = {
     iconPlay: "assets/images/icon_play.png",
     iconRefresh: "assets/images/icon_refresh.png",
     imageEggBroken: "assets/images/egg_broken.png",
-    facebookShare: "assets/images/facebookShare.png"
+    facebookShare: "assets/images/facebook_share.png"
 };
 
 Loader.loadResourceTree(resourceDescription,
