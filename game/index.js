@@ -165,10 +165,10 @@ Loader.loadResourceTree(resourceDescription,
             {
                 method: 'feed',
                 name: 'FREE FALL',
-                link: 'http://37.157.0.158/game/',
-                picture: window.location + '/assets/images/logo.png',
-                caption: 'Free fall page dot com',
-                description: ' Points collected: '
+                link: 'http://37.157.0.95/game/game/',
+                picture: window.location + 'assets/images/logo.png',
+                caption: 'Points collected: ' + gameOver.getScore(),
+                description: 'FREE FALL - features challenging physics-based gameplay and hours of replay value. Get ready for an epic falling journy in SPACE. Avoid rocks and magnets, try to get as more points as you can, but remember the further you go, the faster it gets! MORE COMING SOON! STAY TUNED!'
             },
             function(response) {
                 if (response && response.post_id) {
