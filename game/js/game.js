@@ -64,7 +64,7 @@ function Game(context, resources, PPM) {
         
     // Physics stuff
     var timeScale = 1,      // 0 <= timeScale < infinity
-        sampleCount = 2;    // Number of physics runs per frame
+        sampleCount = 1;    // Number of physics runs per frame
     
     // Level related stuff
     var levelGravity = 6.8,
@@ -213,6 +213,10 @@ function Game(context, resources, PPM) {
 
         playerHealthLossX = player.linearVelocity.x - playerHealthLossX;
         playerHealthLossY = player.linearVelocity.y - playerHealthLossY;
+        
+        var playerDtVelocitySignX = playerHealthLossX >= 0 ? 1 : -1,
+            playerDtVelocitySignY = playerHealthLossY >= 0 ? 1 : -1;
+
 
         if (playerHealthLossX || playerHealthLossY) {
             playerHealthLossX /= dt * 200000;
@@ -227,7 +231,11 @@ function Game(context, resources, PPM) {
             playerHealthLossX = playerHealthLossX >= 1 ? playerHealthLossX : 0;
             playerHealthLossY = playerHealthLossY >= 1 ? playerHealthLossY : 0;
 
-            player.setHealth(player.getHealth() - (playerHealthLossX + playerHealthLossY));        
+            var healthLoss = playerHealthLossX + playerHealthLossY;
+            if (healthLoss > 0) {
+                player.setHealth(player.getHealth() - healthLoss); 
+                camera.spring(playerHealthLossX * playerDtVelocitySignX, playerHealthLossY * -playerDtVelocitySignY);
+            } 
         }
             
         // TODO: Camera
@@ -346,6 +354,7 @@ function Game(context, resources, PPM) {
         player.setScore(0);
         player.resetVelocity();
         player.setTransformation(camera.getWidth() / 2, 0, 0);
+        camera.resetSpring();
     };
     
     this.getPlayerHealth = function() {
