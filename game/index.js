@@ -69,7 +69,10 @@ var resourceDescription = {
     imageButtonRedRound: "assets/images/button_red_round.png",
     iconPlay: "assets/images/icon_play.png",
     iconRefresh: "assets/images/icon_refresh.png",
-    imageEggBroken: "assets/images/egg_broken.png"
+    imageEggBroken: "assets/images/egg_broken.png",
+
+    // Sounds
+    soundBounce: "assets/sounds/bounce.mp3"
 };
 
 Loader.loadResourceTree(resourceDescription,
@@ -135,6 +138,9 @@ Loader.loadResourceTree(resourceDescription,
         hud.setHealth(game.getPlayerHealth());
         game.addEventListener(Game.EVENT_PLAYER_HEALTH_CHANGED, function(eventName, health) {
             hud.setHealth(~~health);
+            resources.soundBounce.load();
+            resources.soundBounce.play();
+
             if (health === 0) {
                 setAppState(AppState.DEATH);
                 setTimeout(function(){
