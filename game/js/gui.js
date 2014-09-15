@@ -31,6 +31,7 @@ function Button(context, image) {
             case "touchleave":
             case "touchcancel":
                 self.state = Button.State.NORMAL;
+                break;
                 
             // Mouse event
             case "mousedown":
@@ -234,6 +235,12 @@ function GameOver(context, resources) {
         self.dispatchEvent(GameOver.EVENT_RESTART_CLICKED);
     });
     
+    var buttonFb = new Button(context, resources.facebookShare);
+    buttonFb.layout(context.canvas.width/2, 600, 0, 0);
+    buttonFb.addEventListener(Button.EVENT_CLICK, function() {
+        self.dispatchEvent(GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED);
+    });
+    
     scoreText.setSize(40);
     scoreText.setBold(true);
 
@@ -287,6 +294,17 @@ function GameOver(context, resources) {
         // TODO: fix this monstrosity
         (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
             .addEventListener("mouseup", button.handlePointerEvent, false);
+        
+        context.canvas.addEventListener("touchstart", buttonFb.handlePointerEvent, false);
+        context.canvas.addEventListener("touchend", buttonFb.handlePointerEvent, false);
+        context.canvas.addEventListener("touchmove", buttonFb.handlePointerEvent, false);
+        context.canvas.addEventListener("touchcancel", buttonFb.handlePointerEvent, false);
+        context.canvas.addEventListener("touchleave", buttonFb.handlePointerEvent, false);
+        context.canvas.addEventListener("mousedown", buttonFb.handlePointerEvent, false);
+        context.canvas.addEventListener("mousemove", buttonFb.handlePointerEvent, false);
+        // TODO: fix this monstrosity
+        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
+            .addEventListener("mouseup", buttonFb.handlePointerEvent, false);
     };
     
     this.dissable = function() {
@@ -300,6 +318,17 @@ function GameOver(context, resources) {
         // TODO: fix this monstrosity
         (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
             .removeEventListener("mouseup", button.handlePointerEvent, false);    
+
+        context.canvas.removeEventListener("touchstart", buttonFb.handlePointerEvent);
+        context.canvas.removeEventListener("touchend", buttonFb.handlePointerEvent);
+        context.canvas.removeEventListener("touchmove", buttonFb.handlePointerEvent);
+        context.canvas.removeEventListener("touchcancel", buttonFb.handlePointerEvent);
+        context.canvas.removeEventListener("touchleave", buttonFb.handlePointerEvent);
+        context.canvas.removeEventListener("mousedown", buttonFb.handlePointerEvent);
+        context.canvas.removeEventListener("mousemove", buttonFb.handlePointerEvent);
+        // TODO: fix this monstrosity
+        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
+            .removeEventListener("mouseup", buttonFb.handlePointerEvent, false);    
     };
     
     this.draw = function() {
@@ -326,6 +355,8 @@ function GameOver(context, resources) {
         }
         
         button.draw();
+        buttonFb.draw();
     };
 };
 GameOver.EVENT_RESTART_CLICKED = "GAME_OVER_RESTART_CLICKED";
+GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED = "GAME_OVER_FACEBOOK_SCORE_SHARE_CLICKED";
