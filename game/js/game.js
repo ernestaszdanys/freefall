@@ -64,7 +64,7 @@ function Game(context, resources, PPM) {
         
     // Physics stuff
     var timeScale = 1,      // 0 <= timeScale < infinity
-        sampleCount = 1;    // Number of physics runs per frame
+        sampleCount = 2;    // Number of physics runs per frame
     
     // Level related stuff
     var levelGravity = 6.8,
@@ -84,9 +84,10 @@ function Game(context, resources, PPM) {
     camera.setOffsetY(cameraDefaultOffsetY);
     
     // Create spatial maps
-    var solidBodies = new SpatialMap("geometry.solid.aabb", 2),      // Solid shapes
-        effectBodies = new SpatialMap("geometry.effect.aabb", 2);    // Effect areas
-    
+    var solidBodies = new SpatialMap("geometry.solid.aabb", 2),     // Solid shapes
+        effectBodies = new SpatialMap("geometry.effect.aabb", 2),   // Effect areas
+        backgroundBodies = new SpatialMap(null, 3);                 // Background objects 
+          
     // Prepare polygons
     // Egg polygon
     var eggPoly = new Poly(resources.eggDescription.vertices, {
@@ -236,7 +237,9 @@ function Game(context, resources, PPM) {
         if(camera.getBottom() > levelMaxY - 10) {
             // generateMoreObstacles();
             //this.dispatchEvent(Game.EVENT_LEVEL_END_VISIBLE, levelMaxY);
-            this.addObstacles(this.generateObstacles(100, levelMaxY));
+            var max = levelMaxY;
+            this.addObstacles(this.generateObstacles(player.position.y / 50 + 30, max));
+            backgroundBodies.addArray(this.generateBackgroundObjects(200, max));
         }
 
         // Set player score
@@ -264,17 +267,25 @@ function Game(context, resources, PPM) {
         
             context.save();
             context.translate(-camera.getLeft(), -camera.getTop());
+            var objects;
+            
+            // Draw background stuff
+            objects = backgroundBodies.query(camera.getLeft() - 10, camera.getTop() - 10, camera.getWidth() + 20, camera.getHeight() + 20);
+            objects.forEach(function(object) {
+                object.drawProjected(context, camera.getX(), camera.getY(), 600/50);
+                //obstacle.geometry.effect.debugDraw(context);
+            });
             
             // Draw effect obstacles
-            var obstacles = effectBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
-            obstacles.forEach(function(obstacle) {
+            objects = effectBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
+            objects.forEach(function(obstacle) {
                 obstacle.geometry.effect.draw(context);
                 //obstacle.geometry.effect.debugDraw(context);
             });
             
             // Draw solid obstacles
-            obstacles = solidBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
-            obstacles.forEach(function(obstacle) {
+            objects = solidBodies.query(camera.getLeft(), camera.getTop(), camera.getWidth(), camera.getHeight());
+            objects.forEach(function(obstacle) {
                 obstacle.geometry.solid.draw(context);
                 //obstacle.geometry.solid.debugDraw(context);
             });
@@ -359,8 +370,8 @@ function Game(context, resources, PPM) {
             random,
             body;
 
-        var leftWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height, 0, height])}, -0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY),
-            rightWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height, 0, height])}, cameraWidth + 0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY);
+        var leftWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height + 20, 0, height + 20])}, -0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY),
+            rightWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height + 20, 0, height + 20])}, cameraWidth + 0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY);
 
         leftWall.restitution = 0;
         leftWall.friction = 0.1;
@@ -383,6 +394,33 @@ function Game(context, resources, PPM) {
         }
 
         return obstacleArray;
+    };
+    
+    this.generateBackgroundObjects = function(numberOfObstacles, offsetY) {
+        var height = cameraHeight * 20,
+            width = cameraWidth,
+            backgroundBodies = [],
+            obstacleVerticleSpacing = height / numberOfObstacles,
+            random,
+            body;
+        
+        for (var i = 0; i < numberOfObstacles; i++){
+            offsetY += obstacleVerticleSpacing;
+            
+            random = Math.floor(Math.random() * meteorPolygons.length);
+            body = new BackgroundBody(
+                resources.backgroundObstaclesBlur2[random],
+                Math.random() * width,
+                offsetY,
+                Math.random() * -10 - 2,
+                resources.meteorDescriptions[random].imageWidth,
+                resources.meteorDescriptions[random].imageHeight
+            );
+        
+            backgroundBodies.push(body);
+        }
+
+        return backgroundBodies;
     };
 }
 

@@ -109,7 +109,7 @@ Body.prototype.resetVelocity = function() {
 };
 
 // TODO:
-function BackgroundObject(x, y, z, textureDescription) {
+function BackgroundBody(image, x, y, z, width, height) {
     if (!isFiniteNumber(x) || !isFiniteNumber(y) || !isFiniteNumber(z)) {
         throw new Error("Invalid position (x: ", x, ", y: ", y, ", z: ", z, ")");
     }
@@ -123,11 +123,31 @@ function BackgroundObject(x, y, z, textureDescription) {
     // Define unique read-only id
     Object.defineProperty(this, "uid", {value: Body.generateUid()});
     
-    this.textureDescription = textureDescription;
+    this.image = image;
+    this.width = width;
+    this.height = height;
 }
 
-BackgroundObject.prototype = Object.create(Vec3.prototype);
-BackgroundObject.prototype.constructor = BackgroundObject;
+BackgroundBody.prototype = Object.create(Vec3.prototype);
+BackgroundBody.prototype.constructor = BackgroundBody;
+
+BackgroundBody.prototype._scratchpad = {};
+
+BackgroundBody.prototype.drawProjected = function(context, projectionCenterX, projectionCenterY, perspective) {
+    var projected = this._scratchpad;
+    
+    this.perspectiveProjectToBucket(projectionCenterX, projectionCenterY, perspective, projected);
+    
+    var width = this.width * projected.w,
+        height = this.height * projected.w;
+    context.save();
+    
+    context.globalAlpha = 0.3 * projected.w;
+    context.drawImage(this.image, projected.x - width / 2, projected.y - height / 2, width, height);
+    
+    context.restore();
+};
+
 
 //
 //Body.prototype.resetVelocity = function() {
