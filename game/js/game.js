@@ -280,7 +280,7 @@ function Game(context, resources, PPM) {
             // Draw background stuff
             objects = backgroundBodies.query(camera.getLeft() - 10, camera.getTop() - 10, camera.getWidth() + 20, camera.getHeight() + 20);
             objects.forEach(function(object) {
-                object.drawProjected(context, camera.getX(), camera.getY(), 600/50);
+                object.drawProjected(context, camera.getLeft() + camera.getWidth() / 2, camera.getTop() + camera.getHeight() / 2, 600/50);
                 //obstacle.geometry.effect.debugDraw(context);
             });
             
@@ -379,13 +379,16 @@ function Game(context, resources, PPM) {
             random,
             body;
 
-        var leftWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height + 20, 0, height + 20])}, -0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY),
-            rightWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height + 20, 0, height + 20])}, cameraWidth + 0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY);
+        var leftWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height + 20, 0, height + 20], null)}, -0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY),
+            rightWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height + 20, 0, height + 20], null)}, cameraWidth + 0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY);
 
         leftWall.restitution = 0;
         leftWall.friction = 0.1;
         rightWall.restitution = 0;
         rightWall.friction = 0.1;
+        
+        
+        
         obstacleArray.push(leftWall);
         obstacleArray.push(rightWall);
 

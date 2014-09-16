@@ -319,7 +319,7 @@ Poly.prototype.debugDraw = function(context) {
 };
 
 Poly.prototype.draw = function(context) {
-    if (this.textureDescription !== void 0) {
+    if (this.textureDescription && this.textureDescription.image) {
         // Save state
         context.save();
 
@@ -338,7 +338,7 @@ Poly.prototype.draw = function(context) {
 
         // Restore state
         context.restore();
-    } else {
+    } else if (this.textureDescription !== null) {
         this.debugDraw(context);
     }
 };
