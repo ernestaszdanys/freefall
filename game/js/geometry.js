@@ -331,7 +331,7 @@ Poly.prototype.draw = function(context) {
 
                 // Draw image
                 context.drawImage(
-                    this.textureDescription.image,
+                    (this.textureDescription.image instanceof Array) ? this.textureDescription.image[this.textureDescription.imageIndex] : this.textureDescription.image,
                     this.textureDescription.offsetX || 0,
                     this.textureDescription.offsetY || 0,
                     this.textureDescription.width,

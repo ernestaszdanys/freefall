@@ -24,6 +24,7 @@ function Player() {
         } 
         if (newHealth !== health) {
             health = newHealth;
+            this.geometry.solid.textureDescription.imageIndex = ~~(health / (100 / this.geometry.solid.textureDescription.image.length)); // TODO
             this.dispatchEvent(Player.EVENT_HEALTH_CHANGED, health);
         }
     };
@@ -96,7 +97,8 @@ function Game(context, resources, PPM) {
     // Prepare polygons
     // Egg polygon
     var eggPoly = new Poly(resources.eggDescription.vertices, {
-        image: resources.eggImage,
+        image: resources.eggImages,
+        imageIndex: resources.eggImages.length - 1,
         width: resources.eggDescription.imageWidth,
         height: resources.eggDescription.imageHeight,
         offsetX: resources.eggDescription.imageOffsetX,
