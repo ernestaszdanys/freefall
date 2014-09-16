@@ -379,8 +379,8 @@ function Game(context, resources, PPM) {
             random,
             body;
 
-        var leftWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height + 20, 0, height + 20])}, -0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY),
-            rightWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height + 20, 0, height + 20])}, cameraWidth + 0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY);
+        var leftWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height + 20, 0, height + 20], {image: null})}, -0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY),
+            rightWall = new Body({solid: new Poly([0, 0, 1, 0, 1, height + 20, 0, height + 20], {image: null})}, cameraWidth + 0.5, offsetY + height / 2, 0, Number.POSITIVE_INFINITY);
 
         leftWall.restitution = 0;
         leftWall.friction = 0.1;

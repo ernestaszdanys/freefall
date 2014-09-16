@@ -320,24 +320,27 @@ Poly.prototype.debugDraw = function(context) {
 
 Poly.prototype.draw = function(context) {
     if (this.textureDescription !== void 0) {
-        // Save state
-        context.save();
+        // Check if image is defined
+        if (this.textureDescription.image) {
+            // Save state
+            context.save();
 
-            // Apply transformation
-            context.translate(this.textureAnchorPoint.x, this.textureAnchorPoint.y);
-            context.rotate(this._orientation);
+                // Apply transformation
+                context.translate(this.textureAnchorPoint.x, this.textureAnchorPoint.y);
+                context.rotate(this._orientation);
 
-            // Draw image
-            context.drawImage(
-                this.textureDescription.image,
-                this.textureDescription.offsetX || 0,
-                this.textureDescription.offsetY || 0,
-                this.textureDescription.width,
-                this.textureDescription.height
-            );
+                // Draw image
+                context.drawImage(
+                    this.textureDescription.image,
+                    this.textureDescription.offsetX || 0,
+                    this.textureDescription.offsetY || 0,
+                    this.textureDescription.width,
+                    this.textureDescription.height
+                );
 
-        // Restore state
-        context.restore();
+            // Restore state
+            context.restore(); 
+        }
     } else {
         this.debugDraw(context);
     }
