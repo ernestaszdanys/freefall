@@ -72,11 +72,10 @@ var resourceDescription = {
     // UI
     imageLogo: "assets/images/logo.png",
     imageRibbon: "assets/images/ribbon.png",
-    imageButtonRedRound: "assets/images/button_red_round.png",
-    iconPlay: "assets/images/icon_play.png",
-    iconRefresh: "assets/images/icon_refresh.png",
     imageEggBroken: "assets/images/egg_broken.png",
-    facebookShare: "assets/images/f_s.png"
+    imageButtonPlay: "assets/images/button_play.png",
+    imageButtonRetry: "assets/images/button_retry.png",
+    imageButtonFacebookShare: "assets/images/button_f_s.png"
 };
 
 Loader.loadResourceTree(resourceDescription,
