@@ -5,9 +5,11 @@ function Button(context, image) {
     Observable.call(this);
 
     var self = this;
-    this.context = context;
-    
-    this.state = Button.State.NORMAL; // NORMAL|HOVERED|PRESSED
+        
+    // Internal state
+    this._context = context;
+    this._state = Button.State.NORMAL; // NORMAL|HOVERED|PRESSED
+    this._clickable = false;
     
     this.x = 0;
     this.y = 0;
@@ -20,35 +22,36 @@ function Button(context, image) {
             // Touch event
             case "touchstart":  
                 if (self.isHitByEvent(event.changedTouches[0])) {
-                    self.state = Button.State.PRESSED;
+                    self._state = Button.State.PRESSED;
                 }
                 break;
 
             case "touchend": 
-                if (self.isHitByEvent(event.changedTouches[0]) && self.state === Button.State.PRESSED) {
+                if (self.isHitByEvent(event.changedTouches[0]) && self._state === Button.State.PRESSED) {
                     self.dispatchEvent(Button.EVENT_CLICK);
                 } // NOTE: no break.
             case "touchleave":
             case "touchcancel":
-                self.state = Button.State.NORMAL;
+                self._state = Button.State.NORMAL;
                 break;
                 
             // Mouse event
             case "mousedown":
                 if (self.isHitByEvent(event)) {
-                    self.state = Button.State.PRESSED;
+                    self._state = Button.State.PRESSED;
                 }
                 break;
                 
             case "mouseup":
-                if (self.isHitByEvent(event) && self.state === Button.State.PRESSED) {
+                if (self.isHitByEvent(event) && self._state === Button.State.PRESSED) {
                     self.dispatchEvent(Button.EVENT_CLICK);
                 }
-                self.state = Button.State.NORMAL;
+                self._state = Button.State.NORMAL;
                 break;
-
         }
     };
+    
+    this.setClickable(true);
 }
 
 Button.prototype.layout = function(parentX, parentY, parentWidth, parentHeight) {
@@ -57,20 +60,55 @@ Button.prototype.layout = function(parentX, parentY, parentWidth, parentHeight) 
 };
 
 Button.prototype.draw = function() {
-    if (this.state === Button.State.NORMAL) {
-        this.context.drawImage(this.image, this.x, this.y, this.width, this.height);
+    if (this._state === Button.State.NORMAL) {
+        this._context.drawImage(this.image, this.x, this.y, this.width, this.height);
     } else {
-        this.context.drawImage(this.image, this.x + 2, this.y + 2, this.width - 4, this.height - 4);
+        this._context.drawImage(this.image, this.x + 2, this.y + 2, this.width - 4, this.height - 4);
     }
 };
 
 Button.prototype.isHitByEvent = function(event) {
-    var canvasRect = this.context.canvas.getBoundingClientRect();
+    var canvasRect = this._context.canvas.getBoundingClientRect();
     return this.isHit((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR); // TODO: evil global
 };
 
 Button.prototype.isHit = function(x, y) {
     return (x >= this.x && x <= this.x + this.width) && (y >= this.y && y <= this.y + this.height);
+};
+
+Button.prototype.isClickable = function() {
+    return this._clickable;
+};
+
+/**
+ * @param {boolean} clickable
+ */
+Button.prototype.setClickable = function(clickable) {
+    if (clickable && !this._clickable) {
+        this._context.canvas.addEventListener("touchstart", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchend", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchmove", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchcancel", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchleave", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("mousedown", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("mousemove", this.handlePointerEvent, false);
+        // TODO: fix this monstrosity
+        (this._context.canvas.ownerDocument.defaultView || this._context.canvas.ownerDocument.parentWindow)
+            .addEventListener("mouseup", this.handlePointerEvent, false);
+        this._clickable = true;
+    } else if (!clickable && this._clickable) {
+        this._context.canvas.removeEventListener("touchstart", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchend", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchmove", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchcancel", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchleave", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("mousedown", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("mousemove", this.handlePointerEvent);
+        // TODO: fix this monstrosity
+        (this._context.canvas.ownerDocument.defaultView || this._context.canvas.ownerDocument.parentWindow)
+            .removeEventListener("mouseup", this.handlePointerEvent, false);    
+        this._clickable = false;
+    }
 };
 
 Button.EVENT_CLICK = "BUTTON_ON_CLICK";
@@ -99,29 +137,11 @@ function Menu(context, resources) {
     });
     
     this.enable = function() {
-        context.canvas.addEventListener("touchstart", button.handlePointerEvent, false);
-        context.canvas.addEventListener("touchend", button.handlePointerEvent, false);
-        context.canvas.addEventListener("touchmove", button.handlePointerEvent, false);
-        context.canvas.addEventListener("touchcancel", button.handlePointerEvent, false);
-        context.canvas.addEventListener("touchleave", button.handlePointerEvent, false);
-        context.canvas.addEventListener("mousedown", button.handlePointerEvent, false);
-        context.canvas.addEventListener("mousemove", button.handlePointerEvent, false);
-        // TODO: fix this monstrosity
-        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
-            .addEventListener("mouseup", button.handlePointerEvent, false);
+        button.setClickable(true);
     };
     
     this.dissable = function() {
-        context.canvas.removeEventListener("touchstart", button.handlePointerEvent);
-        context.canvas.removeEventListener("touchend", button.handlePointerEvent);
-        context.canvas.removeEventListener("touchmove", button.handlePointerEvent);
-        context.canvas.removeEventListener("touchcancel", button.handlePointerEvent);
-        context.canvas.removeEventListener("touchleave", button.handlePointerEvent);
-        context.canvas.removeEventListener("mousedown", button.handlePointerEvent);
-        context.canvas.removeEventListener("mousemove", button.handlePointerEvent);
-        // TODO: fix this monstrosity
-        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
-            .removeEventListener("mouseup", button.handlePointerEvent, false);    
+        button.setClickable(false);
     };
     
     this.draw = function() {
@@ -284,51 +304,13 @@ function GameOver(context, resources) {
     };
 
     this.enable = function() {
-        context.canvas.addEventListener("touchstart", buttonRetry.handlePointerEvent, false);
-        context.canvas.addEventListener("touchend", buttonRetry.handlePointerEvent, false);
-        context.canvas.addEventListener("touchmove", buttonRetry.handlePointerEvent, false);
-        context.canvas.addEventListener("touchcancel", buttonRetry.handlePointerEvent, false);
-        context.canvas.addEventListener("touchleave", buttonRetry.handlePointerEvent, false);
-        context.canvas.addEventListener("mousedown", buttonRetry.handlePointerEvent, false);
-        context.canvas.addEventListener("mousemove", buttonRetry.handlePointerEvent, false);
-        // TODO: fix this monstrosity
-        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
-            .addEventListener("mouseup", buttonRetry.handlePointerEvent, false);
-        
-        context.canvas.addEventListener("touchstart", buttonShare.handlePointerEvent, false);
-        context.canvas.addEventListener("touchend", buttonShare.handlePointerEvent, false);
-        context.canvas.addEventListener("touchmove", buttonShare.handlePointerEvent, false);
-        context.canvas.addEventListener("touchcancel", buttonShare.handlePointerEvent, false);
-        context.canvas.addEventListener("touchleave", buttonShare.handlePointerEvent, false);
-        context.canvas.addEventListener("mousedown", buttonShare.handlePointerEvent, false);
-        context.canvas.addEventListener("mousemove", buttonShare.handlePointerEvent, false);
-        // TODO: fix this monstrosity
-        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
-            .addEventListener("mouseup", buttonShare.handlePointerEvent, false);
+        buttonRetry.setClickable(true);
+        buttonShare.setClickable(true);
     };
     
     this.dissable = function() {
-        context.canvas.removeEventListener("touchstart", buttonRetry.handlePointerEvent);
-        context.canvas.removeEventListener("touchend", buttonRetry.handlePointerEvent);
-        context.canvas.removeEventListener("touchmove", buttonRetry.handlePointerEvent);
-        context.canvas.removeEventListener("touchcancel", buttonRetry.handlePointerEvent);
-        context.canvas.removeEventListener("touchleave", buttonRetry.handlePointerEvent);
-        context.canvas.removeEventListener("mousedown", buttonRetry.handlePointerEvent);
-        context.canvas.removeEventListener("mousemove", buttonRetry.handlePointerEvent);
-        // TODO: fix this monstrosity
-        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
-            .removeEventListener("mouseup", buttonRetry.handlePointerEvent, false);    
-
-        context.canvas.removeEventListener("touchstart", buttonShare.handlePointerEvent);
-        context.canvas.removeEventListener("touchend", buttonShare.handlePointerEvent);
-        context.canvas.removeEventListener("touchmove", buttonShare.handlePointerEvent);
-        context.canvas.removeEventListener("touchcancel", buttonShare.handlePointerEvent);
-        context.canvas.removeEventListener("touchleave", buttonShare.handlePointerEvent);
-        context.canvas.removeEventListener("mousedown", buttonShare.handlePointerEvent);
-        context.canvas.removeEventListener("mousemove", buttonShare.handlePointerEvent);
-        // TODO: fix this monstrosity
-        (context.canvas.ownerDocument.defaultView || context.canvas.ownerDocument.parentWindow)
-            .removeEventListener("mouseup", buttonShare.handlePointerEvent, false);    
+        buttonRetry.setClickable(false);
+        buttonShare.setClickable(false);
     };
     
     this.draw = function() {
