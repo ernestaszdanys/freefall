@@ -280,7 +280,7 @@ function Game(context, resources, PPM) {
             // Draw background stuff
             objects = backgroundBodies.query(camera.getLeft() - 10, camera.getTop() - 10, camera.getWidth() + 20, camera.getHeight() + 20);
             objects.forEach(function(object) {
-                object.drawProjected(context, camera.getX(), camera.getY(), 600/50);
+                object.drawProjected(context, camera.getLeft() + camera.getWidth() / 2, camera.getTop() + camera.getHeight() / 2, 1000 / 50);
                 //obstacle.geometry.effect.debugDraw(context);
             });
             
