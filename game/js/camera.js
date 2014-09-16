@@ -5,7 +5,7 @@ function Camera(centerX, centerY, width, height, perspective) {
         offsetY = 0;
         
     // Spring related
-    this.springX = new Spring(100, 40, 7);
+    this.springX = new Spring(150, 40, 5);
     this.springY = new Spring(30, 20, 3);
     
     this.setCenterX = function(newCenterX) {
@@ -156,7 +156,7 @@ function Spring(stiffness, mass, friction) {
 Spring.prototype.start = function(acceleration, massPos, speed, anchorPos) {
     this.massPos = (typeof massPos !== 'undefined') ? massPos : this.massPos;
     this.speed = (typeof speed !== 'undefined') ? speed : this.speed;
-    this.speed += acceleration * 10 || 0;
+    this.speed += acceleration*10 || 0;
     this.anchorPos = (typeof anchorPos !== 'undefined') ? anchorPos : this.anchorPos;
     this.step();
 };
@@ -171,8 +171,8 @@ Spring.prototype.step = function() {
     this.springForce = -this.stiffness * this.distance;
     this.totalForce = this.springForce + this.dampingForce;
     this.acceleration = this.totalForce / this.mass;
-    this.speed += this.acceleration * dt / 15;
-    this.massPos += this.speed / 100;
+    this.speed += this.acceleration * dt/15;
+    this.massPos += this.speed/100;
     if (Math.round(this.massPos) === this.anchorPos && Math.abs(this.speed) < 0.001) {
         this.removeStepTrigger();
     }
@@ -182,6 +182,7 @@ Spring.prototype.step = function() {
 // This sets the timer for the next step
 Spring.prototype.setStepTrigger = function() {
     var spring = this;
+    clearTimeout(this.stepTrigger);
     this.stepTrigger = setTimeout(function() {spring.step();}, this.interval);
 };
 
