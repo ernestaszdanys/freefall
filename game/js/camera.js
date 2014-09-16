@@ -5,7 +5,7 @@ function Camera(centerX, centerY, width, height, perspective) {
         offsetY = 0;
         
     // Spring related
-    this.springX = new Spring(150, 40, 5);
+    this.springX = new Spring(80, 30, 7);
     this.springY = new Spring(30, 20, 3);
     
     this.setCenterX = function(newCenterX) {
