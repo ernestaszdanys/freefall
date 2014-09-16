@@ -62,6 +62,12 @@ function Game(context, resources, PPM) {
         
     var self = this;
         
+    var leftButton = new Button(context, {width: context.canvas.width / 2, height: context.canvas.height}),
+        rightButton = new Button(context, {width: context.canvas.width / 2, height: context.canvas.height});
+
+    leftButton.layout(context.canvas.width / 4, context.canvas.height / 2, 0, 0);
+    rightButton.layout(context.canvas.width / 4 * 3, context.canvas.height / 2, 0, 0);
+
     // Physics stuff
     var timeScale = 1,      // 0 <= timeScale < infinity
         sampleCount = 1;    // Number of physics runs per frame
@@ -71,10 +77,9 @@ function Game(context, resources, PPM) {
         levelEnvironmentDensity = Physics.densityAir * 7,
         levelMinY = 0,
         levelMaxY = 0;
-    
+        
     // Animators
-    var scaledTimeAnimator = new Animator(),
-        drawRealTimeAnimator = new Animator();
+    var drawRealTimeAnimator = new Animator();
     
     // Camera (all parameters are defined in world space (meters))
     var cameraWidth = context.canvas.width / PPM,       // meters
@@ -157,11 +162,11 @@ function Game(context, resources, PPM) {
             forceOnPlayer.y = (levelGravity + (player.position.y / 200)) * player.mass;
             forceOnPlayer.x = 0;
                         
-            if (KEYS.isDown(68) || KEYS.isDown(39)) { // Right
+            if (KEYS.isDown(68) || KEYS.isDown(39) || rightButton.isPressed()) { // Right
                 forceOnPlayer.x += 28000;
             } 
 
-            if (KEYS.isDown(65) || KEYS.isDown(37)) { // Left
+            if (KEYS.isDown(65) || KEYS.isDown(37) || leftButton.isPressed()) { // Left
                 forceOnPlayer.x += -28000;
             }
 
@@ -313,7 +318,7 @@ function Game(context, resources, PPM) {
             context.fillRect(0, camera.getHeight() - boxHeight, camera.getWidth(), boxHeight);
             context.globalAlpha = 1;
         }
-        
+
         context.restore();
     };
     

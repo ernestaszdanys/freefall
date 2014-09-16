@@ -13,9 +13,16 @@ function Button(context, image) {
     
     this.x = 0;
     this.y = 0;
-    this.width = image.naturalWidth;
-    this.height = image.naturalHeight;
-    this.image = image;
+    
+    if (image instanceof Image) {
+        this.width = image.naturalWidth;
+        this.height = image.naturalHeight;
+        this.image = image;
+    } else {
+        this.width = image.width;
+        this.height = image.height;
+        this.image = void 0;
+    }
     
     this.handlePointerEvent = function(event) {
         switch (event.type) {
@@ -109,6 +116,10 @@ Button.prototype.setClickable = function(clickable) {
             .removeEventListener("mouseup", this.handlePointerEvent, false);    
         this._clickable = false;
     }
+};
+
+Button.prototype.isPressed = function() {
+    return this._state === Button.State.PRESSED;
 };
 
 Button.EVENT_CLICK = "BUTTON_ON_CLICK";
