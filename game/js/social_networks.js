@@ -7,7 +7,8 @@ window.fbAsyncInit = function() {
 };
 
 function openFbPopUp(score) {
-            FB.ui(
+    if (FB) {
+        FB.ui(
             {
                 method: 'feed',
                 name: 'FREE FALL',
@@ -24,4 +25,7 @@ function openFbPopUp(score) {
                 }
             }
         );
+    } else {
+        alert("You are not connected to the internet. :( ");
     }
+}
