@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# FREE FALL version 0.5.0
+# FREE FALL version 0.5.1
 
 # Main page
 index.html
@@ -12,7 +12,6 @@ assets\images\egg_25.png
 assets\images\egg_50.png
 assets\images\egg_75.png
 assets\images\egg_100.png
-
 assets\images\egg_broken.png
 assets\images\button_play.png
 assets\images\button_retry.png
@@ -35,6 +34,9 @@ assets\images\obstacle_4_blur_1.png
 assets\images\obstacle_4_blur_2.png
 assets\images\ribbon.png
 assets\images\button_f_s.png
+assets\images\metal_ball.json
+assets\images\metal_ball.png
+assets\images\gravity_gradient.png
 
 #Fonts
 assets\fonts\bitter\Bitter-Regular.otf
