@@ -24,7 +24,7 @@ function Player() {
         } 
         if (newHealth !== health) {
             health = newHealth;
-            this.geometry.solid.textureDescription.imageIndex = ~~(health / (100 / this.geometry.solid.textureDescription.image.length)); // TODO
+            this.geometry.solid.textureDescription.imageIndex = ~~Math.min((health / (maxHealth / this.geometry.solid.textureDescription.image.length)), this.geometry.solid.textureDescription.image.length - 1); // TODO
             this.dispatchEvent(Player.EVENT_HEALTH_CHANGED, health);
         }
     };
