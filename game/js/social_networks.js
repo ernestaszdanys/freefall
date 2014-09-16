@@ -7,7 +7,7 @@ window.fbAsyncInit = function() {
 };
 
 function openFbPopUp(score) {
-    if (FB) {
+    if (window["FB"] !== undefined) {
         FB.ui(
             {
                 method: 'feed',
