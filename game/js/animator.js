@@ -13,13 +13,13 @@ function Animator() {
         this.onTick = function(time) {
             var value = interpolator(startValue, endValue, startTime, endTime, time);
             callback(value);
-            return value === endValue;
-        }
+            return value === endValue; // TODO: tolerate small error (floating point math errors)
+        };
     }
     
     this.animate = function(from, to, time, interpolator, callback) {
         ongoingAnimations.push(new Animation(from, to, currentTime, currentTime + time, interpolator, callback));
-    }
+    };
     
     this.stop = function(callback) {
         for (var i = 0; i < ongoingAnimations.length; i++) {
@@ -27,11 +27,11 @@ function Animator() {
                 ongoingAnimations.splice(i, 1);
             }
         }
-    }
+    };
     
     this.getCurrentTime = function() {
         return currentTime;   
-    }
+    };
     
     this.tick = function(time) {
         if (firstTime === void 0) {
@@ -49,5 +49,5 @@ function Animator() {
                 ongoingAnimations.splice(i, 1);
             }
         }        
-    }
+    };
 }

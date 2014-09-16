@@ -119,7 +119,7 @@ function SpatialMap(boundingBoxPropertyPath, shift) {
                 key = uidToKey[uid][i];
                 delete cells[key][uid];  
             }
-            uidToKey[uid] = this.generateKeys(object);
+            uidToKey[uid] = generateKeys(object);
             for(i = 0; i < uidToKey[uid].length; i++) {
                 key = uidToKey[uid][i];
                 if (cells[key] === void 0) cells[key] = {};
@@ -145,6 +145,10 @@ function SpatialMap(boundingBoxPropertyPath, shift) {
         }
         //console.log(filterUnique(results));
         return filterUnique(results);
+    };
+    
+    this.queryRect = function(rect) {
+        return this.query(rect.x, rect.y, rect.width, rect.height);
     };
     
     this.toString = function() {

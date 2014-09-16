@@ -32,22 +32,28 @@ function resizeCanvas() {
 // Load resources
 var resourceDescription = {
     // Egg
-    eggTexture: "assets/images/egg.png",
-    eggVertices: "assets/images/egg.json",
+    eggImage: "assets/images/egg.png",
+    eggDescription: "assets/images/egg.json",
 
     // Obstacles
-    obstacleTextures: [
+    meteorImages: [
         "assets/images/obstacle_1.png",
         "assets/images/obstacle_2.png",
         "assets/images/obstacle_3.png",
         "assets/images/obstacle_4.png"
     ],
-    obstacleTextureVertices: [
+    meteorDescriptions: [
         "assets/images/obstacle_1.json",
         "assets/images/obstacle_2.json",
         "assets/images/obstacle_3.json",
         "assets/images/obstacle_4.json"
     ],
+    
+    metalBallImage: "assets/images/metal_ball.png",
+    metalBallDescription: "assets/images/metal_ball.json",
+    
+    gravityGradientImage: "assets/images/gravity_gradient.png",
+    
     
     // Blurred background objects
     backgroundObstaclesBlur1: [
@@ -66,10 +72,10 @@ var resourceDescription = {
     // UI
     imageLogo: "assets/images/logo.png",
     imageRibbon: "assets/images/ribbon.png",
-    imageButtonRedRound: "assets/images/button_red_round.png",
-    iconPlay: "assets/images/icon_play.png",
-    iconRefresh: "assets/images/icon_refresh.png",
-    imageEggBroken: "assets/images/egg_broken.png"
+    imageEggBroken: "assets/images/egg_broken.png",
+    imageButtonPlay: "assets/images/button_play.png",
+    imageButtonRetry: "assets/images/button_retry.png",
+    imageButtonFacebookShare: "assets/images/button_f_s.png"
 };
 
 Loader.loadResourceTree(resourceDescription,
@@ -81,7 +87,7 @@ Loader.loadResourceTree(resourceDescription,
         choreographer.addEventListener(Choreographer.EVENT_ON_FRAME, onFrame);
 
         var menu = new Menu(context, resources),
-            game = new Game(context, resources),
+            game = new Game(context, resources, Metrics.PPM),
             hud = new Hud(context, resources),
             gameOver = new GameOver(context, resources);
         
@@ -149,19 +155,23 @@ Loader.loadResourceTree(resourceDescription,
                 }, 2000);
             }
         });
-        
+        /*
         game.addEventListener(Game.EVENT_LEVEL_END_VISIBLE, function(eventName, levelEndY) {
             game.addObstacles(generateObstacles(10, canvas.width, canvas.height * 3, levelEndY, resources));
             game.addBackgroundObjects(generateRandomBackgroundObjects(50, resources.backgroundObstaclesBlur2, canvas.width, canvas.height * 3, -200, 0, levelEndY, 0));
         });
-        
+        */
         gameOver.addEventListener(GameOver.EVENT_RESTART_CLICKED, function(eventName) {
             game.resetPlayer();
             hud.setHighScore();
             game.setTimeScale(1);
             setAppState(AppState.GAME);
         });
-        
+    
+		gameOver.addEventListener(GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED, function(eventName) {
+                openFbPopUp(~~game.getPlayerScore());
+		});
+            
         function onFrame(eventName, dt) {
             /*console.clear();*/
             context.clearRect(0, 0, canvas.width, canvas.height);
