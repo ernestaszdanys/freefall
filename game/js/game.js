@@ -224,7 +224,6 @@ function Game(context, resources, PPM) {
         var playerDtVelocitySignX = playerHealthLossX >= 0 ? 1 : -1,
             playerDtVelocitySignY = playerHealthLossY >= 0 ? 1 : -1;
 
-
         if (playerHealthLossX || playerHealthLossY) {
             playerHealthLossX /= dt * 200000;
             playerHealthLossY /= dt * 200000;
@@ -241,7 +240,9 @@ function Game(context, resources, PPM) {
             var healthLoss = playerHealthLossX + playerHealthLossY;
             if (healthLoss > 0) {
                 player.setHealth(player.getHealth() - healthLoss); 
-                camera.spring(playerHealthLossX * playerDtVelocitySignX, playerHealthLossY * -playerDtVelocitySignY);
+                if (player.getHealth() > 0) {
+                    camera.spring(playerHealthLossX * playerDtVelocitySignX, playerHealthLossY * -playerDtVelocitySignY);
+                }
             } 
         }
             
@@ -347,13 +348,6 @@ function Game(context, resources, PPM) {
                 levelMinY = obstacle.position.y;
             }
         }
-    };
-
-    /**
-     * @param {BackgroundBody[]} backgroundObjects
-     */
-    this.addBackgroundObjects = function(backgroundObjects) {
-        //backgroundObjectMap.addArray(backgroundObjects);
     };
     
     this.resetPlayer = function() {
