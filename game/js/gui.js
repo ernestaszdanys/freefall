@@ -92,11 +92,11 @@ Button.prototype.isClickable = function() {
  */
 Button.prototype.setClickable = function(clickable) {
     if (clickable && !this._clickable) {
-//        this._context.canvas.addEventListener("touchstart", this.handlePointerEvent, false);
-//        this._context.canvas.addEventListener("touchend", this.handlePointerEvent, false);
-//        this._context.canvas.addEventListener("touchmove", this.handlePointerEvent, false);
-//        this._context.canvas.addEventListener("touchcancel", this.handlePointerEvent, false);
-//        this._context.canvas.addEventListener("touchleave", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchstart", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchend", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchmove", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchcancel", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchleave", this.handlePointerEvent, false);
         this._context.canvas.addEventListener("mousedown", this.handlePointerEvent, false);
         this._context.canvas.addEventListener("mousemove", this.handlePointerEvent, false);
         // TODO: fix this monstrosity
@@ -104,11 +104,11 @@ Button.prototype.setClickable = function(clickable) {
             .addEventListener("mouseup", this.handlePointerEvent, false);
         this._clickable = true;
     } else if (!clickable && this._clickable) {
-//        this._context.canvas.removeEventListener("touchstart", this.handlePointerEvent);
-//        this._context.canvas.removeEventListener("touchend", this.handlePointerEvent);
-//        this._context.canvas.removeEventListener("touchmove", this.handlePointerEvent);
-//        this._context.canvas.removeEventListener("touchcancel", this.handlePointerEvent);
-//        this._context.canvas.removeEventListener("touchleave", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchstart", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchend", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchmove", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchcancel", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchleave", this.handlePointerEvent);
         this._context.canvas.removeEventListener("mousedown", this.handlePointerEvent);
         this._context.canvas.removeEventListener("mousemove", this.handlePointerEvent);
         // TODO: fix this monstrosity
