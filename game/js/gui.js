@@ -37,6 +37,8 @@ function Button(context, image) {
                 if (self.isHitByEvent(event.changedTouches[0]) && self._state === Button.State.PRESSED) {
                     self.dispatchEvent(Button.EVENT_CLICK);
                 } // NOTE: no break.
+            case "touchmove":
+                event.preventDefault();
             case "touchleave":
             case "touchcancel":
                 self._state = Button.State.NORMAL;
