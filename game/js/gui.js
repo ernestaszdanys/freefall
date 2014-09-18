@@ -341,7 +341,7 @@ function GameOver(context, resources) {
         ptsText.draw((context.canvas.width-scoreText.getWidth()-ptsText.getWidth())/2 + scoreText.getWidth() + 4, 390);
 
         // printing high score
-        highScoreValueText.setText(this.getHighScore());
+        highScoreValueText.setText(this.getHighScore() === null ? 0 : this.getHighScore());
         highScoreText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 - 4, context.canvas.height-15);
         highScoreValueText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth() + 8, context.canvas.height-15);
         
