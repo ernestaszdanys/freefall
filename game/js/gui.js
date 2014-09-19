@@ -203,6 +203,8 @@ function Menu(context, resources) {
 Menu.EVENT_START_CLICKED = "MENU_START_CLICKED";
 
 function Hud(context, resources) {
+    Observable.call(this);
+    var self = this;
     
     var score = 0,
         highScore,
@@ -211,9 +213,7 @@ function Hud(context, resources) {
         scoreText = new Text(context),
         ptsText = new Text(context),
         healthText = new Text(context),
-        hpText = new Text(context),
-        highScoreText = new Text(context),
-        highScoreValueText = new Text(context);
+        hpText = new Text(context);
 
     scoreText.setSize(40);
     scoreText.setBold(true);
@@ -228,13 +228,19 @@ function Hud(context, resources) {
     hpText.setText("HP");
     hpText.setSize(30);
     hpText.setBold(false);
-
-    highScoreText.setText("HIGH SCORE");
-    highScoreText.setSize(20);
-    highScoreText.setBold(false);
-
-    highScoreValueText.setSize(20);
-    highScoreValueText.setBold(true);
+    
+    var pauseButton = new Button(context, resources.imageButtonPause);
+    pauseButton.layout(context.canvas.width / 2 - 50, context.canvas.height - 30, 0, 0);
+    pauseButton.addEventListener(Button.EVENT_CLICK, function() {
+        self.dispatchEvent(Hud.EVENT_PAUSE_CLICKED);
+    });
+    
+    var soundButton = new Button(context, resources.imageButtonPause);
+    soundButton.layout(context.canvas.width / 2 + 50, context.canvas.height - 30, 0, 0);
+    soundButton.addEventListener(Button.EVENT_CLICK, function() {
+        //OMG WOW SOUNDS OFF ON STUFF WOW YEAH
+        
+    });
 
     this.setHighScore = function() {
         highScore = localStorage.getItem("highscore");
@@ -273,12 +279,21 @@ function Hud(context, resources) {
 
         hpText.draw(context.canvas.width - 55, context.canvas.height - 15);
 
-        // printing high score
-        highScoreValueText.setText(this.getHighScore() === null ? 0 : this.getHighScore());
-        highScoreText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 - 4, context.canvas.height-15);
-        highScoreValueText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth() + 8, context.canvas.height-15);
+        pauseButton.draw(context);
+        soundButton.draw(context);
     };
 };
+Hud.EVENT_PAUSE_CLICKED = "EVENT_PAUSE_CLICKED";
+
+function Pause(context, resources) {
+    Observable.call(this);
+    var self = this;
+    
+    this.draw = function() {
+        context.fillStyle = "rgba(32, 46, 59, 0.5)";
+        context.fillRect(0, 0, canvas.width, canvas.height);
+    }
+}
 
 function GameOver(context, resources) {
     Observable.call(this);

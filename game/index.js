@@ -80,7 +80,8 @@ var resourceDescription = {
     imageEggBroken: "assets/images/egg_broken.png",
     imageButtonPlay: "assets/images/button_play.png",
     imageButtonRetry: "assets/images/button_retry.png",
-    imageButtonFacebookShare: "assets/images/button_f_s.png"
+    imageButtonFacebookShare: "assets/images/button_f_s.png",
+    imageButtonPause: "assets/images/button_pause.png"
 };
 
 Loader.loadResourceTree(resourceDescription,
@@ -94,13 +95,15 @@ Loader.loadResourceTree(resourceDescription,
         var menu = new Menu(context, resources),
             game = new Game(context, resources, Metrics.PPM),
             hud = new Hud(context, resources),
-            gameOver = new GameOver(context, resources);
+            gameOver = new GameOver(context, resources),
+            pause = new Pause(context, resources);
         
         var AppState = {
                 MENU: 0,
                 GAME: 1,
-                DEATH: 2,
-                GAME_OVER: 3
+                GAME_PAUSE: 2,
+                DEATH: 3,
+                GAME_OVER: 4
             },
             appState;
 
@@ -114,6 +117,9 @@ Loader.loadResourceTree(resourceDescription,
                 case AppState.GAME:
                     menu.dissable();
                     gameOver.dissable();
+                    break;
+                
+                case AppState.GAME_PAUSE:
                     break;
                     
                 case AppState.DEATH:
@@ -141,6 +147,14 @@ Loader.loadResourceTree(resourceDescription,
         game.addEventListener(Game.EVENT_PLAYER_SCORE_CHANGED, function(eventName, score) {
             hud.setScore(~~score);
             gameOver.setScore(~~score);
+        });
+        
+        hud.addEventListener(Hud.EVENT_PAUSE_CLICKED, function(eventName, score) {
+            if (appState === AppState.GAME) {
+                setAppState(AppState.GAME_PAUSE);
+            } else {
+                setAppState(AppState.GAME);
+            }
         });
         
         hud.setHealth(game.getPlayerHealth());
@@ -194,6 +208,9 @@ Loader.loadResourceTree(resourceDescription,
                 hud.draw();
             } else if (appState === AppState.GAME_OVER) {
                 gameOver.draw();
+            } else if (appState === AppState.GAME_PAUSE) {
+                game.draw();
+                pause.draw();
             }
         }
     },
