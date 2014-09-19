@@ -31,17 +31,22 @@ function Button(context, image) {
                 if (self.isHitByEvent(event.changedTouches[0])) {
                     self._state = Button.State.PRESSED;
                 }
+                event.preventDefault();
                 break;
 
             case "touchend": 
                 if (self.isHitByEvent(event.changedTouches[0]) && self._state === Button.State.PRESSED) {
                     self.dispatchEvent(Button.EVENT_CLICK);
                 } // NOTE: no break.
-            case "touchmove":
-                event.preventDefault();
             case "touchleave":
             case "touchcancel":
                 self._state = Button.State.NORMAL;
+                event.preventDefault();
+                break;
+            
+            case "touchmove":
+            case "mousemove":
+                event.preventDefault();
                 break;
                 
             // Mouse event
@@ -49,6 +54,7 @@ function Button(context, image) {
                 if (self.isHitByEvent(event)) {
                     self._state = Button.State.PRESSED;
                 }
+                event.preventDefault();
                 break;
                 
             case "mouseup":
@@ -56,6 +62,7 @@ function Button(context, image) {
                     self.dispatchEvent(Button.EVENT_CLICK);
                 }
                 self._state = Button.State.NORMAL;
+                event.preventDefault();
                 break;
         }
     };
@@ -186,7 +193,7 @@ function Hud(context, resources) {
     scoreText.setSize(40);
     scoreText.setBold(true);
 
-    ptsText.setText("PTS");
+    ptsText.setText("WTF");
     ptsText.setSize(30);
     ptsText.setBold(false);
 
