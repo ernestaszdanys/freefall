@@ -122,6 +122,9 @@ Loader.loadResourceTree(resourceDescription,
                     break;
                     
                 case AppState.GAME_OVER:
+                    if (window["adf"] !== void 0) {
+                        adf.track(47841, 6242687, {}); // <------------------- traking point
+                    }
                     menu.dissable();
                     gameOver.enable();
                     break;

@@ -88,7 +88,7 @@ function Button(context, image) {
 
 Button.prototype._anyTouchDown = function() {
     for (var i in this._touchDown) {
-        if (i === true) {
+        if (i) {
             return true;
         }
     }
