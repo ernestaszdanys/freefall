@@ -11,6 +11,9 @@ function Button(context, image) {
     this._state = Button.State.NORMAL; // NORMAL|HOVERED|PRESSED
     this._clickable = false;
     
+    this._mouseDown = false;
+    this._touchDown = [];
+    
     this.x = 0;
     this.y = 0;
     
@@ -27,48 +30,70 @@ function Button(context, image) {
     this.handlePointerEvent = function(event) {
         switch (event.type) {
             // Touch event
-            case "touchstart":  
-                if (self.isHitByEvent(event.changedTouches[0])) {
-                    self._state = Button.State.PRESSED;
+            case "touchstart":
+                for (var i = 0; i < event.changedTouches.length; i++) {
+                    if (self.isHitByEvent(event.changedTouches[i])) {
+                        self._touchDown[event.changedTouches[i].identifier] = true;
+                        self._state = Button.State.PRESSED;
+                    }
                 }
-                event.preventDefault();
                 break;
 
-            case "touchend": 
-                if (self.isHitByEvent(event.changedTouches[0]) && self._state === Button.State.PRESSED) {
-                    self.dispatchEvent(Button.EVENT_CLICK);
-                } // NOTE: no break.
+            case "touchend":
+                for (var i = 0; i < event.changedTouches.length; i++) {
+                    delete self._touchDown[event.changedTouches[i].identifier];
+                    if (!self._anyTouchDown() && !self._mouseDown) {
+                        if (self.isHitByEvent(event.changedTouches[i]) && self._state === Button.State.PRESSED) {
+                            self.dispatchEvent(Button.EVENT_CLICK);
+                        }
+                        self._state = Button.State.NORMAL;
+                    }
+                }
+                break;
+            
             case "touchleave":
             case "touchcancel":
-                self._state = Button.State.NORMAL;
-                event.preventDefault();
+                self._touchDown.length = 0;
+                if (!self._mouseDown) {
+                    self._state = Button.State.NORMAL;
+                }
                 break;
             
             case "touchmove":
             case "mousemove":
-                event.preventDefault();
                 break;
                 
             // Mouse event
             case "mousedown":
                 if (self.isHitByEvent(event)) {
+                    self._mouseDown = true;
                     self._state = Button.State.PRESSED;
                 }
-                event.preventDefault();
                 break;
                 
             case "mouseup":
-                if (self.isHitByEvent(event) && self._state === Button.State.PRESSED) {
+                self._mouseDown = false;
+                if (self.isHitByEvent(event) && !self._anyTouchDown() && !self._mouseDown && self._state === Button.State.PRESSED) {
                     self.dispatchEvent(Button.EVENT_CLICK);
                 }
                 self._state = Button.State.NORMAL;
-                event.preventDefault();
                 break;
         }
+        
+        event.preventDefault();
     };
     
     this.setClickable(true);
 }
+
+Button.prototype._anyTouchDown = function() {
+    for (var i = 0; i < this._touchDown.length; i++) {
+        if (this._touchDown[i]) {
+            return true;
+        }
+    }
+    return false;
+};
 
 Button.prototype.layout = function(parentX, parentY, parentWidth, parentHeight) {
     this.x = parentX + (parentWidth - this.width) * 0.5;
@@ -132,12 +157,12 @@ Button.prototype.isPressed = function() {
 };
 
 Button.EVENT_CLICK = "BUTTON_ON_CLICK";
+
 Button.State = {
     NORMAL: 0,
     HOVERED: 1,
     PRESSED: 2
 };
-
 
 function Menu(context, resources) {
     Observable.call(this);
@@ -193,7 +218,7 @@ function Hud(context, resources) {
     scoreText.setSize(40);
     scoreText.setBold(true);
 
-    ptsText.setText("WTF");
+    ptsText.setText("PTS");
     ptsText.setSize(30);
     ptsText.setBold(false);
 
