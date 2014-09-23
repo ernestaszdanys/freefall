@@ -230,16 +230,9 @@ function Hud(context, resources) {
     hpText.setBold(false);
     
     var pauseButton = new Button(context, resources.imageButtonPause);
-    pauseButton.layout(context.canvas.width / 2 - 50, context.canvas.height - 30, 0, 0);
+    pauseButton.layout(context.canvas.width / 2, context.canvas.height - 30, 0, 0);
     pauseButton.addEventListener(Button.EVENT_CLICK, function() {
         self.dispatchEvent(Hud.EVENT_PAUSE_CLICKED);
-    });
-    
-    var soundButton = new Button(context, resources.imageButtonPause);
-    soundButton.layout(context.canvas.width / 2 + 50, context.canvas.height - 30, 0, 0);
-    soundButton.addEventListener(Button.EVENT_CLICK, function() {
-        //OMG WOW SOUNDS OFF ON STUFF WOW YEAH
-        
     });
 
     this.setHighScore = function() {
@@ -280,20 +273,46 @@ function Hud(context, resources) {
         hpText.draw(context.canvas.width - 55, context.canvas.height - 15);
 
         pauseButton.draw(context);
-        soundButton.draw(context);
     };
 };
-Hud.EVENT_PAUSE_CLICKED = "EVENT_PAUSE_CLICKED";
+Hud.EVENT_PAUSE_CLICKED = "HUD_PAUSE_CLICKED";
 
 function Pause(context, resources) {
     Observable.call(this);
     var self = this;
+	
+	var buttonRetry = new Button(context, resources.imageButtonRetry);
+    buttonRetry.layout(context.canvas.width / 2 - 140, context.canvas.height / 2, 0, 0);
+    buttonRetry.addEventListener(Button.EVENT_CLICK, function() {
+        self.dispatchEvent(Pause.EVENT_RESTART_CLICKED);
+    });
+	
+	var buttonResume = new Button(context, resources.imageButtonPlay);
+    buttonResume.layout(context.canvas.width / 2, context.canvas.height / 2, 0, 0);
+    buttonResume.addEventListener(Button.EVENT_CLICK, function() {
+        self.dispatchEvent(Pause.EVENT_RESUME_CLICKED);
+    });
+	
+	var buttonSound = new Button(context, resources.imageButtonSound);
+    buttonSound.layout(context.canvas.width / 2 + 140, context.canvas.height / 2, 0, 0);
+    buttonSound.addEventListener(Button.EVENT_CLICK, function() {
+        self.dispatchEvent(Pause.EVENT_SOUND_CLICKED);
+    });
+	
     
     this.draw = function() {
         context.fillStyle = "rgba(32, 46, 59, 0.5)";
         context.fillRect(0, 0, canvas.width, canvas.height);
+		context.fillStyle = "rgba(32, 46, 59, 0.9)";
+		context.fillRect(0, canvas.height/3, canvas.width, canvas.height/3);
+		buttonRetry.draw();
+        buttonResume.draw();
+		buttonSound.draw();
     }
 }
+Pause.EVENT_RESTART_CLICKED = "PAUSE_RESTART_CLICKED";
+Pause.EVENT_RESUME_CLICKED = "PAUSE_RESUME_CLICKED";
+Pause.EVENT_SOUND_CLICKED = "PAUSE_SOUND_CLICKED";
 
 function GameOver(context, resources) {
     Observable.call(this);

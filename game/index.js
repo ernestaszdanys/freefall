@@ -81,6 +81,7 @@ var resourceDescription = {
     imageButtonPlay: "assets/images/button_play.png",
     imageButtonRetry: "assets/images/button_retry.png",
     imageButtonFacebookShare: "assets/images/button_f_s.png",
+	imageButtonSound: "assets/images/button_sound.png",
     imageButtonPause: "assets/images/button_pause.png"
 };
 
@@ -149,15 +150,12 @@ Loader.loadResourceTree(resourceDescription,
             gameOver.setScore(~~score);
         });
         
-        hud.addEventListener(Hud.EVENT_PAUSE_CLICKED, function(eventName, score) {
-            if (appState === AppState.GAME) {
-                setAppState(AppState.GAME_PAUSE);
-            } else {
-                setAppState(AppState.GAME);
-            }
+        hud.addEventListener(Hud.EVENT_PAUSE_CLICKED, function(eventName) {
+            setAppState(AppState.GAME_PAUSE);
         });
         
         hud.setHealth(game.getPlayerHealth());
+		
         game.addEventListener(Game.EVENT_PLAYER_HEALTH_CHANGED, function(eventName, health) {
             hud.setHealth(~~health);
             if (health === 0) {
@@ -180,6 +178,22 @@ Loader.loadResourceTree(resourceDescription,
             game.addBackgroundObjects(generateRandomBackgroundObjects(50, resources.backgroundObstaclesBlur2, canvas.width, canvas.height * 3, -200, 0, levelEndY, 0));
         });
         */
+		
+		pause.addEventListener(Pause.EVENT_RESTART_CLICKED, function(eventName) {
+            game.resetPlayer();
+            hud.setHighScore();
+            game.setTimeScale(1);
+            setAppState(AppState.GAME);
+        });
+		
+		pause.addEventListener(Pause.EVENT_RESUME_CLICKED, function(eventName) {
+            setAppState(AppState.GAME);
+        });
+		
+		pause.addEventListener(Pause.EVENT_SOUND_CLICKED, function(eventName) {
+            //Insert sound enable/disable here
+        });
+		
         gameOver.addEventListener(GameOver.EVENT_RESTART_CLICKED, function(eventName) {
             game.resetPlayer();
             hud.setHighScore();

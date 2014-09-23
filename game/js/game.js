@@ -63,8 +63,8 @@ function Game(context, resources, PPM) {
         
     var self = this;
         
-    var leftButton = new Button(context, {width: context.canvas.width / 2, height: context.canvas.height}),
-        rightButton = new Button(context, {width: context.canvas.width / 2, height: context.canvas.height});
+    var leftButton = new Button(context, {width: context.canvas.width / 2, height: context.canvas.height - 60}),
+        rightButton = new Button(context, {width: context.canvas.width / 2, height: context.canvas.height - 60});
 
     leftButton.layout(context.canvas.width / 4, context.canvas.height / 2, 0, 0);
     rightButton.layout(context.canvas.width / 4 * 3, context.canvas.height / 2, 0, 0);
