@@ -72,13 +72,25 @@ var resourceDescription = {
     imageEggBroken: "assets/images/egg_broken.png",
 
     // Sounds
-    soundBounce: "assets/sounds/bounce.mp3"
+    soundBounce: "assets/sounds/bounce.mp3",
+    soundBackground: "assets/sounds/power-juice.mp3"
 };
+
+var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 Loader.loadResourceTree(resourceDescription,
     function onSuccess(resources) {
         // Game
-        
+        var sound1 = new Sound(audioContext, resources.soundBounce, 1);
+        var sound2 = new Sound(audioContext, resources.soundBackground, 0.25);
+
+        KEYS.setOnDown(13, function() {
+            sound1.play();
+        });
+        KEYS.setOnDown(87, function() {
+            sound2.play();
+        })
+
         // Start frame loop
         choreographer.startFrameLoop();
         choreographer.addEventListener(Choreographer.EVENT_ON_FRAME, onFrame);
@@ -138,9 +150,7 @@ Loader.loadResourceTree(resourceDescription,
         hud.setHealth(game.getPlayerHealth());
         game.addEventListener(Game.EVENT_PLAYER_HEALTH_CHANGED, function(eventName, health) {
             hud.setHealth(~~health);
-            resources.soundBounce.load();
-            resources.soundBounce.play();
-
+            sound1.play();
             if (health === 0) {
                 setAppState(AppState.DEATH);
                 setTimeout(function(){

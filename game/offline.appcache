@@ -35,6 +35,11 @@ assets\images\ribbon.png
 #Fonts
 assets\fonts\bitter\Bitter-Regular.otf
 
+#Sounds
+assets\sounds\bounce.mp3
+assets\sounds\bounce.wav
+assets\sounds\power-juice.mp3
+
 #JS files
 js\animator.js
 js\body.js

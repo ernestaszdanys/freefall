@@ -66,7 +66,30 @@ var Loader = (function() {
     }
 
     function getAudio(url, successCallback, errorCallback) {
-        var audio = new Audio();
+        var request = new XMLHttpRequest();
+
+        request.onreadystatechange = function() {
+            if (request.readyState === 1) {
+                request.responseType = "arraybuffer";
+                request.send();
+            } else if (request.readyState === 4) {
+                if (request.status === 200) {
+                    successCallback(request.response);
+                } else {
+                    errorCallback({
+                        status: request.status
+                    });
+                }
+            }
+        };
+
+        var requestUrl = url;
+        if (!cache) {
+            requestUrl += "?" + getTime();
+        }
+        request.open("GET", requestUrl, true);
+
+        /*var audio = new Audio();
 
         audio.addEventListener('loadeddata', function() {
             successCallback(audio);
@@ -80,7 +103,7 @@ var Loader = (function() {
         if (!cache) {
             requestUrl += "?" + getTime();
         }
-        audio.src = requestUrl;
+        audio.src = requestUrl;*/
     }
 
     function setProperty(target, propertyPath, value) {
