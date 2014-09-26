@@ -81,8 +81,9 @@ var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 Loader.loadResourceTree(resourceDescription,
     function onSuccess(resources) {
         // Game
-        var sound1 = new Sound(audioContext, resources.soundBounce, 1);
-        var sound2 = new Sound(audioContext, resources.soundBackground, 0.25);
+        var sm = new SoundManager(audioContext);
+        var sound1 = new sm.Sound(resources.soundBounce, 1, false);
+        var sound2 = new sm.Sound(resources.soundBackground, 0.25, true);
 
         KEYS.setOnDown(13, function() {
             sound1.play();
