@@ -80,13 +80,30 @@ var resourceDescription = {
     imageEggBroken: "assets/images/egg_broken.png",
     imageButtonPlay: "assets/images/button_play.png",
     imageButtonRetry: "assets/images/button_retry.png",
-    imageButtonFacebookShare: "assets/images/button_f_s.png"
+    imageButtonFacebookShare: "assets/images/button_f_s.png",
+
+    // Sounds
+    soundBackgroundWAV: "assets/sounds/game.wav",
+    soundBackgroundMP3: "assets/sounds/game.mp3",
+    soundClick: "assets/sounds/click.wav",
+    soundBounce: "assets/sounds/bounce.wav",
+    soundGameOver: "assets/sounds/game_over.wav"
 };
+
+var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 Loader.loadResourceTree(resourceDescription,
     function onSuccess(resources) {
         // Game
-        
+
+        //checking browser type http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
+        var sm = new SoundManager(audioContext);
+        var soundBounce = new sm.Sound(resources.soundBounce, 1, false);
+        var soundBackground = new sm.Sound((typeof InstallTrigger !== 'undefined')     // checking if browser is firefox
+                                            ? resources.soundBackgroundMP3 : resources.soundBackgroundWAV, 0.2, true);
+        var soundClicked = new sm.Sound(resources.soundClick, 1, false);
+        var soundGameOver = new sm.Sound(resources.soundGameOver, 0.6, false);
+
         // Start frame loop
         choreographer.startFrameLoop();
         choreographer.addEventListener(Choreographer.EVENT_ON_FRAME, onFrame);
@@ -137,6 +154,8 @@ Loader.loadResourceTree(resourceDescription,
         
         menu.addEventListener(Menu.EVENT_START_CLICKED, function() {
             hud.setHighScore();
+            soundClicked.play();
+            soundBackground.play();
             setAppState(AppState.GAME);
         });
 
@@ -149,7 +168,9 @@ Loader.loadResourceTree(resourceDescription,
         hud.setHealth(game.getPlayerHealth());
         game.addEventListener(Game.EVENT_PLAYER_HEALTH_CHANGED, function(eventName, health) {
             hud.setHealth(~~health);
-            if (health === 0) {
+            if (~~health === 0) {
+                soundGameOver.play();
+                soundBackground.stop();
                 setAppState(AppState.DEATH);
                 setTimeout(function(){
                     if (gameOver.getScore() > hud.getHighScore()) {
@@ -161,6 +182,8 @@ Loader.loadResourceTree(resourceDescription,
                     gameOver.setHighScore(localStorage.getItem("highscore"));
                     setAppState(AppState.GAME_OVER);
                 }, 2000);
+            } else {
+                if (health < 100) soundBounce.play();
             }
         });
         /*
@@ -170,6 +193,8 @@ Loader.loadResourceTree(resourceDescription,
         });
         */
         gameOver.addEventListener(GameOver.EVENT_RESTART_CLICKED, function(eventName) {
+            soundClicked.play();
+            soundBackground.play();
             game.resetPlayer();
             hud.setHighScore();
             game.setTimeScale(1);
@@ -177,7 +202,8 @@ Loader.loadResourceTree(resourceDescription,
         });
     
 		gameOver.addEventListener(GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED, function(eventName) {
-                openFbPopUp(~~game.getPlayerScore());
+            soundClicked.play();
+            openFbPopUp(~~game.getPlayerScore());
 		});
             
         function onFrame(eventName, dt) {
