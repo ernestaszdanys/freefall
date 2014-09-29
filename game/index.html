@@ -2,14 +2,22 @@
 <!--
 WARNING: direct eye contact with source code might cause permanent brain damage.
 -->
-<html> <!--manifest="offline.appcache"-->
+<html manifest="offline.appcache">
     <head>
         
         <title>Free Fall pre-pre-alpha</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, minimal-ui, user-scalable=no"/>
+        <meta name="apple-mobile-web-app-capable" content="yes"/>
+        <meta name="mobile-web-app-capable" content="yes"/>
+        <meta name="msapplication-tap-highlight" content="no"/>
 
+        <!-- adform tracking -->
+        <script type="text/javascript" src="https://track.adform.net/serving/scripts/trackpoint"></script>
+        
         <!-- TODO: requere.js -->
+        <script src="js/common.js"></script>
+        <script src="js/gui.js"></script>
         <script src="js/loader.js"></script>
         <script src="js/sound.js"></script>
         <script src="js/dynamic_behaviour.js"></script>
@@ -17,20 +25,21 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
         <script src="js/metrics.js"></script>
         <script src="js/observable.js"></script>
         <script src="js/choreographer.js"></script>
-        <script src="js/vector.js"></script>
+        <script src="js/vec2.js"></script>
+        <script src="js/vec3.js"></script>
         <script src="js/spatialMap.js"></script>
         <script src="js/controls.js"></script>
         <script src="js/geometry.js"></script>
         <script src="js/body.js"></script>
         <script src="js/physics.js"></script>
         <script src="js/text.js"></script>
-        <script src="js/gui.js"></script>
         <script src="js/level.js"></script>
         <script src="js/game.js"></script>
         <script src="js/touch_screen.js"></script>
         <script src="js/camera.js"></script>
         <script src="js/animator.js"></script>
         <script src="js/interpolator.js"></script>
+        <script src="js/social_networks.js"></script>
         
         <style>
             @font-face {
@@ -47,6 +56,7 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
                 -moz-user-select: none;
                 -ms-user-select: none;
                 user-select: none;
+                -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
                 }
             
             #canvas {position:absolute; background-color: rgb(238, 238, 238);}
@@ -54,9 +64,26 @@ WARNING: direct eye contact with source code might cause permanent brain damage.
         </style>
     </head>
 <body>
+    <script>
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
+    <div id="fb-root"></div>
+    
     <div id="outside">
-        <canvas id="canvas" width=480px height=720px>This text is displayed if your browser does not support HTML5 Canvas.</canvas>outside text
+        <canvas id="canvas" width=480 height=720>Your browser does not support HTML5 Canvas.</canvas>
         <script type="text/javascript" src="index.js"></script>
     </div>
+    
+    <script type="text/javascript">
+        if (window["adf"] !== void 0) {
+            adf.track(47841, 6242687, {}); // <------------------- traking point
+        }
+    </script>
 </body>
 </html>

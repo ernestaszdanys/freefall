@@ -1,122 +1,192 @@
-/*function loadImages(sources, callback) {
-    var sourceCount = 0,
-        loadedCount = 0,
-        images = {};
-    
-    for (var imageName in sources) {
-        if (sources.hasOwnProperty(imageName)) sourceCount++;
-    }
+"use strict";
 
-    for (var imageName in sources) {
-        if (sources.hasOwnProperty(imageName)) {
-            images[imageName] = new Image();
-            images[imageName].onload = function() {
-                if (++loadedCount >= sourceCount) callback(images);
-            };
-            images[imageName].onerror = function() {
-                throw new Error("Couldn't load " + imageName);
-            };
-            images[imageName].src = sources[imageName];
-        }
+// TODO: multiple images, hover state, remove global PXR
+function Button(context, image) {
+    Observable.call(this);
+
+    var self = this;
+        
+    // Internal state
+    this._context = context;
+    this._state = Button.State.NORMAL; // NORMAL|HOVERED|PRESSED
+    this._clickable = false;
+    
+    this._mouseDown = false;
+    this._touchDown = [];
+    
+    this.x = 0;
+    this.y = 0;
+    
+    if (image instanceof Image) {
+        this.width = image.naturalWidth;
+        this.height = image.naturalHeight;
+        this.image = image;
+    } else {
+        this.width = image.width;
+        this.height = image.height;
+        this.image = void 0;
     }
+    
+    this.handlePointerEvent = function(event) {
+        switch (event.type) {
+            // Touch event
+            case "touchstart":
+                for (var i = 0; i < event.changedTouches.length; i++) {
+                    if (self.isHitByEvent(event.changedTouches[i])) {
+                        self._touchDown[event.changedTouches[i].identifier] = true;
+                        self._state = Button.State.PRESSED;
+                    }
+                }
+                break;
+
+            case "touchend":
+                for (var i = 0; i < event.changedTouches.length; i++) {
+                    delete self._touchDown[event.changedTouches[i].identifier];
+                    if (!self._anyTouchDown() && !self._mouseDown) {
+                        if (self.isHitByEvent(event.changedTouches[i]) && self._state === Button.State.PRESSED) {
+                            self.dispatchEvent(Button.EVENT_CLICK);
+                        }
+                        self._state = Button.State.NORMAL;
+                    }
+                }
+                break;
+            
+            case "touchleave":
+            case "touchcancel":
+                self._touchDown.length = 0;
+                if (!self._mouseDown) {
+                    self._state = Button.State.NORMAL;
+                }
+                break;
+            
+            case "touchmove":
+            case "mousemove":
+                break;
+                
+            // Mouse event
+            case "mousedown":
+                if (self.isHitByEvent(event)) {
+                    self._mouseDown = true;
+                    self._state = Button.State.PRESSED;
+                }
+                break;
+                
+            case "mouseup":
+                self._mouseDown = false;
+                if (self.isHitByEvent(event) && !self._anyTouchDown() && !self._mouseDown && self._state === Button.State.PRESSED) {
+                    self.dispatchEvent(Button.EVENT_CLICK);
+                }
+                self._state = Button.State.NORMAL;
+                break;
+        }
+        
+        event.preventDefault();
+    };
+    
+    this.setClickable(true);
 }
 
-var images = void 0;
-loadImages({
-    //background : "assets/images/gui/main.png",
-    logo: "assets/images/logo.png",
-    button: "assets/images/button_red_round.png",
-    playIcon: "assets/images/icon_play.png",
-    refreshIcon: "assets/images/icon_refresh.png",
-    brokenEgg: "assets/images/egg_broken.png",
-    ribbon: "assets/images/ribbon.png"
+Button.prototype._anyTouchDown = function() {
+    for (var i in this._touchDown) {
+        if (i) {
+            return true;
+        }
+    }
+    return false;
+};
 
-}, function(loadedImages) {
-    images = loadedImages;
-    console.log("Menu images loaded.");
-});
-*/
-"use strict";
+Button.prototype.layout = function(parentX, parentY, parentWidth, parentHeight) {
+    this.x = parentX + (parentWidth - this.width) * 0.5;
+    this.y = parentY + (parentHeight - this.height) * 0.5;
+};
+
+Button.prototype.draw = function() {
+    if (this._state === Button.State.NORMAL) {
+        this._context.drawImage(this.image, this.x, this.y, this.width, this.height);
+    } else {
+        this._context.drawImage(this.image, this.x + 2, this.y + 2, this.width - 4, this.height - 4);
+    }
+};
+
+Button.prototype.isHitByEvent = function(event) {
+    var canvasRect = this._context.canvas.getBoundingClientRect();
+    return this.isHit((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR); // TODO: evil global
+};
+
+Button.prototype.isHit = function(x, y) {
+    return (x >= this.x && x <= this.x + this.width) && (y >= this.y && y <= this.y + this.height);
+};
+
+Button.prototype.isClickable = function() {
+    return this._clickable;
+};
+
+/**
+ * @param {boolean} clickable
+ */
+Button.prototype.setClickable = function(clickable) {
+    if (clickable && !this._clickable) {
+        this._context.canvas.addEventListener("touchstart", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchend", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchmove", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchcancel", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("touchleave", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("mousedown", this.handlePointerEvent, false);
+        this._context.canvas.addEventListener("mousemove", this.handlePointerEvent, false);
+        // TODO: fix this monstrosity
+        (this._context.canvas.ownerDocument.defaultView || this._context.canvas.ownerDocument.parentWindow)
+            .addEventListener("mouseup", this.handlePointerEvent, false);
+        this._clickable = true;
+    } else if (!clickable && this._clickable) {
+        this._context.canvas.removeEventListener("touchstart", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchend", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchmove", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchcancel", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("touchleave", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("mousedown", this.handlePointerEvent);
+        this._context.canvas.removeEventListener("mousemove", this.handlePointerEvent);
+        // TODO: fix this monstrosity
+        (this._context.canvas.ownerDocument.defaultView || this._context.canvas.ownerDocument.parentWindow)
+            .removeEventListener("mouseup", this.handlePointerEvent, false);    
+        this._clickable = false;
+    }
+};
+
+Button.prototype.isPressed = function() {
+    return this._state === Button.State.PRESSED;
+};
+
+Button.EVENT_CLICK = "BUTTON_ON_CLICK";
+
+Button.State = {
+    NORMAL: 0,
+    HOVERED: 1,
+    PRESSED: 2
+};
 
 function Menu(context, resources) {
     Observable.call(this);
     
     var self = this;
     
-    var buttonCircle = new Circle(45),
-        buttonClick = false,
-        buttonHover = false;
-
-    // testing image saving to local storage
-    /*var img = new Image();
-
-    img.src = "assets/images/egg.png";
-    console.log(img);
-    var imgData = getBase64Image(img);
-    localStorage.setItem("imgData", imgData);
-
-    function getBase64Image(img) {
-        // Create an empty canvas element
-        var cvs = document.createElement("canvas");
-        console.log(img.width, img.height);
-        cvs.width = img.width;
-        cvs.height = img.height;
-
-        console.log(cvs.width, cvs.height);
-
-        console.log(cvs);
-        // Copy the image contents to the canvas
-        var ctx = cvs.getContext("2d");
-        ctx.drawImage(img, 0, 0);
-
-        console.log(ctx);
-        // Get the data-URL formatted image
-        // Firefox supports PNG and JPEG. You could check img.src to guess the
-        // original format, but be aware the using "image/jpg" will re-encode the image.
-        var dataURL = cvs.toDataURL("image/png");
-
-        return dataURL.replace(/^data:image\/(png|jpg);base64,/, "");
-    }
-
-    var dataImage = localStorage.getItem('imgData');
-    img.src = "data:image/png;base64," + dataImage;
-    context.drawImage(img, 100, 100);*/
-
+    var button = new Button(context, resources.imageButtonPlay);
+    button.layout(context.canvas.width / 2, 559, 0, 0);
     
     var gradient = context.createLinearGradient(0, 0, 0, context.canvas.height);
     gradient.addColorStop(0, 'rgba(32, 46, 59, 1.000)');
     gradient.addColorStop(0.5, 'rgba(65, 77, 89, 1.000)');
     gradient.addColorStop(1, 'rgba(90, 101, 111, 1.000)');
     
-    buttonCircle.layout(context.canvas.width / 2, 559, 0, 0);
-    
-    function onMouseMove(event) {
-        var canvasRect = context.canvas.getBoundingClientRect();
-        buttonHover = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
-    }
-
-    function onMouseUp() {
-        buttonClick = false;
-    }
-
-    function onMouseDown(event) {
-        var canvasRect = context.canvas.getBoundingClientRect();
-        buttonClick = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
-        if (buttonClick) {
-            self.dispatchEvent(Menu.EVENT_START_CLICKED);
-        }
-    } 
+    button.addEventListener(Button.EVENT_CLICK, function() {
+        self.dispatchEvent(Menu.EVENT_START_CLICKED);
+    });
     
     this.enable = function() {
-        context.canvas.addEventListener("mousemove", onMouseMove, false);
-        context.canvas.addEventListener("mouseup", onMouseUp, false);
-        context.canvas.addEventListener("mousedown", onMouseDown, false);
+        button.setClickable(true);
     };
-
+    
     this.dissable = function() {
-        context.canvas.removeEventListener("mousemove", onMouseMove, false);
-        context.canvas.removeEventListener("mouseup", onMouseUp, false);
-        context.canvas.removeEventListener("mousedown", onMouseDown, false);
+        button.setClickable(false);
     };
     
     this.draw = function() {
@@ -126,19 +196,8 @@ function Menu(context, resources) {
         context.fillStyle = "rgb(32, 46, 59)";
         context.fillRect(0, 245, context.canvas.width, 185);
         context.drawImage(resources.imageLogo, (context.canvas.width - resources.imageLogo.width)/2+9, 183);
-        //context.drawImage(images.button, 153, 514);
 
-        if (buttonHover && buttonClick) { // Click
-            //context.drawImage(images.button, buttonRect.x, buttonRect.y);
-
-        } else if (buttonHover) { // Hover
-            context.drawImage(resources.imageButtonRedRound, buttonCircle.x+3, buttonCircle.y+3);
-            context.drawImage(resources.iconPlay, buttonCircle.x+35, buttonCircle.y+21);
-
-        } else { // Idle
-            context.drawImage(resources.imageButtonRedRound, buttonCircle.x, buttonCircle.y);
-            context.drawImage(resources.iconPlay, buttonCircle.x+32, buttonCircle.y+18);
-        }
+        button.draw(context);
     };
 };
 Menu.EVENT_START_CLICKED = "MENU_START_CLICKED";
@@ -229,17 +288,24 @@ function GameOver(context, resources) {
     var score = 0,
         highScore,
         newHighScore = false,
-        buttonCircle = new Circle(45),
-        buttonClick = false,
-        buttonHover = false,
         scoreText = new Text(context),
         ptsText = new Text(context),
         highScoreText = new Text(context),
         highScoreValueText = new Text(context),
         newHighScoreText = new Text(context);
 
-    buttonCircle.layout(context.canvas.width/2, 500, 0, 0);
-        
+    var buttonRetry = new Button(context, resources.imageButtonRetry);
+    buttonRetry.layout(context.canvas.width / 2 - 65, 500, 0, 0);
+    buttonRetry.addEventListener(Button.EVENT_CLICK, function() {
+        self.dispatchEvent(GameOver.EVENT_RESTART_CLICKED);
+    });
+    
+    var buttonShare = new Button(context, resources.imageButtonFacebookShare);
+    buttonShare.layout(context.canvas.width / 2 + 65, 500, 0, 0);
+    buttonShare.addEventListener(Button.EVENT_CLICK, function() {
+        self.dispatchEvent(GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED);
+    });
+    
     scoreText.setSize(40);
     scoreText.setBold(true);
 
@@ -273,44 +339,25 @@ function GameOver(context, resources) {
     this.setHighScore = function() {
         highScore = localStorage.getItem("highscore");
     };
-
-    this.getHighScore = function() {
-        return highScore;
-    };
     
     this.setNewHighScore = function(value) {
         newHighScore = value;
     };
 
-    function onMouseMove(event) {
-        var canvasRect = context.canvas.getBoundingClientRect();
-        buttonHover = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
-    }
-
-    function onMouseUp() {
-        buttonClick = false;
-    }
-
-    function onMouseDown(event) {
-        var canvasRect = context.canvas.getBoundingClientRect();
-        buttonClick = Intersection.pointCircle((event.clientX - canvasRect.left) / PXR, (event.clientY - canvasRect.top) / PXR, buttonCircle);
-        if (buttonClick) {
-            self.dispatchEvent(GameOver.EVENT_RESTART_CLICKED);
-        }
-    }
+    this.getHighScore = function() {
+        return highScore;
+    };
 
     this.enable = function() {
-        context.canvas.addEventListener("mousemove", onMouseMove, false);
-        context.canvas.addEventListener("mouseup", onMouseUp, false);
-        context.canvas.addEventListener("mousedown", onMouseDown, false);
+        buttonRetry.setClickable(true);
+        buttonShare.setClickable(true);
     };
-
+    
     this.dissable = function() {
-        context.canvas.removeEventListener("mousemove", onMouseMove, false);
-        context.canvas.removeEventListener("mouseup", onMouseUp, false);
-        context.canvas.removeEventListener("mousedown", onMouseDown, false);
+        buttonRetry.setClickable(false);
+        buttonShare.setClickable(false);
     };
-
+    
     this.draw = function() {
         context.fillStyle = gradient;
         context.fillRect(0, 0, context.canvas.width, context.canvas.height);
@@ -326,25 +373,17 @@ function GameOver(context, resources) {
         ptsText.draw((context.canvas.width-scoreText.getWidth()-ptsText.getWidth())/2 + scoreText.getWidth() + 4, 390);
 
         // printing high score
-        highScoreValueText.setText(this.getHighScore());
+        highScoreValueText.setText(this.getHighScore() === null ? 0 : this.getHighScore());
         highScoreText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 - 4, context.canvas.height-15);
         highScoreValueText.draw((context.canvas.width-highScoreText.getWidth()-highScoreValueText.getWidth())/2 + highScoreText.getWidth() + 8, context.canvas.height-15);
+        
         if (newHighScore) {
-            newHighScoreText.draw((context.canvas.width - newHighScoreText.getWidth())/2, context.canvas.height-90);
+            newHighScoreText.draw((context.canvas.width - newHighScoreText.getWidth()) / 2, context.canvas.height - 90);
         }
-
-        if (buttonHover && buttonClick) { // Click
-            context.drawImage(resources.imageButtonRedRound, buttonCircle.x, buttonCircle.y);
-            context.drawImage(resources.iconRefresh, buttonCircle.x+19, buttonCircle.y+17);
-
-        } else if (buttonHover) { // Hover
-            context.drawImage(resources.imageButtonRedRound, buttonCircle.x+3, buttonCircle.y+3);
-            context.drawImage(resources.iconRefresh, buttonCircle.x+22, buttonCircle.y+20);
-
-        } else { // Idle
-            context.drawImage(resources.imageButtonRedRound, buttonCircle.x, buttonCircle.y);
-            context.drawImage(resources.iconRefresh, buttonCircle.x+19, buttonCircle.y+17);
-        }
+        
+        buttonRetry.draw();
+        buttonShare.draw();
     };
 };
 GameOver.EVENT_RESTART_CLICKED = "GAME_OVER_RESTART_CLICKED";
+GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED = "GAME_OVER_FACEBOOK_SCORE_SHARE_CLICKED";

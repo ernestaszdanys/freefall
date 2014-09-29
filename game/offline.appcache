@@ -1,18 +1,20 @@
 CACHE MANIFEST
 
-# FREE FALL version 0.1.0
+# FREE FALL version 0.8.34
 
 # Main page
 index.html
 index.js
 
 #Images
-assets\images\button_red_round.png
 assets\images\egg.json
-assets\images\egg.png
+assets\images\egg_25.png
+assets\images\egg_50.png
+assets\images\egg_75.png
+assets\images\egg_100.png
 assets\images\egg_broken.png
-assets\images\icon_play.png
-assets\images\icon_refresh.png
+assets\images\button_play.png
+assets\images\button_retry.png
 assets\images\logo.png
 assets\images\obstacle_1.json
 assets\images\obstacle_1.png
@@ -31,6 +33,10 @@ assets\images\obstacle_4.png
 assets\images\obstacle_4_blur_1.png
 assets\images\obstacle_4_blur_2.png
 assets\images\ribbon.png
+assets\images\button_f_s.png
+assets\images\metal_ball.json
+assets\images\metal_ball.png
+assets\images\gravity_gradient.png
 
 #Fonts
 assets\fonts\bitter\Bitter-Regular.otf
@@ -41,24 +47,29 @@ assets\sounds\bounce.wav
 assets\sounds\power-juice.mp3
 
 #JS files
-js\animator.js
-js\body.js
-js\camera.js
-js\choreographer.js
-js\controls.js
-js\dynamic_behaviour.js
-js\game.js
-js\geometry.js
+js\common.js
 js\gui.js
-js\interpolator.js
-js\level.js
 js\loader.js
-js\matrix4x4_temp.js
+js\dynamic_behaviour.js
+js\property_checker.js
 js\metrics.js
 js\observable.js
-js\physics.js
-js\property_checker.js
+js\choreographer.js
+js\vec2.js
+js\vec3.js
 js\spatialMap.js
+js\controls.js
+js\geometry.js
+js\body.js
+js\physics.js
 js\text.js
+js\level.js
+js\game.js
 js\touch_screen.js
-js\vector.js
+js\camera.js
+js\animator.js
+js\interpolator.js
+js\social_networks.js
+
+NETWORK:
+*
