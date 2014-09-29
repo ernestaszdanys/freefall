@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# FREE FALL version 0.9.0
+# FREE FALL version 0.9.1
 
 # Main page
 index.html
@@ -73,6 +73,7 @@ js\camera.js
 js\animator.js
 js\interpolator.js
 js\social_networks.js
+js\cookie.js
 
 NETWORK:
 *

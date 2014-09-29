@@ -238,6 +238,7 @@ function Hud(context, resources) {
 
     this.setHighScore = function() {
         highScore = localStorage.getItem("highscore");
+        //highScore = getCookie("highscore");
     };
 
     this.getHighScore = function() {
@@ -338,6 +339,7 @@ function GameOver(context, resources) {
 
     this.setHighScore = function() {
         highScore = localStorage.getItem("highscore");
+        //highScore = getCookie("highscore");
     };
     
     this.setNewHighScore = function(value) {

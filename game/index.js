@@ -176,10 +176,12 @@ Loader.loadResourceTree(resourceDescription,
                     if (gameOver.getScore() > hud.getHighScore()) {
                         gameOver.setNewHighScore(true);
                         localStorage.setItem("highscore", gameOver.getScore());
+                        //setCookie("highscore", gameOver.getScore(), 1000)
                     } else {
                         gameOver.setNewHighScore(false);
                     }
                     gameOver.setHighScore(localStorage.getItem("highscore"));
+                    //gameOver.setHighScore(getCookie("highscore"));
                     setAppState(AppState.GAME_OVER);
                 }, 2000);
             } else {
