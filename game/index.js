@@ -94,8 +94,6 @@ var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 Loader.loadResourceTree(resourceDescription,
     function onSuccess(resources) {
-        // Game
-        
         //checking browser type http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
         var sm = new SoundManager(audioContext);
         var soundBounce = new sm.Sound(resources.soundBounce, 1, false);
@@ -103,6 +101,8 @@ Loader.loadResourceTree(resourceDescription,
                                             ? resources.soundBackgroundMP3 : resources.soundBackgroundWAV, 0.2, true);
         var soundClicked = new sm.Sound(resources.soundClick, 1, false);
         var soundGameOver = new sm.Sound(resources.soundGameOver, 0.6, false);
+        if (localStorage.getItem("soundState") === null) localStorage.setItem("soundState", "play");
+        if (localStorage.getItem("soundState") === "mute") sm.setMasterGain(0);
         
         // Start frame loop
         choreographer.startFrameLoop();
@@ -131,11 +131,14 @@ Loader.loadResourceTree(resourceDescription,
                     break;
                  
                 case AppState.GAME:
+                    game.enableControls();
                     menu.dissable();
                     gameOver.dissable();
                     break;
                 
                 case AppState.GAME_PAUSE:
+                    game.dissableControls();
+                    pause.enable();
                     break;
                     
                 case AppState.DEATH:
@@ -148,7 +151,6 @@ Loader.loadResourceTree(resourceDescription,
                     gameOver.enable();
                     break;
             }
-            
             appState = newState;
         }
         
@@ -189,6 +191,8 @@ Loader.loadResourceTree(resourceDescription,
                     gameOver.setHighScore(localStorage.getItem("highscore"));
                     setAppState(AppState.GAME_OVER);
                 }, 2000);
+            } else {
+                if (health < 100) soundBounce.play();
             }
         });
         /*
@@ -203,17 +207,20 @@ Loader.loadResourceTree(resourceDescription,
             hud.setHighScore();
             game.setTimeScale(1);
             setAppState(AppState.GAME);
+            pause.dissable();
         });
 		
 	pause.addEventListener(Pause.EVENT_RESUME_CLICKED, function(eventName) {
             setAppState(AppState.GAME);
+            pause.dissable();
         });
 		
 	pause.addEventListener(Pause.EVENT_SOUND_CLICKED, function(eventName) {
-            console.log();
-            if (sm.getMasterGain() === 1) {
+            if (localStorage.getItem("soundState") === "play") {
                 sm.setMasterGain(0);
+                localStorage.setItem("soundState", "mute");
             } else {
+                localStorage.setItem("soundState", "play");
                 sm.setMasterGain(1);
             };
         });

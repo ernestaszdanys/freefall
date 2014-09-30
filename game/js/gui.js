@@ -309,6 +309,18 @@ function Pause(context, resources) {
         buttonResume.draw();
 	buttonSound.draw();
     };
+    
+    this.enable = function() {
+        buttonRetry.setClickable(true);
+        buttonResume.setClickable(true);
+        buttonSound.setClickable(true);
+    };
+    
+    this.dissable = function() {
+        buttonRetry.setClickable(false);
+        buttonResume.setClickable(false);
+        buttonSound.setClickable(false);
+    };
 };
 Pause.EVENT_RESTART_CLICKED = "PAUSE_RESTART_CLICKED";
 Pause.EVENT_RESUME_CLICKED = "PAUSE_RESUME_CLICKED";

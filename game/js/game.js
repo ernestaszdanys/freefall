@@ -66,8 +66,8 @@ function Game(context, resources, PPM) {
     var leftButton = new Button(context, {width: context.canvas.width / 2, height: context.canvas.height - 60}),
         rightButton = new Button(context, {width: context.canvas.width / 2, height: context.canvas.height - 60});
 
-    leftButton.layout(context.canvas.width / 4, context.canvas.height / 2, 0, 0);
-    rightButton.layout(context.canvas.width / 4 * 3, context.canvas.height / 2, 0, 0);
+    leftButton.layout(context.canvas.width / 4, context.canvas.height / 2 - 60, 0, 0);
+    rightButton.layout(context.canvas.width / 4 * 3, context.canvas.height / 2 - 60, 0, 0);
 
     // Physics stuff
     var timeScale = 1,      // 0 <= timeScale < infinity
@@ -368,6 +368,16 @@ function Game(context, resources, PPM) {
     
     this.setTimeScale = function(newTimeScale) {
         timeScale = (newTimeScale > 0) ? newTimeScale : 0;
+    };
+    
+    this.dissableControls = function() {
+        leftButton.setClickable(false);
+        rightButton.setClickable(false);
+    };
+    
+    this.enableControls = function() {
+        leftButton.setClickable(true);
+        rightButton.setClickable(true);
     };
     
     this.generateObstacles = function(numberOfObstacles, offsetY) {
