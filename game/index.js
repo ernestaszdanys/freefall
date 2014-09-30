@@ -79,7 +79,7 @@ var resourceDescription = {
     imageButtonPlay: "assets/images/button_play.png",
     imageButtonRetry: "assets/images/button_retry.png",
     imageButtonFacebookShare: "assets/images/button_f_s.png",
-    imageButtonSound: "assets/images/button_sound.png",
+    imageButtonSound: "assets/images/button_red_sound.png",
     imageButtonPause: "assets/images/button_pause_small.png",
 
     // Sounds
