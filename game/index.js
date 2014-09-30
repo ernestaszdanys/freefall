@@ -56,9 +56,7 @@ var resourceDescription = {
     
     metalBallImage: "assets/images/metal_ball.png",
     metalBallDescription: "assets/images/metal_ball.json",
-    
     gravityGradientImage: "assets/images/gravity_gradient.png",
-    
     
     // Blurred background objects
     backgroundObstaclesBlur1: [
@@ -81,6 +79,8 @@ var resourceDescription = {
     imageButtonPlay: "assets/images/button_play.png",
     imageButtonRetry: "assets/images/button_retry.png",
     imageButtonFacebookShare: "assets/images/button_f_s.png",
+    imageButtonSound: "assets/images/button_sound.png",
+    imageButtonPause: "assets/images/button_pause_small.png",
 
     // Sounds
     soundBackgroundWAV: "assets/sounds/game.wav",
@@ -95,7 +95,7 @@ var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 Loader.loadResourceTree(resourceDescription,
     function onSuccess(resources) {
         // Game
-
+        
         //checking browser type http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
         var sm = new SoundManager(audioContext);
         var soundBounce = new sm.Sound(resources.soundBounce, 1, false);
@@ -103,7 +103,7 @@ Loader.loadResourceTree(resourceDescription,
                                             ? resources.soundBackgroundMP3 : resources.soundBackgroundWAV, 0.2, true);
         var soundClicked = new sm.Sound(resources.soundClick, 1, false);
         var soundGameOver = new sm.Sound(resources.soundGameOver, 0.6, false);
-
+        
         // Start frame loop
         choreographer.startFrameLoop();
         choreographer.addEventListener(Choreographer.EVENT_ON_FRAME, onFrame);
@@ -111,13 +111,15 @@ Loader.loadResourceTree(resourceDescription,
         var menu = new Menu(context, resources),
             game = new Game(context, resources, Metrics.PPM),
             hud = new Hud(context, resources),
-            gameOver = new GameOver(context, resources);
+            gameOver = new GameOver(context, resources),
+            pause = new Pause(context, resources);
         
         var AppState = {
                 MENU: 0,
                 GAME: 1,
-                DEATH: 2,
-                GAME_OVER: 3
+                GAME_PAUSE: 2,
+                DEATH: 3,
+                GAME_OVER: 4
             },
             appState;
 
@@ -132,6 +134,9 @@ Loader.loadResourceTree(resourceDescription,
                     menu.dissable();
                     gameOver.dissable();
                     break;
+                
+                case AppState.GAME_PAUSE:
+                    break;
                     
                 case AppState.DEATH:
                     menu.dissable();
@@ -139,9 +144,6 @@ Loader.loadResourceTree(resourceDescription,
                     break;
                     
                 case AppState.GAME_OVER:
-                    if (window["adf"] !== void 0) {
-                        adf.track(47841, 6242688, {}); // <------------------- traking point
-                    }
                     menu.dissable();
                     gameOver.enable();
                     break;
@@ -165,7 +167,12 @@ Loader.loadResourceTree(resourceDescription,
             gameOver.setScore(~~score);
         });
         
+        hud.addEventListener(Hud.EVENT_PAUSE_CLICKED, function(eventName) {
+            setAppState(AppState.GAME_PAUSE);
+        });
+        
         hud.setHealth(game.getPlayerHealth());
+		
         game.addEventListener(Game.EVENT_PLAYER_HEALTH_CHANGED, function(eventName, health) {
             hud.setHealth(~~health);
             if (~~health === 0) {
@@ -176,16 +183,12 @@ Loader.loadResourceTree(resourceDescription,
                     if (gameOver.getScore() > hud.getHighScore()) {
                         gameOver.setNewHighScore(true);
                         localStorage.setItem("highscore", gameOver.getScore());
-                        //setCookie("highscore", gameOver.getScore(), 1000)
                     } else {
                         gameOver.setNewHighScore(false);
                     }
                     gameOver.setHighScore(localStorage.getItem("highscore"));
-                    //gameOver.setHighScore(getCookie("highscore"));
                     setAppState(AppState.GAME_OVER);
                 }, 2000);
-            } else {
-                if (health < 100) soundBounce.play();
             }
         });
         /*
@@ -194,6 +197,27 @@ Loader.loadResourceTree(resourceDescription,
             game.addBackgroundObjects(generateRandomBackgroundObjects(50, resources.backgroundObstaclesBlur2, canvas.width, canvas.height * 3, -200, 0, levelEndY, 0));
         });
         */
+		
+	pause.addEventListener(Pause.EVENT_RESTART_CLICKED, function(eventName) {
+            game.resetPlayer();
+            hud.setHighScore();
+            game.setTimeScale(1);
+            setAppState(AppState.GAME);
+        });
+		
+	pause.addEventListener(Pause.EVENT_RESUME_CLICKED, function(eventName) {
+            setAppState(AppState.GAME);
+        });
+		
+	pause.addEventListener(Pause.EVENT_SOUND_CLICKED, function(eventName) {
+            console.log();
+            if (sm.getMasterGain() === 1) {
+                sm.setMasterGain(0);
+            } else {
+                sm.setMasterGain(1);
+            };
+        });
+		
         gameOver.addEventListener(GameOver.EVENT_RESTART_CLICKED, function(eventName) {
             soundClicked.play();
             soundBackground.play();
@@ -203,10 +227,10 @@ Loader.loadResourceTree(resourceDescription,
             setAppState(AppState.GAME);
         });
     
-		gameOver.addEventListener(GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED, function(eventName) {
+	gameOver.addEventListener(GameOver.EVENT_FACEBOOK_SCORE_SHARE_CLICKED, function(eventName) {
             soundClicked.play();
             openFbPopUp(~~game.getPlayerScore());
-		});
+	});
             
         function onFrame(eventName, dt) {
             /*console.clear();*/
@@ -225,6 +249,9 @@ Loader.loadResourceTree(resourceDescription,
                 hud.draw();
             } else if (appState === AppState.GAME_OVER) {
                 gameOver.draw();
+            } else if (appState === AppState.GAME_PAUSE) {
+                game.draw();
+                pause.draw();
             }
         }
     },

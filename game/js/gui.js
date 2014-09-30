@@ -282,35 +282,34 @@ function Pause(context, resources) {
     Observable.call(this);
     var self = this;
 	
-	var buttonRetry = new Button(context, resources.imageButtonRetry);
+    var buttonRetry = new Button(context, resources.imageButtonRetry);
     buttonRetry.layout(context.canvas.width / 2 - 140, context.canvas.height / 2, 0, 0);
     buttonRetry.addEventListener(Button.EVENT_CLICK, function() {
         self.dispatchEvent(Pause.EVENT_RESTART_CLICKED);
     });
 	
-	var buttonResume = new Button(context, resources.imageButtonPlay);
+    var buttonResume = new Button(context, resources.imageButtonPlay);
     buttonResume.layout(context.canvas.width / 2, context.canvas.height / 2, 0, 0);
     buttonResume.addEventListener(Button.EVENT_CLICK, function() {
         self.dispatchEvent(Pause.EVENT_RESUME_CLICKED);
     });
 	
-	var buttonSound = new Button(context, resources.imageButtonSound);
+    var buttonSound = new Button(context, resources.imageButtonSound);
     buttonSound.layout(context.canvas.width / 2 + 140, context.canvas.height / 2, 0, 0);
     buttonSound.addEventListener(Button.EVENT_CLICK, function() {
         self.dispatchEvent(Pause.EVENT_SOUND_CLICKED);
     });
 	
-    
     this.draw = function() {
         context.fillStyle = "rgba(32, 46, 59, 0.5)";
         context.fillRect(0, 0, canvas.width, canvas.height);
-		context.fillStyle = "rgba(32, 46, 59, 0.9)";
-		context.fillRect(0, canvas.height/3, canvas.width, canvas.height/3);
-		buttonRetry.draw();
+	context.fillStyle = "rgba(32, 46, 59, 0.9)";
+	context.fillRect(0, canvas.height/3, canvas.width, canvas.height/3);
+	buttonRetry.draw();
         buttonResume.draw();
-		buttonSound.draw();
-    }
-}
+	buttonSound.draw();
+    };
+};
 Pause.EVENT_RESTART_CLICKED = "PAUSE_RESTART_CLICKED";
 Pause.EVENT_RESUME_CLICKED = "PAUSE_RESUME_CLICKED";
 Pause.EVENT_SOUND_CLICKED = "PAUSE_SOUND_CLICKED";

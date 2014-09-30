@@ -4,6 +4,10 @@ function SoundManager(audioContext) {
     this.setMasterGain = function (volume) {
         masterGain.gain.value = volume;
     };
+    
+    this.getMasterGain = function () {
+        return masterGain.gain.value;
+    };
 
     this.setMasterGain(1);
     masterGain.connect(audioContext.destination);
