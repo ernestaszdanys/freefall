@@ -88,7 +88,7 @@ function Button(context, image) {
 
 Button.prototype._anyTouchDown = function() {
     for (var i in this._touchDown) {
-        if (i === true) {
+        if (i) {
             return true;
         }
     }
@@ -237,6 +237,7 @@ function Hud(context, resources) {
 
     this.setHighScore = function() {
         highScore = localStorage.getItem("highscore");
+        //highScore = getCookie("highscore");
     };
 
     this.getHighScore = function() {
@@ -372,6 +373,7 @@ function GameOver(context, resources) {
 
     this.setHighScore = function() {
         highScore = localStorage.getItem("highscore");
+        //highScore = getCookie("highscore");
     };
     
     this.setNewHighScore = function(value) {

@@ -10,6 +10,8 @@ var Loader = (function() {
     extensionToLoader["jpg"] = getImage;
     extensionToLoader["jpeg"] = getImage;
     extensionToLoader["gif"] = getImage;
+    extensionToLoader["wav"] = getAudio;
+    extensionToLoader["mp3"] = getAudio;
 
     function getUrlFileExtension(url) {
         var extensionTokens = url.match(urlFileExtensionPattern);
@@ -61,6 +63,47 @@ var Loader = (function() {
             requestUrl += "?" + getTime();
         }
         image.src = requestUrl;
+    }
+
+    function getAudio(url, successCallback, errorCallback) {
+        var request = new XMLHttpRequest();
+
+        request.onreadystatechange = function() {
+            if (request.readyState === 1) {
+                request.responseType = "arraybuffer";
+                request.send();
+            } else if (request.readyState === 4) {
+                if (request.status === 200) {
+                    successCallback(request.response);
+                } else {
+                    errorCallback({
+                        status: request.status
+                    });
+                }
+            }
+        };
+
+        var requestUrl = url;
+        if (!cache) {
+            requestUrl += "?" + getTime();
+        }
+        request.open("GET", requestUrl, true);
+
+        /*var audio = new Audio();
+
+        audio.addEventListener('loadeddata', function() {
+            successCallback(audio);
+        }, false);
+
+        audio.addEventListener('error' , function() {
+            errorCallback();
+        }, false);
+
+        var requestUrl = url;
+        if (!cache) {
+            requestUrl += "?" + getTime();
+        }
+        audio.src = requestUrl;*/
     }
 
     function setProperty(target, propertyPath, value) {

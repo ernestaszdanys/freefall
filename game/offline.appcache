@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-# FREE FALL version 0.8.20
+# FREE FALL version 0.9.1
 
 # Main page
 index.html
@@ -41,10 +41,18 @@ assets\images\gravity_gradient.png
 #Fonts
 assets\fonts\bitter\Bitter-Regular.otf
 
+#Sounds
+assets\sounds\bounce.wav
+assets\sounds\click.wav
+assets\sounds\game.wav
+assets\sounds\game.mp3
+assets\sounds\game_over.wav
+
 #JS files
 js\common.js
 js\gui.js
 js\loader.js
+js\sound.js
 js\dynamic_behaviour.js
 js\property_checker.js
 js\metrics.js
@@ -65,6 +73,7 @@ js\camera.js
 js\animator.js
 js\interpolator.js
 js\social_networks.js
+js\cookie.js
 
 NETWORK:
 *
