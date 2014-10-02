@@ -239,7 +239,7 @@ function Game(context, resources, PPM) {
 
             var healthLoss = playerHealthLossX + playerHealthLossY;
             if (healthLoss > 0) {
-                player.setHealth(player.getHealth() - healthLoss - 6);
+                player.setHealth(player.getHealth() - healthLoss * 5);
                 if (player.getHealth() > 0) {
                     camera.spring(playerHealthLossX * playerDtVelocitySignX, playerHealthLossY * -playerDtVelocitySignY);
                 }
