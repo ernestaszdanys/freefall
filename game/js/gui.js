@@ -275,6 +275,14 @@ function Hud(context, resources) {
 
         pauseButton.draw(context);
     };
+    
+    this.enable = function() {
+        pauseButton.setClickable(true);
+    };
+    
+    this.dissable = function() {
+        pauseButton.setClickable(false);
+    };
 };
 Hud.EVENT_PAUSE_CLICKED = "HUD_PAUSE_CLICKED";
 

@@ -128,27 +128,32 @@ Loader.loadResourceTree(resourceDescription,
                 case AppState.MENU:
                     gameOver.dissable();
                     menu.enable();
+                    hud.dissable();
                     break;
                  
                 case AppState.GAME:
                     game.enableControls();
                     menu.dissable();
+                    hud.enable();
                     gameOver.dissable();
                     break;
                 
                 case AppState.GAME_PAUSE:
                     game.dissableControls();
                     pause.enable();
+                    hud.dissable();
                     break;
                     
                 case AppState.DEATH:
                     menu.dissable();
                     gameOver.dissable();
+                    hud.dissable();
                     break;
                     
                 case AppState.GAME_OVER:
                     menu.dissable();
                     gameOver.enable();
+                    hud.dissable();
                     break;
             }
             appState = newState;
