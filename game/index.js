@@ -132,11 +132,11 @@ Loader.loadResourceTree(resourceDescription,
                     break;
                  
                 case AppState.GAME:
-                    game.enableControls();
                     menu.dissable();
                     hud.enable();
                     pause.dissable();
                     gameOver.dissable();
+					game.enableControls();
                     break;
                 
                 case AppState.GAME_PAUSE:
