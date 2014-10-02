@@ -159,7 +159,7 @@ Loader.loadResourceTree(resourceDescription,
         menu.addEventListener(Menu.EVENT_START_CLICKED, function() {
             hud.setHighScore();
             soundClicked.play();
-            soundBackground.play();
+            soundBackground.play(true);
             setAppState(AppState.GAME);
         });
 
@@ -227,7 +227,7 @@ Loader.loadResourceTree(resourceDescription,
 		
         gameOver.addEventListener(GameOver.EVENT_RESTART_CLICKED, function(eventName) {
             soundClicked.play();
-            soundBackground.play();
+            soundBackground.play(true);
             game.resetPlayer();
             hud.setHighScore();
             game.setTimeScale(1);
