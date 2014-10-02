@@ -135,6 +135,7 @@ Loader.loadResourceTree(resourceDescription,
                     game.enableControls();
                     menu.dissable();
                     hud.enable();
+                    pause.dissable();
                     gameOver.dissable();
                     break;
                 
