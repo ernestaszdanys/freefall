@@ -74,8 +74,8 @@ function Game(context, resources, PPM) {
         sampleCount = 1;    // Number of physics runs per frame
     
     // Level related stuff
-    var levelGravity = 6.8,
-        levelEnvironmentDensity = Physics.densityAir * 7,
+    var levelGravity = 7.8,
+        levelEnvironmentDensity = Physics.densityAir * 6,
         levelMinY = 0,
         levelMaxY = 0;
         
@@ -172,7 +172,7 @@ function Game(context, resources, PPM) {
                 forceOnPlayer.x += -28000;
             }
 
-            if (KEYS.isDown(83) || KEYS.isDown(40)) { // Down
+            /*if (KEYS.isDown(83) || KEYS.isDown(40)) { // Down
                 forceOnPlayer.y += 10000;
             }
 
@@ -183,7 +183,7 @@ function Game(context, resources, PPM) {
             // TODO:
             if (KEYS.isDown(13)) {
                 player.setHealth(0);
-            }
+            }*/
             
             // Apply air drag
             // TODO: cross section area
@@ -239,7 +239,7 @@ function Game(context, resources, PPM) {
 
             var healthLoss = playerHealthLossX + playerHealthLossY;
             if (healthLoss > 0) {
-                player.setHealth(player.getHealth() - healthLoss); 
+                player.setHealth(player.getHealth() - healthLoss - 6);
                 if (player.getHealth() > 0) {
                     camera.spring(playerHealthLossX * playerDtVelocitySignX, playerHealthLossY * -playerDtVelocitySignY);
                 }
