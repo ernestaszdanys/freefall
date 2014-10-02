@@ -1,6 +1,5 @@
 // TODO: sanitize tokenized property path before eval in compiled versions
-// TODO: documentation...
-// TODO: tests would be great...
+
 /**
  * See performace camparison between simple and compiled checks here: 
  * http://jsperf.com/nested-property-checker-performance
@@ -13,7 +12,7 @@ var PropertyChecker = (function() {
         // Tokenize property path
         if (typeof path === "string") {
             path = path.split(".");
-            // TODO: sanitize tokens
+            // TODO: sanitize tokens!!!
         } else {
             throw new Error("Bad property path. The path must be a string.");   
         } 
@@ -60,7 +59,7 @@ var PropertyChecker = (function() {
         },
         
         getProperty: function(object, path) {
-            if (typeof path === "string") {
+            if (isString(path)) {
                 path = path.split(".");
                 var property = object;
                 if (property === void 0) {

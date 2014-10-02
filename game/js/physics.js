@@ -54,18 +54,13 @@ var Physics = {
         return isInside;
     },
 
-    intersectPolyCircle: function(circle, poly, bucket) {
-        // http://stackoverflow.com/questions/217578/point-in-polygon-aka-hit-test
-        // TODO:
-    },
-
     /**
      * Checks collision between 2 polygons.
      * @param {Vec2[]} a
      * @param {Vec2[]} b
      * @param {Object} bucket       Object in which results (distance, x, y, dx, dy) will be stored. <b>The results are only valid if this function returns <code>true</code> or failFast is set to <code>false</code></b>
      * @param {boolean} failFast
-     * @returns {boolean} <code>true</code> if polygons are intersecting.
+     * @returns {boolean} true if polygons are intersecting.
      */
     intersectPolyPoly: function(a, b, bucket, failFast) {
         // http://gamedevelopment.tutsplus.com/tutorials/how-to-create-a-custom-2d-physics-engine-oriented-rigid-bodies--gamedev-8032
@@ -151,8 +146,8 @@ var Physics = {
      * @returns {boolean}
      */
     simpleIntersectRectRect: function(rect1, rect2) {
-        return (rect1.x + rect1.width > rect2.x || rect1.x - rect1.width < rect2.x + rect2.width 
-            || rect1.y + rect1.height > rect2.y || rect1.y - rect1.height < rect2.y + rect2.height);
+        return (rect1.x + rect1.width > rect2.x || rect1.x - rect1.width < rect2.x + rect2.width) 
+            || (rect1.y + rect1.height > rect2.y || rect1.y - rect1.height < rect2.y + rect2.height);
     },
     
     /**
@@ -223,7 +218,6 @@ var Physics = {
         normalImpulseMagnitude /= a.inverseMass + b.inverseMass + aRCrossN * aRCrossN * a.inverseInertia + bRCrossN * bRCrossN * b.inverseInertia;
 
         // Apply contact impulse on bodies
-        // ---------------------------------------------------------------------------------------------------------
         impulseX = normalImpulseMagnitude * contactNormal.x;
         impulseY = normalImpulseMagnitude * contactNormal.y;
         if (a.mass !== Number.POSITIVE_INFINITY) {
@@ -236,11 +230,13 @@ var Physics = {
             b.linearVelocity.y -= b.inverseMass * impulseY;
             b.angularVelocity -= b.inverseInertia * bContactRadius.crossXy(impulseX, impulseY);
         }
-        // ---------------------------------------------------------------------------------------------------------
 
         // Friction
-        // TODO: friction destroyes too much energy (sometimes it completely destroyes velocity along normal, even
-        // with restitution set to 1). There's probably something wrong with contactTanget.
+        
+        /**
+         * TODO: friction destroyes too much energy (sometimes it completely destroyes velocity along normal, even with
+         * restitution set to 1). There's probably something wrong with contactTanget.
+         */
 
         // Recalculate velocities of contact points
         aVelocity = Vec2.scalarCrossVec2(a.angularVelocity, aContactRadius);
@@ -256,7 +252,6 @@ var Physics = {
             relativeVelocity.x - relativeVelocity.dotXy(contactNormal.x, contactNormal.y) * contactNormal.x,
             relativeVelocity.y - relativeVelocity.dotXy(contactNormal.x, contactNormal.y) * contactNormal.y
         );
-        //contactTangent = new Vec2(relativeVelocity.x, relativeVelocity.y);
         contactTangent.normalize();
 
         var aRCrossT = aContactRadius.crossVec2(contactTangent),
@@ -272,7 +267,6 @@ var Physics = {
         }
 
         // Apply friction impulse on bodies
-        // ---------------------------------------------------------------------------------------------------------
         impulseX = frictionImpulseMagnitude * contactTangent.x;
         impulseY = frictionImpulseMagnitude * contactTangent.y;
         if (a.mass !== Number.POSITIVE_INFINITY) {
@@ -285,7 +279,6 @@ var Physics = {
             b.linearVelocity.y -= b.inverseMass * impulseY;
             b.angularVelocity -= b.inverseInertia * bContactRadius.crossXy(impulseX, impulseY);
         }
-        // ---------------------------------------------------------------------------------------------------------
     },
 
     calculateDragForce1d: function(velocity, density, dragCoef, crossSectionalArea) {

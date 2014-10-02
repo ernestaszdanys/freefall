@@ -6,8 +6,6 @@ var canvas = document.getElementById("canvas"),
 canvas.width = 480;
 canvas.height = 720;
 
-var touch = new TouchObserver(canvas);
-
 var PXR;
 resizeCanvas();
 
@@ -83,33 +81,35 @@ var resourceDescription = {
     imageButtonPause: "assets/images/button_pause_small.png",
 
     // Sounds
-    soundBackgroundWAV: "assets/sounds/game.wav",
-    soundBackgroundMP3: "assets/sounds/game.mp3",
-    soundClick: "assets/sounds/click.wav",
-    soundBounce: "assets/sounds/bounce.wav",
-    soundGameOver: "assets/sounds/game_over.wav"
+    soundBackground: "assets/sounds/game" + (isSafari ? ".mp3" : ".ogg"),
+    soundClick: "assets/sounds/click" + (isSafari ? ".mp3" : ".ogg"),
+    soundBounce: "assets/sounds/bounce" + (isSafari ? ".mp3" : ".ogg"),
+    soundGameOver: "assets/sounds/game_over" + (isSafari ? ".mp3" : ".ogg")
 };
-
-var audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
 Loader.loadResourceTree(resourceDescription,
     function onSuccess(resources) {
-        //checking browser type http://stackoverflow.com/questions/9847580/how-to-detect-safari-chrome-ie-firefox-and-opera-browser
-        var sm = new SoundManager(audioContext);
-        var soundBounce = new sm.Sound(resources.soundBounce, 1, false);
-        var soundBackground = new sm.Sound((typeof InstallTrigger !== 'undefined')     // checking if browser is firefox
-                                            ? resources.soundBackgroundMP3 : resources.soundBackgroundWAV, 0.2, true);
-        var soundClicked = new sm.Sound(resources.soundClick, 1, false);
-        var soundGameOver = new sm.Sound(resources.soundGameOver, 0.6, false);
-        if (localStorage.getItem("soundState") === null) localStorage.setItem("soundState", "play");
-        if (localStorage.getItem("soundState") === "mute") sm.setMasterGain(0);
+        
+        var soundManager = new SoundManager(createAudioContext(window)),
+            soundBounce = new soundManager.Sound(resources.soundBounce, 1, false),
+            soundBackground = new soundManager.Sound(resources.soundBackground, 0.2, true),
+            soundClicked = new soundManager.Sound(resources.soundClick, 1, false),
+            soundGameOver = new soundManager.Sound(resources.soundGameOver, 0.6, false);
+        
+        if (localStorage.getItem("soundState") === null) {
+            localStorage.setItem("soundState", "play");
+        }
+        
+        if (localStorage.getItem("soundState") === "mute") {
+            soundManager.setMasterGain(0);
+        }
         
         // Start frame loop
         choreographer.startFrameLoop();
         choreographer.addEventListener(Choreographer.EVENT_ON_FRAME, onFrame);
 
         var menu = new Menu(context, resources),
-            game = new Game(context, resources, Metrics.PPM),
+            game = new Game(context, resources, 50),
             hud = new Hud(context, resources),
             gameOver = new GameOver(context, resources),
             pause = new Pause(context, resources);
@@ -217,11 +217,11 @@ Loader.loadResourceTree(resourceDescription,
 		
 	pause.addEventListener(Pause.EVENT_SOUND_CLICKED, function(eventName) {
             if (localStorage.getItem("soundState") === "play") {
-                sm.setMasterGain(0);
+                soundManager.setMasterGain(0);
                 localStorage.setItem("soundState", "mute");
             } else {
                 localStorage.setItem("soundState", "play");
-                sm.setMasterGain(1);
+                soundManager.setMasterGain(1);
             };
         });
 		

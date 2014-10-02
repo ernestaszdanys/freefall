@@ -402,6 +402,8 @@ Poly.createEdgeNormalArray = function(vertices) {
  * @param {number[] | Vec2[]} vertices
  */
 Poly.Template = function(vertices) {
+    // TODO: split into multiple functions?
+    
     // Clones vertices (also converts primitives to Vec2 objects if needed)
     vertices = Poly.cloneVertexArray(vertices);
     

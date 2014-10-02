@@ -2,6 +2,9 @@ function SoundManager(audioContext) {
     var masterGain = audioContext.createGain();
 
     this.setMasterGain = function (volume) {
+        if (!isFiniteNumber(volume)) {
+            throw new Error("Argument must be finite number.");
+        }
         masterGain.gain.value = volume;
     };
     
@@ -12,7 +15,7 @@ function SoundManager(audioContext) {
     this.setMasterGain(1);
     masterGain.connect(audioContext.destination);
 
-    function Sound(soundArrayBuffer, volume, loop) {
+    function Sound(soundArrayBuffer, volume) {
         var decodedAudio,
             gainNode,
             soundSource;
@@ -20,12 +23,15 @@ function SoundManager(audioContext) {
         audioContext.decodeAudioData(soundArrayBuffer, function (buffer) {
             decodedAudio = buffer;
         });
-
-        // play
-        this.play = function () {
+        
+        /**
+         * @param {boolean} loop
+         */
+        this.play = function (loop) {
             if (soundSource) {
                 soundSource.disconnect(0);
             }
+            
             if (gainNode) {
                 gainNode.disconnect(0);
             }
@@ -33,18 +39,21 @@ function SoundManager(audioContext) {
             gainNode = audioContext.createGain();
             gainNode.gain.value = volume;
             soundSource = audioContext.createBufferSource();
-            soundSource.loop = loop;
+            soundSource.loop = !!loop; // Cast to boolean
             soundSource.buffer = decodedAudio;
 
             soundSource.connect(gainNode);
             gainNode.connect(masterGain);
+            
             soundSource.start();
         };
 
-        // stop
         this.stop = function () {
-            soundSource.stop();
-        }
+            if (soundSource) {
+                soundSource.stop();
+            }
+        };
     }
+    
     this.Sound = Sound;
 }

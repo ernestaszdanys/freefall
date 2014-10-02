@@ -10,8 +10,8 @@ var Loader = (function() {
     extensionToLoader["jpg"] = getImage;
     extensionToLoader["jpeg"] = getImage;
     extensionToLoader["gif"] = getImage;
-    extensionToLoader["wav"] = getAudio;
     extensionToLoader["mp3"] = getAudio;
+    extensionToLoader["ogg"] = getAudio;
 
     function getUrlFileExtension(url) {
         var extensionTokens = url.match(urlFileExtensionPattern);
@@ -214,7 +214,7 @@ var Loader = (function() {
                     throw new Error("Can't load \"" + resource.url + "\". Resource loader for \"." +  extension + "\" extension is undefined.");
                 }
             } else {
-                throw new Error("Can't determine resource type (extension). " + resource.url);
+                throw new Error("Can't determine resource type (extension). Url: " + resource.url);
             }
         });
     }
