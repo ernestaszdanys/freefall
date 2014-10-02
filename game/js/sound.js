@@ -45,7 +45,7 @@ function SoundManager(audioContext) {
             soundSource.connect(gainNode);
             gainNode.connect(masterGain);
             
-            soundSource.start();
+            soundSource.start(0);
         };
 
         this.stop = function () {
